@@ -11,29 +11,29 @@ const scrapeSpreadsheet = () => {
 
             let evaluated = await page.evaluate(() => {
 
-                const hourDom = document.querySelectorAll('td.s128'); 		// hardcoded dom element id
-                const minuteDom = document.querySelectorAll('td.s129');		// hardcoded dom element id
+                const hourDom = document.querySelectorAll('td.s128');       // hardcoded dom element id
+                const minuteDom = document.querySelectorAll('td.s129');     // hardcoded dom element id
 
-                const hourList = [0]; 										// missing hour 0 in first line
+                const hourList = [0];                                       // missing hour 0 in first line
                 const minuteList = [];
 
                 hourDom.forEach((domItem) => {
-                	const hour = domItem.innerText;
-                	hour!=='' 
-                		? hourList.push(hour==='NULL' ? null : parseInt(hour))
-                		: null;
+                    const hour = domItem.innerText;
+                    hour!=='' 
+                        ? hourList.push(hour==='NULL' ? null : parseInt(hour))
+                        : null;
                 });
 
                 minuteDom.forEach((domItem) => {
-                	const minute = domItem.innerText;
-                	minute!=='' 
-                		? minuteList.push(minute==='NULL' ? null : parseInt(minute))
-                		: null;
+                    const minute = domItem.innerText;
+                    minute!=='' 
+                        ? minuteList.push(minute==='NULL' ? null : parseInt(minute))
+                        : null;
                 });
 
                 const data = {
-                	hour: hourList,
-                	minute: minuteList
+                    hour: hourList,
+                    minute: minuteList
                 };
 
                 return data;
@@ -48,10 +48,10 @@ const scrapeSpreadsheet = () => {
 }
 
 scrapeSpreadsheet()
-	.then(data => {
-		console.log("hello");
-		console.log(data);
-	})
-	.catch(error => {
-		console.error(error);
-	});
+    .then(data => {
+        console.log("hello");
+        console.log(data);
+    })
+    .catch(error => {
+        console.error(error);
+    });
