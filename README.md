@@ -9,6 +9,10 @@ Subathon Dates:
 - START: March 14, 2021 (2:00pm PST) 
 - END: XXX
 
+Current Data Extracted from SullyGnome (manually updated):
+- START: March 02, 2021
+- END: March 31, 2021
+
 Dataset Credits To:
 - [Ludwig Subathon Tracker](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#)
 - [SullyGnome](https://sullygnome.com/channel/ludwig)

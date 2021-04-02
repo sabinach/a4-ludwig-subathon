@@ -23,7 +23,6 @@ const scrapeSpreadsheet = () => {
                         ? hourList.push(hour==='NULL' ? null : parseInt(hour))
                         : null;
                 });
-
                 minuteDom.forEach((domItem) => {
                     const minute = domItem.innerText;
                     minute!=='' 
@@ -49,7 +48,6 @@ const scrapeSpreadsheet = () => {
 
 scrapeSpreadsheet()
     .then(data => {
-        console.log("hello");
         console.log(data);
     })
     .catch(error => {
