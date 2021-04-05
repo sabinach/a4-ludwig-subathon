@@ -89,13 +89,10 @@ d3.json("data/timeLeft.json", (error, data) => {
     // What are the selected boundaries?
     extent = d3.event.selection
 
-    console.log("extent: ", extent); //debug
-
     // If no selection, back to initial coordinate. Otherwise, update X axis domain
-    if(!extent || extent===null){
+    if(!extent){
       if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
     }else{
-      console.log([ x.invert(extent[0]), x.invert(extent[1]) ]) // TODO
       x.domain([ x.invert(extent[0]), x.invert(extent[1]) ])
       line.select(".brush").call(brush.move, null) 
     }
