@@ -42,7 +42,7 @@ d3.json("data/timeLeft.json", (error, data) => {
       idleDelay = 350;
 
   // Define line
-  var line = d3.line()
+  var drawLine = d3.line()
     .defined(d => !isNaN(d.timeLeft))
     .x(d => xScale(d.timeStreamed))
     .y(d => yScale(d.timeLeft))
@@ -79,10 +79,11 @@ d3.json("data/timeLeft.json", (error, data) => {
   // Add line
   svg_line.append("path")
     .datum(data_zip)
+    .attr("class", "line")
     .attr("fill", "none")
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
-    .attr("d", line);
+    .attr("d", drawLine);
 
   function brushended() {
     var extent = d3.event.selection;
@@ -106,7 +107,7 @@ d3.json("data/timeLeft.json", (error, data) => {
     var time = svg.transition().duration(750);
     svg.select(".axis--x").transition(time).call(xAxis);
     svg.select(".axis--y").transition(time).call(yAxis);
-    svg_line.selectAll(".line").transition(time).attr("d", line);
+    svg_line.selectAll(".line").transition(time).attr("d", drawLine);
   }
 
 });
