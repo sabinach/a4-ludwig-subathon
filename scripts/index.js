@@ -1,7 +1,7 @@
 // set the dimensions and margins of the graph
-var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 500,
-    height = 500;
+var margin = { top: 10, right: 30, bottom: 30, left: 60 },
+    width = 700 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
 var svg = d3.select("#viz")
@@ -56,7 +56,7 @@ d3.json("data/timeLeft.json", (error, data) => {
     .attr("x", 0)
     .attr("y", 0);
 
-  // Create the line variable: where both the line and the brush take place
+  // Create the line svg: where both the line and the brush take place
   var svg_line = svg.append('g')
     .attr("clip-path", "url(#clip)");
 
@@ -69,7 +69,24 @@ d3.json("data/timeLeft.json", (error, data) => {
   // Add y-axis
   svg.append("g")
     .attr("class", "axis axis--y")
-    .call(yAxis);
+    .call(yAxis)
+
+  // Add x-axis label
+  svg.append("text")             
+    .attr("transform",
+          "translate(" + (width/2) + " ," + 
+                         (height + margin.top + 20) + ")")
+    .style("text-anchor", "middle")
+    .text("# hours streamed");
+
+  // Add y-axis label
+  svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left)
+    .attr("x",0 - (height / 2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("# hours left");  
 
   // Add brush
   svg_line.append("g")
@@ -86,14 +103,14 @@ d3.json("data/timeLeft.json", (error, data) => {
     .attr("d", drawLine);
 
   function brushended() {
-    var extent = d3.event.selection;
-    if (!extent) {
+    var brushBounds = d3.event.selection;
+    if (!brushBounds) {
       if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
       xScale.domain(x0);
       yScale.domain(y0);
     } else {
-      xScale.domain([extent[0][0], extent[1][0]].map(xScale.invert, xScale));
-      yScale.domain([extent[1][1], extent[0][1]].map(yScale.invert, yScale));
+      xScale.domain([brushBounds[0][0], brushBounds[1][0]].map(xScale.invert, xScale));
+      yScale.domain([brushBounds[1][1], brushBounds[0][1]].map(yScale.invert, yScale));
       svg_line.select(".brush").call(brush.move, null);
     }
     zoom();
