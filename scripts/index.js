@@ -160,6 +160,8 @@ function createViz(error, ...args) {
     .attr("class", "brush")
     .call(brush);
 
+  /* --- Highlights Node DEFINITION --- */
+
   // Add nodes (event highlights)
   svg_line.selectAll("circle")
     .data(dummy_zip)
@@ -169,32 +171,9 @@ function createViz(error, ...args) {
     .attr("r", (d, i) => 5)
     .attr("id", d => d.id)
     .style("fill", "#fcb0b5")
-    .on("mouseover", function(d) {
+    .on("mouseover", highlightsNode_mouseover)
+    .on("mouseout", highlightsNode_mouseout);
 
-      d3.select(this).transition().duration(200).style("fill", "#d30715");
-
-      svg_line.selectAll("#tooltip").data([d]).enter().append("text")
-        .attr("id", "tooltip")
-        .text((d, i) => d.value)
-        .attr("y", d => yScale(d.value)-12)
-        .attr("x", d => xScale(d.date))
-
-      svg_line.selectAll("#tooltip_path").data([d]).enter().append("line")
-        .attr("id", "tooltip_path")
-        .attr("class", "line")
-        .attr("d", highlightsLine)
-        .attr("x1", d => xScale(d.date))
-        .attr("x2", d => xScale(d.date))
-        .attr("y1", height)
-        .attr("y2", d => yScale(d.value))
-        .attr("stroke", "black")
-        .style("stroke-dasharray", ("3, 3"));
-    })
-    .on("mouseout", function (d) {
-      d3.select(this).transition().duration(500).style("fill", "#fcb0b5");
-      svg_line.selectAll("#tooltip").remove();
-      svg_line.selectAll("#tooltip_path").remove();
-    });
 
   /* --- Brush + Line Clip FUNCTIONS --- */
 
@@ -224,6 +203,35 @@ function createViz(error, ...args) {
     svg_line.selectAll("circle").transition(t)
       .attr("cx", d => xScale(d.date))
       .attr("cy", d => yScale(d.value));
+  }
+
+  /* --- Highlights Node FUNCTIONS --- */
+
+  function highlightsNode_mouseover(d, i){
+    d3.select(this).transition().duration(200).style("fill", "#d30715");
+
+    svg_line.selectAll("#tooltip").data([d]).enter().append("text")
+      .attr("id", "tooltip")
+      .text((d, i) => d.value)
+      .attr("y", d => yScale(d.value)-12)
+      .attr("x", d => xScale(d.date))
+
+    svg_line.selectAll("#tooltip_path").data([d]).enter().append("line")
+      .attr("id", "tooltip_path")
+      .attr("class", "line")
+      .attr("d", highlightsLine)
+      .attr("x1", d => xScale(d.date))
+      .attr("x2", d => xScale(d.date))
+      .attr("y1", height)
+      .attr("y2", d => yScale(d.value))
+      .attr("stroke", "black")
+      .style("stroke-dasharray", ("3, 3"));
+  }
+
+  function highlightsNode_mouseout(d, i){
+    d3.select(this).transition().duration(500).style("fill", "#fcb0b5");
+    svg_line.selectAll("#tooltip").remove();
+    svg_line.selectAll("#tooltip_path").remove();
   }
 
 };
