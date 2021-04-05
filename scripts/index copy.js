@@ -21,14 +21,14 @@ d3.json("data/timeLeft.json", (error, data) => {
   // handle error
   if (error) throw error;
 
-  // reformat xy data
+  // reformat x/y data
   const timeStreamed_hours = Array.from(Array(data.timeLeft.length), (_,x) => x*0.5);
   const timeLeft_hours = data.timeLeft.map(d => parseTimeLeft(d));
   const data_zip = timeStreamed_hours.map((timeStreamed, index) => {
     return {timeStreamed:timeStreamed, timeLeft:timeLeft_hours[index] }
   })
 
-  // Define xy axes
+  // Define x/y axes
   var x0 = [0, d3.max(timeStreamed_hours)],
       y0 = [0, d3.max(timeLeft_hours)];
   var xScale = d3.scaleLinear().domain(x0).range([ 0, width ]),
@@ -47,19 +47,6 @@ d3.json("data/timeLeft.json", (error, data) => {
     .x(d => xScale(d.timeStreamed))
     .y(d => yScale(d.timeLeft))
 
-  // Add a clipPath: everything out of this area won't be drawn.
-  var clip = svg.append("defs").append("svg:clipPath")
-    .attr("id", "clip")
-    .append("svg:rect")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("x", 0)
-    .attr("y", 0);
-
-  // Create the line variable: where both the line and the brush take place
-  var svg_line = svg.append('g')
-    .attr("clip-path", "url(#clip)");
-
   // Add x-axis
   svg.append("g")
     .attr("class", "axis axis--x")
@@ -71,13 +58,16 @@ d3.json("data/timeLeft.json", (error, data) => {
     .attr("class", "axis axis--y")
     .call(yAxis);
 
+  svg.selectAll(".domain")
+    .style("display", "none");
+
   // Add brush
-  svg_line.append("g")
+  svg.append("g")
     .attr("class", "brush")
     .call(brush);
 
   // Add line
-  svg_line.append("path")
+  svg.append("path")
     .datum(data_zip)
     .attr("fill", "none")
     .attr("stroke", "steelblue")
@@ -93,7 +83,7 @@ d3.json("data/timeLeft.json", (error, data) => {
     } else {
       xScale.domain([extent[0][0], extent[1][0]].map(xScale.invert, xScale));
       yScale.domain([extent[1][1], extent[0][1]].map(yScale.invert, yScale));
-      svg_line.select(".brush").call(brush.move, null);
+      svg.select(".brush").call(brush.move, null);
     }
     zoom();
   }
@@ -106,7 +96,7 @@ d3.json("data/timeLeft.json", (error, data) => {
     var time = svg.transition().duration(750);
     svg.select(".axis--x").transition(time).call(xAxis);
     svg.select(".axis--y").transition(time).call(yAxis);
-    svg_line.selectAll(".line").transition(time).attr("d", line);
+    svg.selectAll(".path").transition(time).attr("d", line);
   }
 
 });
