@@ -15,16 +15,56 @@ var svg = d3.select("#viz")
 // convert hr:min:sec to minutes
 var parseTimeLeft = timeLeft => parseInt(timeLeft.split(":")[0]) + parseInt(timeLeft.split(":")[1])/60;
 
-// read json
-d3.json("data/timeLeft.json", (error, data) => {
+// create viz with imported data
+function createViz(error, ...args) {
   
   // handle error
   if (error) throw error;
 
-  // reformat xy data
-  const timeStreamed_hours = Array.from(Array(data.timeLeft.length), (_,x) => x*0.5);
-  const timeLeft_hours = data.timeLeft.map(d => parseTimeLeft(d));
-  const data_zip = timeStreamed_hours.map((timeStreamed, index) => {
+  // save json objects
+  const timeLeftJson = args[0];
+  const viewersJson = args[1];
+  const followersJson = args[2];
+  const highlightsJson = args[3];
+
+  /* --------------------------------------------- */
+  // VIEWERS
+
+  const datetimeStreamed_viewers = viewersJson.data.labels;
+  const gamePlayed_viewers = viewersJson.data.datasets;
+
+  console.log(datetimeStreamed_viewers)
+  console.log(gamePlayed_viewers)
+
+  /* --------------------------------------------- */
+  // FOLLOWERS
+
+  const datetimeStreamed_followers = followersJson.data.labels;
+  const num_followers = followersJson.data.datasets[2].data; // hardcoded index for "Followers trend"
+
+  console.log(datetimeStreamed_followers)
+  console.log(num_followers)
+
+  /* --------------------------------------------- */
+  // HIGHLIGHTS
+
+  const datetimeStreamed_highlights = highlightsJson.datetime;
+  const title_highlights = highlightsJson.title; 
+  const desc_highlights = highlightsJson.desc;
+  const url_highlights = highlightsJson.url;
+
+  console.log(datetimeStreamed_highlights)
+  console.log(title_highlights)
+  console.log(desc_highlights)
+  console.log(url_highlights)
+
+  /* --------------------------------------------- */
+  // TIME LEFT
+
+  // reformat xy data (timeLeftJson)
+  const timeStreamed_hours = Array.from(Array(timeLeftJson.timeLeft.length), (_,x) => x*0.5);
+  const timeLeft_hours = timeLeftJson.timeLeft.map(d => parseTimeLeft(d));
+  const timeLeftJson_zip = timeStreamed_hours.map((timeStreamed, index) => {
     return {timeStreamed:timeStreamed, timeLeft:timeLeft_hours[index] }
   })
 
@@ -95,7 +135,7 @@ d3.json("data/timeLeft.json", (error, data) => {
 
   // Add line
   svg_line.append("path")
-    .datum(data_zip)
+    .datum(timeLeftJson_zip)
     .attr("class", "line")
     .attr("fill", "none")
     .attr("stroke", "steelblue")
@@ -127,4 +167,12 @@ d3.json("data/timeLeft.json", (error, data) => {
     svg_line.selectAll(".line").transition(t).attr("d", drawLine);
   }
 
-});
+};
+
+// read json files
+d3.queue()
+  .defer(d3.json, "data/timeLeft.json")
+  .defer(d3.json, "data/viewers.json")
+  .defer(d3.json, "data/followers.json")
+  .defer(d3.json, "data/highlights.json")
+  .await(createViz)

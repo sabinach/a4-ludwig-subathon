@@ -17,23 +17,33 @@ const scrapeSpreadsheet = () => {
 
             let evaluated = await page.evaluate(() => {
 				
-				const headers = ['time', 'type', 'title', 'url', 'description'];
+				const headers = ['datetime', 'type', 'title', 'url', 'description'];
 				const types = ['subspike', 'highlight'];
 
+                const datetimeDomId = "td.s0";
 				const typeDomId = "td.s0"; 			// hardcoded dom element id
 				const titleDomId = "td.s1"; 		// hardcoded dom element id
 				const urlDomId = "a"
 				const descDomId = "td.s3"; 			// hardcoded dom element id
 				
+                const datetimeDom = document.querySelectorAll(datetimeDomId);
 				const typeDom = document.querySelectorAll(typeDomId);  
                 const titleDom = document.querySelectorAll(titleDomId);    
 				const urlDom = document.querySelectorAll(urlDomId);  
 				const descDom = document.querySelectorAll(descDomId); 
 				
+                const datetimeList = [];
 				const typeList = [];
                 const titleList = []; 
 				const urlList = []; 
 				const descList = []; 
+
+                datetimeDom.forEach((domItem) => {
+                    const datetime = domItem.innerText;
+                    datetime!=='' && datetime.includes(":")
+                        ? datetimeList.push(datetime)
+                        : null;
+                });
 				
 				typeDom.forEach((domItem) => {
                     const type = domItem.innerText;
@@ -64,6 +74,7 @@ const scrapeSpreadsheet = () => {
                 });
 
                 const data = {
+                    datetime: datetimeList,
 					type: typeList,
                     title: titleList,
 					desc: descList,
