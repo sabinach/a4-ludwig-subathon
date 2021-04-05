@@ -29,10 +29,10 @@ d3.json("data/timeLeft.json", (error, data) => {
   })
 
   // Define xy axes
-  var x0 = [0, d3.max(timeStreamed_hours)],
-      y0 = [0, d3.max(timeLeft_hours)];
-  var xScale = d3.scaleLinear().domain(x0).range([ 0, width ]),
-      yScale = d3.scaleLinear().domain(y0).range([ height, 0 ]);
+  var xDomain = [0, d3.max(timeStreamed_hours)],
+      yDomain = [0, d3.max(timeLeft_hours)];
+  var xScale = d3.scaleLinear().domain(xDomain).range([ 0, width ]),
+      yScale = d3.scaleLinear().domain(yDomain).range([ height, 0 ]);
   var xAxis = d3.axisBottom(xScale),
       yAxis = d3.axisLeft(yScale);
 
@@ -102,18 +102,12 @@ d3.json("data/timeLeft.json", (error, data) => {
     .attr("stroke-width", 1.5)
     .attr("d", drawLine);
 
-  /** ------------------------------------- **/
-
- 
-
-  /** ------------------------------------- **/
-
   function brushended() {
     var brushBounds = d3.event.selection;
     if (!brushBounds) {
       if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
-      xScale.domain(x0);
-      yScale.domain(y0);
+      xScale.domain(xDomain);
+      yScale.domain(yDomain);
     } else {
       xScale.domain([brushBounds[0][0], brushBounds[1][0]].map(xScale.invert, xScale));
       yScale.domain([brushBounds[1][1], brushBounds[0][1]].map(yScale.invert, yScale));
