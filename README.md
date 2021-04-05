@@ -16,11 +16,20 @@ Current Data Extracted from SullyGnome (manually updated):
 Dataset Credits To:
 - [Ludwig Subathon Tracker](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#)
 - [SullyGnome](https://sullygnome.com/channel/ludwig)
+- [Twitch Clips](https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#)
 
 ### To Run Locally:
 
-- Frontend access the website at: [localhost:3000](http://localhost:3000)
-- To run test scripts inidividually: ```node filename.js```
+- Use Brackets IDE. 
+- Open ```index.html``` via 'Live Preview'
+
+### To Preprocess Data:
+```
+cd utils/
+node scrapeSubathonSheet.js
+node scrapeHighlightsSheet.js
+node processSubathonSheet.js
+```
 
 ### To Deploy:
 
