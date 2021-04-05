@@ -12,36 +12,48 @@ const scrapeSpreadsheet = () => {
         try {
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
-			await page.setDefaultNavigationTimeout(0);  // remove timeout (set to unlimited load time)
+			await page.setDefaultNavigationTimeout(0);  // set to unlimited load time
             await page.goto(URL);
 
             let evaluated = await page.evaluate(() => {
 				
-				const hourDomId = "td.s140"; 								// hardcoded dom element id
-				const minuteDomId = "td.s141";								// hardcoded dom element id
+				const timeStreamedDomId = "td.s179"; 	// hardcoded dom element id -- TODO: incorrect values scraped
+				const timeLeftDomId = "td.s180";		// hardcoded dom element id
+				const subsGainedDomId = "td.s183";		// hardcoded dom element id
 
-                const hourDom = document.querySelectorAll(hourDomId);
-                const minuteDom = document.querySelectorAll(minuteDomId);
+                const timeStreamedDom = document.querySelectorAll(timeStreamedDomId);
+                const timeLeftDom = document.querySelectorAll(timeLeftDomId);
+				const subsGainedDom = document.querySelectorAll(subsGainedDomId);
 				
-                const hourList = [0];  										// missing hour 0 in first line
-                const minuteList = [];
+                const timeStreamedList = [];  									
+                const timeLeftList = [];
+				const subsGainedList = [];
 
-                hourDom.forEach((domItem) => {
-                    const hour = domItem.innerText;
-                    hour!=='' 
-                        ? hourList.push(hour==='NULL' ? null : parseInt(hour))
+                timeStreamedDom.forEach((domItem) => {
+                    const timeStreamed = parseFloat(domItem.innerText);
+                    timeStreamed!=='' && !isNaN(timeStreamed)
+                        ? timeStreamedList.push(timeStreamed)
                         : null;
                 });
-                minuteDom.forEach((domItem) => {
-                    const minute = domItem.innerText;
-                    minute!=='' 
-                        ? minuteList.push(minute==='NULL' ? null : parseInt(minute))
+				
+                timeLeftDom.forEach((domItem) => {
+                    const timeLeft = domItem.innerText;
+                    timeLeft!=='' 
+                        ? timeLeftList.push(timeLeft)
+                        : null;
+                });
+				
+				subsGainedDom.forEach((domItem) => {
+                    const subsGained = parseInt(domItem.innerText);
+                    subsGained!=='' && !isNaN(subsGained)
+                        ? subsGainedList.push(subsGained)
                         : null;
                 });
 
                 const data = {
-                    hour: hourList,
-                    minute: minuteList
+                    timeStreamed: timeStreamedList,
+                    timeLeft: timeLeftList,
+					subsGained: subsGainedList
                 };
 
                 return data;
