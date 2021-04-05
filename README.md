@@ -28,7 +28,7 @@ Dataset Credits To:
 cd utils/
 node scrapeSubathonSheet.js
 node scrapeHighlightsSheet.js
-node processSubathonSheet.js
+node formatSullyGnome.js
 ```
 
 ### To Deploy:
