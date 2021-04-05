@@ -102,6 +102,12 @@ d3.json("data/timeLeft.json", (error, data) => {
     .attr("stroke-width", 1.5)
     .attr("d", drawLine);
 
+  /** ------------------------------------- **/
+
+ 
+
+  /** ------------------------------------- **/
+
   function brushended() {
     var brushBounds = d3.event.selection;
     if (!brushBounds) {
@@ -121,10 +127,10 @@ d3.json("data/timeLeft.json", (error, data) => {
   }
 
   function zoom() {
-    var time = svg.transition().duration(750);
-    svg.select(".axis--x").transition(time).call(xAxis);
-    svg.select(".axis--y").transition(time).call(yAxis);
-    svg_line.selectAll(".line").transition(time).attr("d", drawLine);
+    var t = svg.transition().duration(750);
+    svg.select(".axis--x").transition(t).call(xAxis);
+    svg.select(".axis--y").transition(t).call(yAxis);
+    svg_line.selectAll(".line").transition(t).attr("d", drawLine);
   }
 
 });
