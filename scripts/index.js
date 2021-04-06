@@ -1,19 +1,19 @@
 // video embed settings
-var parentDomain = "6859-sp21.github.io" // deploy: 6859-sp21.github.io
+var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
                                // test: 127.0.0.1
 
 // set canvas dimensions
-var svg_width = 750;
+var svg_width = 650;
 var svg_height = 750;
 
 // set the dimensions and margins
-var margin_timeLeft = { top: 10, right: 200, bottom: 450, left: 60 };
+var margin_timeLeft = { top: 10, right: 50, bottom: 450, left: 60 };
 var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 
-var margin_viewers = { top: 360, right: 200, bottom: 250, left: 60 };
+var margin_viewers = { top: 360, right: 50, bottom: 250, left: 60 };
 var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
 
-var margin_subFollows = { top: 563, right: 200, bottom: 50, left: 60 };
+var margin_subFollows = { top: 563, right: 50, bottom: 50, left: 60 };
 var height_subFollows = svg_height - margin_subFollows.top - margin_subFollows.bottom;
 
 var margin_text = 20; //global
@@ -36,10 +36,16 @@ var subathonStartDate = parseDatetime("2021-03-15 17:00"); // converted to EST
 var subathonEndDate = new Date;
 
 // calculate hours from subathon start 
-var datetimeToHours = (datetime) => d3.timeMinute.count(subathonStartDate, datetime)/60
+var datetimeToHours = d3Datetime => d3.timeMinute.count(subathonStartDate, d3Datetime)/60
 
 // convert hr:min:sec to hours
 var parseTimeLeft = timeLeft => parseInt(timeLeft.split(":")[0]) + parseInt(timeLeft.split(":")[1])/60;
+
+// convert d3 datetime to human-friendly version
+var formatDatetime = d3.timeFormat("%B %d, %Y %H:%M")
+
+var formatTime = d3.timeFormat("%B %d, %Y");
+console.log(formatTime(new Date)); // "June 30, 2015"
 
 console.log("subathonStartDate: ", subathonStartDate) 
 console.log("subathonEndDate: ", subathonEndDate) // TODO -- update!
@@ -580,7 +586,6 @@ function createViz(error, ...args) {
 
   /* --- Highlights FUNCTIONS --- */
 
-
   function mouseover_highlights(d, i){
     //clear previous 
     svg_line_timeLeft.selectAll("circle").style("fill", "#fcb0b5");
@@ -604,7 +609,7 @@ function createViz(error, ...args) {
       .attr("x", d => xScale_timeLeft(d.timeStreamed))
       .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
     tooltip
-      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + d.datetime + "<br><br>" + html_embed + "<br><br>") 
+      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(new Date) + "<br><br>" + html_embed + "<br><br>") 
   }
 
 
