@@ -9,6 +9,9 @@ var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 var margin_viewers = { top: 360, right: 200, bottom: 250, left: 60 };
 var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
 
+var margin_subFollows = { top: 50, right: 200, bottom: 10, left: 60 };
+var height_subFollows = svg_height - margin_subFollows.top - margin_subFollows.bottom;
+
 var margin_text = 20; //global
 var width = svg_width - margin_timeLeft.left - margin_timeLeft.right; // global
   
@@ -55,13 +58,17 @@ function createViz(error, ...args) {
   const highlightsJson = args[3];
 
   /* --------------------------------------------- */
-  // TIME LEFT
+  // TIME LEFT / SUBS GAINED
 
   // reformat xy data (timeLeftJson)
   const timeStreamed_hours = Array.from(Array(timeLeftJson.timeLeft.length), (_,x) => x*0.5);
   const timeLeft_hours = timeLeftJson.timeLeft.map(d => parseTimeLeft(d));
   const timeLeftJson_zip = timeStreamed_hours.map((timeStreamed, index) => {
-    return {timeStreamed:timeStreamed, timeLeft:timeLeft_hours[index] }
+    return {
+      timeStreamed: timeStreamed, 
+      timeLeft: timeLeft_hours[index],
+      subsGained: timeLeftJson.subsGained[index]
+    }
   });
 
   console.log("timeLeftJson_zip: ", timeLeftJson_zip)
@@ -110,10 +117,15 @@ function createViz(error, ...args) {
   // FOLLOWERS
 
   const datetime_followers = followersJson.data.labels;
-  const num_followers = followersJson.data.datasets[2].data; // hardcoded index for "Followers trend"
+  const num_followers = followersJson.data.datasets[1].data; // hardcoded index for "Followers"
+  const gained_followers = num_followers.map((val, index) => {
+    const deltaFollowers = val - (num_followers[index - 1] || 0)
+    return deltaFollowers<=0 ? null : deltaFollowers
+  });
 
   //console.log("datetime_followers: ", datetime_followers)
   //console.log("num_followers: ", num_followers)
+  //console.log("gained_followers: ", gained_followers)
 
   // handle error: mismatch xy length
   if (datetime_followers.length !== num_followers.length) throw error;
@@ -123,7 +135,8 @@ function createViz(error, ...args) {
       return {
         timeStreamed: null,
         datetime: parseDatetime(datetime), 
-        numFollowers: num_followers[index]
+        numFollowers: num_followers[index],
+        gainedFollowers: gained_followers[index]
       }
     })
     .filter(followers => followers.datetime >= subathonStartDate && followers.datetime <= subathonEndDate)
@@ -131,7 +144,8 @@ function createViz(error, ...args) {
       return {
         timeStreamed: datetimeToHours(followers.datetime),
         datetime: followers.datetime,
-        numFollowers: followers.numFollowers
+        numFollowers: followers.numFollowers,
+        gainedFollowers: followers.gainedFollowers
       }
     });
 
