@@ -1,23 +1,31 @@
-// set the dimensions and margins of the graph
-var margin = { top: 10, right: 30, bottom: 30, left: 60 },
-    width = 500 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+// set canvas dimensions
+var svg_width = 750;
+var svg_height = 750;
 
+// set the dimensions and margins
+var margin_timeLeft = { top: 10, right: 200, bottom: 450, left: 60 };
+var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
+
+var margin_viewers = { top: 400, right: 200, bottom: 200, left: 60 };
+var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
+
+var width = svg_width - margin_timeLeft.left - margin_timeLeft.right; // global
+  
 // append the svg object to the body of the page
 var svg = d3.select("#viz")
   .append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
+  .attr("width", width + margin_timeLeft.left + margin_timeLeft.right)
+  .attr("height", height_timeLeft + margin_timeLeft.top + margin_timeLeft.bottom)
   .append("g")
   .attr("transform",
-    "translate(" + margin.left + "," + margin.top + ")");
+    "translate(" + margin_timeLeft.left + "," + margin_timeLeft.top + ")");
 
 // string to d3 datetime conversion function
 var parseDatetime = d3.timeParse("%Y-%m-%d %H:%M");
 
 // The data recorded began at 2pm PST on March 15th, the time Ludwig intended to start the subathon.
 var subathonStartDate = parseDatetime("2021-03-15 17:00"); // converted to EST
-var now = new Date;
+var subathonEndDate = new Date;
 
 // calculate hours from subathon start 
 var datetimeToHours = (datetime) => d3.timeMinute.count(subathonStartDate, datetime)/60
@@ -25,7 +33,8 @@ var datetimeToHours = (datetime) => d3.timeMinute.count(subathonStartDate, datet
 // convert hr:min:sec to hours
 var parseTimeLeft = timeLeft => parseInt(timeLeft.split(":")[0]) + parseInt(timeLeft.split(":")[1])/60;
 
-console.log("subathonStartDate: ", subathonStartDate) // debug
+console.log("subathonStartDate: ", subathonStartDate) 
+console.log("subathonEndDate: ", subathonEndDate) // TODO -- update!
 
 
 // create viz with imported data
@@ -58,13 +67,36 @@ function createViz(error, ...args) {
   const datetime_viewers = viewersJson.data.labels;
   const gamePlayed_viewers = viewersJson.data.datasets;
 
-  console.log("datetime_viewers: ", datetime_viewers)
-  console.log("gamePlayed_viewers: ", gamePlayed_viewers)
+  //console.log("datetime_viewers: ", datetime_viewers)
+  //console.log("gamePlayed_viewers: ", gamePlayed_viewers)
 
   // handle error: mismatch xy length
   gamePlayed_viewers.forEach(gamePlayed => {
     if(datetime_viewers.length!==gamePlayed.data.length) throw error;
   })
+
+  // here's an extremely inefficient for-loop... will optimize later
+  var viewers_zip = []
+  datetime_viewers.forEach((datetime, i) => {
+    const parsedDatetime = parseDatetime(datetime);
+    if(parsedDatetime >= subathonStartDate && parsedDatetime <= subathonEndDate){
+      viewers_zip.push({
+        timeStreamed: datetimeToHours(parsedDatetime),
+        datetime: parsedDatetime,
+        game: null,
+        numViewers: null
+      })
+      for (j = 0; j < gamePlayed_viewers.length; j++) {
+        if(gamePlayed_viewers[j].data[i]!==null){
+          viewers_zip[viewers_zip.length-1].game = gamePlayed_viewers[j].label;
+          viewers_zip[viewers_zip.length-1].numViewers = gamePlayed_viewers[j].data[i];
+          break;
+        }
+      }
+    }
+  }) 
+
+  console.log("viewers_zip: ", viewers_zip)
 
   /* --------------------------------------------- */
   // FOLLOWERS
@@ -72,11 +104,30 @@ function createViz(error, ...args) {
   const datetime_followers = followersJson.data.labels;
   const num_followers = followersJson.data.datasets[2].data; // hardcoded index for "Followers trend"
 
-  console.log("datetime_followers: ", datetime_followers)
-  console.log("num_followers: ", num_followers)
+  //console.log("datetime_followers: ", datetime_followers)
+  //console.log("num_followers: ", num_followers)
 
   // handle error: mismatch xy length
   if (datetime_followers.length !== num_followers.length) throw error;
+
+  const followers_zip = datetime_followers
+    .map((datetime, index) => {
+      return {
+        timeStreamed: null,
+        datetime: parseDatetime(datetime), 
+        numFollowers: num_followers[index]
+      }
+    })
+    .filter(followers => followers.datetime >= subathonStartDate && followers.datetime <= subathonEndDate)
+    .map(followers => { 
+      return {
+        timeStreamed: datetimeToHours(followers.datetime),
+        datetime: followers.datetime,
+        numFollowers: followers.numFollowers
+      }
+    });
+
+  console.log("followers_zip: ", followers_zip)
 
   /* --------------------------------------------- */
   // HIGHLIGHTS
@@ -108,7 +159,7 @@ function createViz(error, ...args) {
         url: url_highlights[index]
       }
     })
-    .filter(highlight => highlight.datetime > subathonStartDate && highlight.datetime < now)
+    .filter(highlight => highlight.datetime >= subathonStartDate && highlight.datetime <= subathonEndDate)
     .map(highlight => { 
       const xHour = datetimeToHours(highlight.datetime)
       const yHour = timeLeft_hours[timeStreamed_hours.indexOf(xHour)]
@@ -134,7 +185,7 @@ function createViz(error, ...args) {
   var xDomain = [0, d3.max(timeStreamed_hours)],
       yDomain = [0, d3.max(timeLeft_hours)];
   var xScale = d3.scaleLinear().domain(xDomain).range([ 0, width ]),
-      yScale = d3.scaleLinear().domain(yDomain).range([ height, 0 ]);
+      yScale = d3.scaleLinear().domain(yDomain).range([ height_timeLeft, 0 ]);
   var xAxis = d3.axisBottom(xScale),
       yAxis = d3.axisLeft(yScale);
 
@@ -153,7 +204,7 @@ function createViz(error, ...args) {
   // Add x-axis
   svg.append("g")
     .attr("class", "axis axis--x")
-    .attr("transform", "translate(0," + height + ")")
+    .attr("transform", "translate(0," + height_timeLeft + ")")
     .call(xAxis);
 
   // Add y-axis
@@ -164,15 +215,15 @@ function createViz(error, ...args) {
   // Add x-axis label
   svg.append("text")             
     .attr("transform",
-          "translate(" + (width/2) + " ," + (height + margin.top + 20) + ")")
+          "translate(" + (width/2) + " ," + (height_timeLeft + margin_timeLeft.top + 20) + ")")
     .style("text-anchor", "middle")
     .text("# hours streamed");
 
   // Add y-axis label
   svg.append("text")
     .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left)
-    .attr("x",0 - (height / 2))
+    .attr("y", 0 - margin_timeLeft.left)
+    .attr("x",0 - (height_timeLeft / 2))
     .attr("dy", "1em")
     .style("text-anchor", "middle")
     .text("# hours left");  
@@ -189,7 +240,7 @@ function createViz(error, ...args) {
     .attr("id", "clip")
     .append("svg:rect")
     .attr("width", width)
-    .attr("height", height)
+    .attr("height", height_timeLeft)
     .attr("x", 0)
     .attr("y", 0);
 
