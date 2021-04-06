@@ -42,7 +42,7 @@ var datetimeToHours = d3Datetime => d3.timeMinute.count(subathonStartDate, d3Dat
 var parseTimeLeft = timeLeft => parseInt(timeLeft.split(":")[0]) + parseInt(timeLeft.split(":")[1])/60;
 
 // convert d3 datetime to human-friendly version
-var formatDatetime = d3.timeFormat("%B %d, %Y %H:%M")
+var formatDatetime = d3.timeFormat("%B %d, %Y %H:%M %p")
 
 var formatTime = d3.timeFormat("%B %d, %Y");
 console.log(formatTime(new Date)); // "June 30, 2015"
@@ -574,12 +574,13 @@ function createViz(error, ...args) {
   // Show tooltip (show the first highlight event)
   tooltip_highlights
     .style("opacity", 1)
-    .html("<b>" + highlights_zip[0].title + "</b>" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(highlights_zip[0].datetime) + "<br><br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br><br>") 
+    .html("<b>" + highlights_zip[0].title + "</b>" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(highlights_zip[0].datetime) + " EST" + "<br><br>time streamed: " + highlights_zip[0].timeStreamed.toFixed(2) + " hrs" + "<br>time left: " + highlights_zip[0].timeLeft.toFixed(2) + " hrs" + "<br><br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br><br>") 
 
   // Add nodes (event highlights)
-  svg_line_timeLeft.selectAll("circle")
+  svg_line_timeLeft.selectAll(".dot-highlight")
     .data(highlights_zip)
     .enter().append("circle")
+    .attr("class", "dot-highlight")
     .attr("cx", d => xScale_timeLeft(d.timeStreamed))
     .attr("cy", d =>  yScale_timeLeft(d.timeLeft))
     .attr("r", (d, i) => 6)
@@ -602,7 +603,7 @@ function createViz(error, ...args) {
 
   function mouseover_highlights(d, i){
     //clear previous 
-    svg_line_timeLeft.selectAll("circle").style("fill", "#fcb0b5");
+    svg_line_timeLeft.selectAll(".dot-highlight").style("fill", "#fcb0b5");
     svg_line_timeLeft.selectAll("#tooltip_highlights").remove();
     svg_line_timeLeft.selectAll("#tooltip_path").remove();
 
@@ -611,26 +612,28 @@ function createViz(error, ...args) {
     svg_line_timeLeft.selectAll("#tooltip_highlights").data([d]).enter()
       .append("text")
       .attr("id", "tooltip_highlights")
-      .text(d.timeLeft.toFixed(1) + " hrs")
+      //.text(d.timeLeft.toFixed(1) + " hrs")
+      .text(d.title.slice(0,10)+"..")
       .attr("x", d => xScale_timeLeft(d.timeStreamed))
       .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
 
     // update tooltip
     tooltip_highlights
-      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(d.datetime) + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br><br>") 
+      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(d.datetime) + " EST" + "<br><br>time streamed: " + d.timeStreamed.toFixed(2) + " hrs" + "<br>time left: " + d.timeLeft.toFixed(2) + " hrs" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br><br>") 
   }
 
   /** ------------------ Hover Tooltip (timeLeft) ------------------ **/
+
+  /*
 
   var tooltip_timeLeft = d3.select('#line-viz')
     .append('div')
     .attr('id', 'tooltip_timeLeft');
 
-  svg_line_timeLeft.selectAll(".dot")
+  svg_line_timeLeft.selectAll(".dot-timeLeft")
    .data(timeLeftJson_zip)
-   .enter()
-   .append("circle")
-   .attr("class", "dot")
+   .enter().append("circle")
+   .attr("class", "dot-timeLeft")
    .attr("r", 2)
    .attr("cx", d => xScale_timeLeft(d.timeStreamed))
    .attr("cy", d => yScale_timeLeft(d.timeLeft))
@@ -650,6 +653,9 @@ function createViz(error, ...args) {
        .style('opacity', 0);
    });
 
+   */
+
+  /** ------------------ ------------------ ------------------ **/
 
 };
 
