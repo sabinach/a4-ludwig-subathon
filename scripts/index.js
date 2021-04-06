@@ -1,7 +1,7 @@
 // set the dimensions and margins of the graph
 var margin = { top: 10, right: 30, bottom: 30, left: 60 },
-    width = 1000 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    width = 500 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
 var svg = d3.select("#viz")
@@ -12,17 +12,17 @@ var svg = d3.select("#viz")
   .attr("transform",
     "translate(" + margin.left + "," + margin.top + ")");
 
-
 // string to d3 datetime conversion function
 var parseDatetime = d3.timeParse("%Y-%m-%d %H:%M");
 
 // The data recorded began at 2pm PST on March 15th, the time Ludwig intended to start the subathon.
 var subathonStartDate = parseDatetime("2021-03-15 17:00"); // converted to EST
+var now = new Date;
 
 // calculate hours from subathon start 
 var datetimeToHours = (datetime) => d3.timeMinute.count(subathonStartDate, datetime)/60
 
-// convert hr:min:sec to minutes
+// convert hr:min:sec to hours
 var parseTimeLeft = timeLeft => parseInt(timeLeft.split(":")[0]) + parseInt(timeLeft.split(":")[1])/60;
 
 console.log("subathonStartDate: ", subathonStartDate) // debug
@@ -108,7 +108,7 @@ function createViz(error, ...args) {
         url: url_highlights[index]
       }
     })
-    .filter(highlight => highlight.datetime > subathonStartDate)
+    .filter(highlight => highlight.datetime > subathonStartDate && highlight.datetime < now)
     .map(highlight => { 
       const xHour = datetimeToHours(highlight.datetime)
       const yHour = timeLeft_hours[timeStreamed_hours.indexOf(xHour)]
@@ -211,7 +211,7 @@ function createViz(error, ...args) {
     .attr("class", "brush")
     .call(brush);
 
-  /* --- Highlights Node DEFINITION --- */
+  /* --- Node DEFINITIONS --- */
 
   // Add nodes (event highlights)
   svg_line.selectAll("circle")
@@ -262,7 +262,7 @@ function createViz(error, ...args) {
 
     svg_line.selectAll("#tooltip").data([d]).enter().append("text")
       .attr("id", "tooltip")
-      .text((d, i) => d.timeLeft)
+      .text((d, i) => d.title + "\n" + d.desc + "\n" + d.url + "\n" + (d.timeStreamed, d.timeLeft))
       .attr("y", d => yScale(d.timeLeft)-12)
       .attr("x", d => xScale(d.timeStreamed))
 
