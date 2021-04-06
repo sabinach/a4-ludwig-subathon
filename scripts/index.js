@@ -182,35 +182,35 @@ function createViz(error, ...args) {
   /* --- Simple Line DEFINITIONS --- */
 
   // Define xy axes
-  var xDomain = [0, d3.max(timeStreamed_hours)],
-      yDomain = [0, d3.max(timeLeft_hours)];
-  var xScale = d3.scaleLinear().domain(xDomain).range([ 0, width ]),
-      yScale = d3.scaleLinear().domain(yDomain).range([ height_timeLeft, 0 ]);
-  var xAxis = d3.axisBottom(xScale),
-      yAxis = d3.axisLeft(yScale);
+  var xDomain_timeLeft = [0, d3.max(timeStreamed_hours)],
+      yDomain_timeLeft = [0, d3.max(timeLeft_hours)];
+  var xScale_timeLeft = d3.scaleLinear().domain(xDomain_timeLeft).range([ 0, width ]),
+      yScale_timeLeft = d3.scaleLinear().domain(yDomain_timeLeft).range([ height_timeLeft, 0 ]);
+  var xAxis_timeLeft = d3.axisBottom(xScale_timeLeft),
+      yAxis_timeLeft = d3.axisLeft(yScale_timeLeft);
 
   // Define line (timeLeft)
-  var timeLeftLine = d3.line()
+  var line_timeLeft = d3.line()
     .defined(d => !isNaN(d.timeLeft))
-    .x(d => xScale(d.timeStreamed))
-    .y(d => yScale(d.timeLeft))
+    .x(d => xScale_timeLeft(d.timeStreamed))
+    .y(d => yScale_timeLeft(d.timeLeft))
 
   // Define line (highlights)
-  var highlightsLine = d3.line()
+  var line_highlights = d3.line()
     .defined(d => !isNaN(d.value))
-    .x(d => xScale(d.timeStreamed))
-    .y(d => yScale(d.timeLeft))
+    .x(d => xScale_timeLeft(d.timeStreamed))
+    .y(d => yScale_timeLeft(d.timeLeft))
 
   // Add x-axis
   svg.append("g")
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + height_timeLeft + ")")
-    .call(xAxis);
+    .call(xAxis_timeLeft);
 
   // Add y-axis
   svg.append("g")
     .attr("class", "axis axis--y")
-    .call(yAxis)
+    .call(yAxis_timeLeft)
 
   // Add x-axis label
   svg.append("text")             
@@ -255,7 +255,7 @@ function createViz(error, ...args) {
     .attr("fill", "none")
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
-    .attr("d", timeLeftLine);
+    .attr("d", line_timeLeft);
 
   // Add brush
   svg_line.append("g")
@@ -268,8 +268,8 @@ function createViz(error, ...args) {
   svg_line.selectAll("circle")
     .data(highlights_zip)
     .enter().append("circle")
-    .attr("cx", d => xScale(d.timeStreamed))
-    .attr("cy", d =>  yScale(d.timeLeft))
+    .attr("cx", d => xScale_timeLeft(d.timeStreamed))
+    .attr("cy", d =>  yScale_timeLeft(d.timeLeft))
     .attr("r", (d, i) => 5)
     .attr("id", d => d.id)
     .style("fill", "#fcb0b5")
@@ -282,11 +282,11 @@ function createViz(error, ...args) {
     var brushBounds = d3.event.selection;
     if (!brushBounds) {
       if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
-      xScale.domain(xDomain);
-      yScale.domain(yDomain);
+      xScale_timeLeft.domain(xDomain_timeLeft);
+      yScale_timeLeft.domain(yDomain_timeLeft);
     } else {
-      xScale.domain([brushBounds[0][0], brushBounds[1][0]].map(xScale.invert, xScale));
-      yScale.domain([brushBounds[1][1], brushBounds[0][1]].map(yScale.invert, yScale));
+      xScale_timeLeft.domain([brushBounds[0][0], brushBounds[1][0]].map(xScale_timeLeft.invert, xScale_timeLeft));
+      yScale_timeLeft.domain([brushBounds[1][1], brushBounds[0][1]].map(yScale_timeLeft.invert, yScale_timeLeft));
       svg_line.select(".brush").call(brush.move, null);
     }
     zoom();
@@ -298,12 +298,12 @@ function createViz(error, ...args) {
 
   function zoom() {
     var t = svg.transition().duration(750);
-    svg.select(".axis--x").transition(t).call(xAxis);
-    svg.select(".axis--y").transition(t).call(yAxis);
-    svg_line.selectAll(".line").transition(t).attr("d", timeLeftLine);
+    svg.select(".axis--x").transition(t).call(xAxis_timeLeft);
+    svg.select(".axis--y").transition(t).call(yAxis_timeLeft);
+    svg_line.selectAll(".line").transition(t).attr("d", line_timeLeft);
     svg_line.selectAll("circle").transition(t)
-      .attr("cx", d => xScale(d.timeStreamed))
-      .attr("cy", d => yScale(d.timeLeft));
+      .attr("cx", d => xScale_timeLeft(d.timeStreamed))
+      .attr("cy", d => yScale_timeLeft(d.timeLeft));
   }
 
   /* --- Highlights Node FUNCTIONS --- */
@@ -314,8 +314,8 @@ function createViz(error, ...args) {
     svg_line.selectAll("#tooltip").data([d]).enter().append("text")
       .attr("id", "tooltip")
       .text((d, i) => d.title + "\n" + d.desc + "\n" + d.url + "\n" + (d.timeStreamed, d.timeLeft))
-      .attr("y", d => yScale(d.timeLeft)-12)
-      .attr("x", d => xScale(d.timeStreamed))
+      .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
+      .attr("x", d => xScale_timeLeft(d.timeStreamed))
 
     /*
     svg_line.selectAll("#tooltip_path").data([d]).enter().append("line")
