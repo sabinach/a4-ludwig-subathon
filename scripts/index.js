@@ -259,13 +259,13 @@ function createViz(error, ...args) {
 
   // Add x-axis (timeLeft)
   svg.append("g")
-    .attr("class", "axis axis--x")
+    .attr("class", "axis axis--x--timeLeft")
     .attr("transform", "translate(0," + height_timeLeft + ")")
     .call(xAxis_timeLeft);
 
   // Add y-axis (timeLeft)
   svg.append("g")
-    .attr("class", "axis axis--y")
+    .attr("class", "axis axis--y--timeLeft")
     .call(yAxis_timeLeft)
 
   // Add x-axis label (timeLeft)
@@ -288,13 +288,13 @@ function createViz(error, ...args) {
 
   // Add x-axis (viewers)
   svg.append("g")
-    .attr("class", "axis axis--x")
+    .attr("class", "axis axis--x--viewers")
     .attr("transform", "translate(0," + (height_viewers + margin_viewers.top - margin_text) + ")")
     .call(xAxis_viewers);
 
   // Add y-axis (viewers)
   svg.append("g")
-    .attr("class", "axis axis--y")
+    .attr("class", "axis axis--y--viewers")
     .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ")")
     .call(yAxis_viewers)
 
@@ -318,13 +318,13 @@ function createViz(error, ...args) {
 
   // Add x-axis (subFollows)
   svg.append("g")
-    .attr("class", "axis axis--x")
+    .attr("class", "axis axis--x--subFollows")
     .attr("transform", "translate(0," + (height_subFollows + margin_subFollows.top - margin_text) + ")")
     .call(xAxis_subFollows);
 
   // Add y-axis (subFollows)
   svg.append("g")
-    .attr("class", "axis axis--y")
+    .attr("class", "axis axis--y--subFollows")
     .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
     .call(yAxis_subFollows)
 
@@ -347,15 +347,16 @@ function createViz(error, ...args) {
 
   /* --- Brush + Line Clip DEFINITIONS --- */
 
-  // Define brush
-  var brush = d3.brushX()
-    .extent( [ [0,0], [width, height_timeLeft] ] )
-    .on("end", brushended)
-  
+  // Define animation time
   var idleTimeout,
       idleDelay = 350;
 
-  // Add a clipPath: everything out of this area won't be drawn.
+  // Define brush (timeleft)
+  var brush_timeLeft = d3.brushX()
+    .extent( [ [0,0], [width, height_timeLeft] ] )
+    .on("end", brushended_timeLeft)
+
+  // Add a clipPath (timeLeft): everything out of this area won't be drawn.
   var clip_timeLeft = svg.append("defs").append("svg:clipPath")
     .attr("id", "clip_timeLeft")
     .append("svg:rect")
@@ -364,51 +365,93 @@ function createViz(error, ...args) {
     .attr("x", 0)
     .attr("y", 0);
 
-  // Create the line svg: where both the line and the brush take place
+  // Create the line svg (timeLeft): where both the line and the brush take place
   var svg_line_timeLeft = svg.append('g')
     .attr("clip-path", "url(#clip_timeLeft)");
 
   // Add line (timeLeft)
   svg_line_timeLeft.append("path")
     .datum(timeLeftJson_zip)
-    .attr("class", "line")
+    .attr("class", "line_timeLeft")
     .attr("fill", "none")
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
     .attr("d", drawLine_timeLeft);
 
-  // Add brush
+  // Add brush (timeLeft)
   svg_line_timeLeft.append("g")
-    .attr("class", "brush")
-    .call(brush);
+    .attr("class", "brush_timeLeft")
+    .call(brush_timeLeft);
 
   /* ---------- */
 
+  // Define brush (viewers)
+  var brush_viewers = d3.brushX()
+    .extent( [ [0,0], [width, height_viewers] ] )
+    .on("end", brushended_viewers)
+
+  // Add a clipPath (viewers): everything out of this area won't be drawn.
+  var clip_viewers = svg.append("defs").append("svg:clipPath")
+    .attr("id", "clip_viewers")
+    .append("svg:rect")
+    .attr("width", width)
+    .attr("height", height_viewers)
+    .attr("x", 0)
+    .attr("y", 0);
+
+  // Create the line svg (viewers): where both the line and the brush take place
   var svg_line_viewers = svg.append('g')
+    .attr("clip-path", "url(#clip_viewers)")
     .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ")")
 
   // Add line (viewers)
   svg_line_viewers.append("path")
     .datum(viewers_zip)
-    .attr("class", "line")
+    .attr("class", "line_viewers")
     .attr("fill", "none")
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
     .attr("d", drawLine_viewers);
 
+  // Add brush (viewers)
+  svg_line_viewers.append("g")
+    .attr("class", "brush_viewers")
+    .call(brush_viewers);
+
   /* ---------- */
 
+  // Define brush (subFollows)
+  var brush_subFollows = d3.brushX()
+    .extent( [ [0,0], [width, height_subFollows] ] )
+    .on("end", brushended_subFollows)
+
+  // Add a clipPath (subFollows): everything out of this area won't be drawn.
+  var clip_subFollows = svg.append("defs").append("svg:clipPath")
+    .attr("id", "clip_subFollows")
+    .append("svg:rect")
+    .attr("width", width)
+    .attr("height", height_subFollows)
+    .attr("x", 0)
+    .attr("y", 0);
+
+  // Create the line svg (subFollows): where both the line and the brush take place
   var svg_line_subFollows = svg.append('g')
+    .attr("clip-path", "url(#clip_subFollows)")
     .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
 
   // Add line (subFollows)
   svg_line_subFollows.append("path")
     .datum(followers_zip)
-    .attr("class", "line")
+    .attr("class", "line_subFollows")
     .attr("fill", "none")
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
     .attr("d", drawLine_subFollows);
+
+  // Add brush (subFollows)
+  svg_line_subFollows.append("g")
+    .attr("class", "brush_subFollows")
+    .call(brush_subFollows);
 
 
   /* --- Node DEFINITIONS --- */
@@ -427,30 +470,86 @@ function createViz(error, ...args) {
 
   /* --- Brush + Line Clip FUNCTIONS --- */
 
-  function brushended() {
-    var brushBounds = d3.event.selection;
-    if (!brushBounds) {
-      if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
-      xScale_timeLeft.domain(xDomain_timeLeft);
-    } else {
-      xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
-      svg_line_timeLeft.select(".brush").call(brush.move, null);
-    }
-    zoom();
-  }
-
   function idled() {
     idleTimeout = null;
   }
 
-  function zoom() {
+  function brushended_timeLeft() {
+    var brushBounds = d3.event.selection;
+    if (!brushBounds) {
+      if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+      xScale_timeLeft.domain(xDomain_timeLeft);
+      xScale_viewers.domain(xDomain_viewers);
+      xScale_subFollows.domain(xDomain_subFollows);
+    } else {
+      xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
+      xScale_viewers.domain([brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers));
+      xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
+      svg_line_timeLeft.select(".brush_timeLeft").call(brush_timeLeft.move, null);
+    }
+    zoom_timeLeft();
+    zoom_viewers();
+    zoom_subFollows();
+  }
+
+  function brushended_viewers() {
+    var brushBounds = d3.event.selection;
+    if (!brushBounds) {
+      if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+      xScale_timeLeft.domain(xDomain_timeLeft);
+      xScale_viewers.domain(xDomain_viewers);
+      xScale_subFollows.domain(xDomain_subFollows);
+    } else {
+      xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
+      xScale_viewers.domain([brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers));
+      xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
+      svg_line_viewers.select(".brush_viewers").call(brush_viewers.move, null);
+    }
+    zoom_timeLeft();
+    zoom_viewers();
+    zoom_subFollows();
+  }
+
+  function brushended_subFollows() {
+    var brushBounds = d3.event.selection;
+    if (!brushBounds) {
+      if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+      xScale_timeLeft.domain(xDomain_timeLeft);
+      xScale_viewers.domain(xDomain_viewers);
+      xScale_subFollows.domain(xDomain_subFollows);
+    } else {
+      xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
+      xScale_viewers.domain([brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers));
+      xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
+      svg_line_subFollows.select(".brush_subFollows").call(brush_subFollows.move, null);
+    }
+    zoom_timeLeft();
+    zoom_viewers();
+    zoom_subFollows();
+  }
+
+  function zoom_timeLeft() {
     var t = svg.transition().duration(750);
-    svg.select(".axis--x").transition(t).call(xAxis_timeLeft);
-    svg.select(".axis--y").transition(t).call(yAxis_timeLeft);
-    svg_line_timeLeft.selectAll(".line").transition(t).attr("d", drawLine_timeLeft);
+    svg.select(".axis--x--timeLeft").transition(t).call(xAxis_timeLeft);
+    svg.select(".axis--y--timeLeft").transition(t).call(yAxis_timeLeft);
+    svg_line_timeLeft.selectAll(".line_timeLeft").transition(t).attr("d", drawLine_timeLeft);
     svg_line_timeLeft.selectAll("circle").transition(t)
       .attr("cx", d => xScale_timeLeft(d.timeStreamed))
       .attr("cy", d => yScale_timeLeft(d.timeLeft));
+  }
+
+  function zoom_viewers() {
+    var t = svg.transition().duration(750);
+    svg.select(".axis--x--viewers").transition(t).call(xAxis_viewers);
+    svg.select(".axis--y--viewers").transition(t).call(yAxis_viewers);
+    svg_line_viewers.selectAll(".line_viewers").transition(t).attr("d", drawLine_viewers);
+  }
+
+  function zoom_subFollows() {
+    var t = svg.transition().duration(750);
+    svg.select(".axis--x--subFollows").transition(t).call(xAxis_subFollows);
+    svg.select(".axis--y--subFollows").transition(t).call(yAxis_subFollows);
+    svg_line_subFollows.selectAll(".line_subFollows").transition(t).attr("d", drawLine_subFollows);
   }
 
   /* --- Highlights Node FUNCTIONS --- */
@@ -467,7 +566,7 @@ function createViz(error, ...args) {
     /*
     svg_line_timeLeft.selectAll("#tooltip_path").data([d]).enter().append("line")
       .attr("id", "tooltip_path")
-      .attr("class", "line")
+      .attr("class", "line_timeLeft")
       .attr("d", line_highlights)
       .attr("x1", d => xScale_timeLeft(d.timeStreamed))
       .attr("x2", d => xScale_timeLeft(d.timeStreamed))
