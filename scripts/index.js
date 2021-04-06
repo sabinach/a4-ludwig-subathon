@@ -1,3 +1,7 @@
+// video embed settings
+var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
+                               // test: 127.0.0.1
+
 // set canvas dimensions
 var svg_width = 750;
 var svg_height = 750;
@@ -159,19 +163,25 @@ function createViz(error, ...args) {
   // HIGHLIGHTS
 
   const datetime_highlights = highlightsJson.datetime;
+  const type_highlights = highlightsJson.type; 
   const title_highlights = highlightsJson.title; 
   const desc_highlights = highlightsJson.desc;
   const url_highlights = highlightsJson.url;
+  const embed_highlights = highlightsJson.embed;
 
   //console.log("datetime_highlights: ", datetime_highlights)
+  //console.log("type_highlights: ", type_highlights)
   //console.log("title_highlights: ", title_highlights)
   //console.log("desc_highlights: ", desc_highlights)
   //console.log("url_highlights: ", url_highlights)
+  //console.log("embed_highlights: ", embed_highlights)
 
   // handle error: mismatch xy length
-  if (datetime_highlights.length !== title_highlights.length || 
+  if (datetime_highlights.length !== type_highlights.length || 
+        datetime_highlights.length !== title_highlights.length || 
         datetime_highlights.length !== desc_highlights.length || 
-        datetime_highlights.length !== url_highlights.length ) 
+        datetime_highlights.length !== url_highlights.length || 
+        datetime_highlights.length !== embed_highlights.length ) 
     throw error;
 
   const highlights_zip = datetime_highlights
@@ -180,9 +190,11 @@ function createViz(error, ...args) {
         id: index, 
         timeStreamed: null,
         datetime: parseDatetime(datetime), 
+        type: type_highlights[index],
         title: title_highlights[index],
         desc: desc_highlights[index],
-        url: url_highlights[index]
+        url: url_highlights[index],
+        embed: embed_highlights[index]
       }
     })
     .filter(highlight => highlight.datetime >= subathonStartDate && highlight.datetime <= subathonEndDate)
@@ -194,9 +206,11 @@ function createViz(error, ...args) {
         timeStreamed: xHour,
         timeLeft: yHour,
         datetime: highlight.datetime,
+        type: highlight.type,
         title: highlight.title,
         desc: highlight.desc,
-        url: highlight.url
+        url: highlight.url,
+        embed: highlight.embed
       }
     });
 
@@ -517,6 +531,9 @@ function createViz(error, ...args) {
     svg_line_timeLeft.selectAll("circle").transition(t)
       .attr("cx", d => xScale_timeLeft(d.timeStreamed))
       .attr("cy", d => yScale_timeLeft(d.timeLeft));
+    svg_line_timeLeft.selectAll("text").transition(t)
+      .attr("x", d => xScale_timeLeft(d.timeStreamed))
+      .attr("y", d => yScale_timeLeft(d.timeLeft)-12);
   }
 
   function zoom_viewers() {
@@ -560,35 +577,34 @@ function createViz(error, ...args) {
     .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
     .on("mouseover", mouseover_highlights)
-    .on("mouseout", mouseout_highlights)
-    .on("click", click_highlights)
 
   /* --- Highlights FUNCTIONS --- */
 
 
   function mouseover_highlights(d, i){
-    d3.select(this).transition().duration(100).style("fill", "#d30715");
+    //clear previous 
+    svg_line_timeLeft.selectAll("circle").style("fill", "#fcb0b5");
+    svg_line_timeLeft.selectAll("#tooltip").remove();
+    svg_line_timeLeft.selectAll("#tooltip_path").remove();
 
-    svg_line_timeLeft.selectAll("#tooltip")
-      .data([d]).enter()
+    // create embed html
+    var html_embed;
+    if (d.type=="twitch"){
+      html_embed = "<iframe src='" + d.embed + parentDomain + "' frameborder='0' allowfullscreen='true' scrolling='no' height='300' width='400'></iframe>"
+    }else if(d.type=="youtube"){
+      html_embed = "<iframe src='" + d.embed + "' frameborder='0' allowfullscreen='true' scrolling='no' height='300' width='400'></iframe>"
+    }
+
+    // add color and text to current
+    d3.select(this).transition().duration(100).style("fill", "#d30715");
+    svg_line_timeLeft.selectAll("#tooltip").data([d]).enter()
       .append("text")
       .attr("id", "tooltip")
       .text(d.timeLeft.toFixed(1) + " hrs")
-      .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
       .attr("x", d => xScale_timeLeft(d.timeStreamed))
-
+      .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
     tooltip
-      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + d.datetime + "<br><br>" + "EMBED VIDEO HERE" + "<br><br>") 
-  }
-
-  function mouseout_highlights(d, i){
-    d3.select(this).transition().duration(100).style("fill", "#fcb0b5");
-    svg_line_timeLeft.selectAll("#tooltip").remove();
-    svg_line_timeLeft.selectAll("#tooltip_path").remove();
-  }
-
-  function click_highlights(d, i){
-    
+      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + d.datetime + "<br><br>" + html_embed + "<br><br>") 
   }
 
 

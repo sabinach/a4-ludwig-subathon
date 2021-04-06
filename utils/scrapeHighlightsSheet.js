@@ -17,26 +17,29 @@ const scrapeSpreadsheet = () => {
 
             let evaluated = await page.evaluate(() => {
 				
-				const headers = ['datetime', 'type', 'title', 'url', 'description'];
-				const types = ['subspike', 'highlight'];
+				const headers = ['datetime', 'type', 'title', 'url', 'embed', 'description'];
+				const types = ['twitch', 'youtube'];
 
                 const datetimeDomId = "td.s0";
 				const typeDomId = "td.s0"; 			// hardcoded dom element id
 				const titleDomId = "td.s1"; 		// hardcoded dom element id
-				const urlDomId = "a"
-				const descDomId = "td.s3"; 			// hardcoded dom element id
+				const descDomId = "td.s4"; 			// hardcoded dom element id
+                const urlDomId = "a"
+                const embedDomId = "a"
 				
                 const datetimeDom = document.querySelectorAll(datetimeDomId);
 				const typeDom = document.querySelectorAll(typeDomId);  
-                const titleDom = document.querySelectorAll(titleDomId);    
-				const urlDom = document.querySelectorAll(urlDomId);  
+                const titleDom = document.querySelectorAll(titleDomId);      
 				const descDom = document.querySelectorAll(descDomId); 
+                const urlDom = document.querySelectorAll(urlDomId);
+                const embedDom = document.querySelectorAll(embedDomId);
 				
                 const datetimeList = [];
 				const typeList = [];
                 const titleList = []; 
-				const urlList = []; 
 				const descList = []; 
+                const urlList = []; 
+                const embedList = []; 
 
                 datetimeDom.forEach((domItem) => {
                     const datetime = domItem.innerText;
@@ -59,17 +62,24 @@ const scrapeSpreadsheet = () => {
                         : null;
                 });
 				
-				urlDom.forEach((domItem) => {
-                    const url = domItem.innerText;
-                    url!=='' && url.includes('http')
-                        ? urlList.push(url)
-                        : null;
-                });
-				
 				descDom.forEach((domItem) => {
                     const desc = domItem.innerText;
                     desc!==''
                         ? descList.push(desc)
+                        : null;
+                });
+
+                urlDom.forEach((domItem) => {
+                    const url = domItem.innerText;
+                    url!=='' && url.includes('http') && !url.includes('embed')
+                        ? urlList.push(url)
+                        : null;
+                });
+
+                embedDom.forEach((domItem) => {
+                    const embed = domItem.innerText;
+                    embed!=='' && embed.includes('http') && embed.includes('embed')
+                        ? embedList.push(embed)
                         : null;
                 });
 
@@ -78,7 +88,8 @@ const scrapeSpreadsheet = () => {
 					type: typeList,
                     title: titleList,
 					desc: descList,
-					url: urlList
+					url: urlList,
+                    embed: embedList
                 };
 
                 return data;
