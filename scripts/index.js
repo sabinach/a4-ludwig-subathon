@@ -16,7 +16,7 @@ var margin_text = 20; //global
 var width = svg_width - margin_timeLeft.left - margin_timeLeft.right; // global
   
 // append the svg object to the body of the page
-var svg = d3.select("#viz")
+var svg = d3.select("#line-viz")
   .append("svg")
   .attr("width", width + margin_timeLeft.left + margin_timeLeft.right)
   .attr("height", height_timeLeft + margin_timeLeft.top + margin_timeLeft.bottom)
@@ -249,13 +249,7 @@ function createViz(error, ...args) {
     .x(d => xScale_subFollows(d.timeStreamed))
     .y(d => yScale_subFollows(d.gainedFollowers))
 
-  /*
-  // Define line (highlights)
-  var line_highlights = d3.line()
-    .defined(d => !isNaN(d.value))
-    .x(d => xScale_timeLeft(d.timeStreamed))
-    .y(d => yScale_timeLeft(d.timeLeft))
-  */
+  /* ---------- */
 
   // Add x-axis (timeLeft)
   svg.append("g")
@@ -350,6 +344,8 @@ function createViz(error, ...args) {
   // Define animation time
   var idleTimeout,
       idleDelay = 350;
+
+  /* ---------- */
 
   // Define brush (timeleft)
   var brush_timeLeft = d3.brushX()
@@ -453,21 +449,6 @@ function createViz(error, ...args) {
     .attr("class", "brush_subFollows")
     .call(brush_subFollows);
 
-
-  /* --- Node DEFINITIONS --- */
-
-  // Add nodes (event highlights)
-  svg_line_timeLeft.selectAll("circle")
-    .data(highlights_zip)
-    .enter().append("circle")
-    .attr("cx", d => xScale_timeLeft(d.timeStreamed))
-    .attr("cy", d =>  yScale_timeLeft(d.timeLeft))
-    .attr("r", (d, i) => 5)
-    .attr("id", d => d.id)
-    .style("fill", "#fcb0b5")
-    .on("mouseover", highlightsNode_mouseover)
-    .on("mouseout", highlightsNode_mouseout);
-
   /* --- Brush + Line Clip FUNCTIONS --- */
 
   function idled() {
@@ -552,36 +533,64 @@ function createViz(error, ...args) {
     svg_line_subFollows.selectAll(".line_subFollows").transition(t).attr("d", drawLine_subFollows);
   }
 
-  /* --- Highlights Node FUNCTIONS --- */
+  /* --- Highlights DEFINITIONS --- */
 
-  function highlightsNode_mouseover(d, i){
+  // Create tooltip
+  var tooltip = d3.select("#highlights-viz")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+
+  // Show tooltip
+  tooltip
+    .style("opacity", 1)
+    .html("<b>Title</b>" + " (<a href='xxx' target='_blank'>video</a>)</h4>" + "<br>Datetime<br><br>" + "EMBED VIDEO HERE" + "<br><br>") 
+
+  // Add nodes (event highlights)
+  svg_line_timeLeft.selectAll("circle")
+    .data(highlights_zip)
+    .enter().append("circle")
+    .attr("cx", d => xScale_timeLeft(d.timeStreamed))
+    .attr("cy", d =>  yScale_timeLeft(d.timeLeft))
+    .attr("r", (d, i) => 5)
+    .attr("id", d => "node" + d.id)
+    .style("fill", "#fcb0b5")
+    .on("mouseover", mouseover_highlights)
+    .on("mouseout", mouseout_highlights)
+    .on("click", click_highlights)
+
+  /* --- Highlights FUNCTIONS --- */
+
+
+  function mouseover_highlights(d, i){
     d3.select(this).transition().duration(100).style("fill", "#d30715");
 
-    svg_line_timeLeft.selectAll("#tooltip").data([d]).enter().append("text")
+    svg_line_timeLeft.selectAll("#tooltip")
+      .data([d]).enter()
+      .append("text")
       .attr("id", "tooltip")
-      .text((d, i) => d.title + "\n" + d.desc + "\n" + d.url + "\n" + (d.timeStreamed, d.timeLeft))
+      .text(d.timeLeft.toFixed(1) + " hrs")
       .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
       .attr("x", d => xScale_timeLeft(d.timeStreamed))
 
-    /*
-    svg_line_timeLeft.selectAll("#tooltip_path").data([d]).enter().append("line")
-      .attr("id", "tooltip_path")
-      .attr("class", "line_timeLeft")
-      .attr("d", line_highlights)
-      .attr("x1", d => xScale_timeLeft(d.timeStreamed))
-      .attr("x2", d => xScale_timeLeft(d.timeStreamed))
-      .attr("y1", height_timeLeft)
-      .attr("y2", d => yScale_timeLeft(d.timeLeft))
-      .attr("stroke", "black")
-      .style("stroke-dasharray", ("3, 3"));
-    */
+    tooltip
+      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + d.datetime + "<br><br>" + "EMBED VIDEO HERE" + "<br><br>") 
   }
 
-  function highlightsNode_mouseout(d, i){
+  function mouseout_highlights(d, i){
     d3.select(this).transition().duration(100).style("fill", "#fcb0b5");
     svg_line_timeLeft.selectAll("#tooltip").remove();
     svg_line_timeLeft.selectAll("#tooltip_path").remove();
   }
+
+  function click_highlights(d, i){
+    
+  }
+
 
 };
 
