@@ -9,7 +9,7 @@ var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 var margin_viewers = { top: 360, right: 200, bottom: 250, left: 60 };
 var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
 
-var margin_subFollows = { top: 565, right: 200, bottom: 50, left: 60 };
+var margin_subFollows = { top: 563, right: 200, bottom: 50, left: 60 };
 var height_subFollows = svg_height - margin_subFollows.top - margin_subFollows.bottom;
 
 var margin_text = 20; //global
@@ -342,14 +342,17 @@ function createViz(error, ...args) {
     .attr("x", 0 - (height_subFollows / 2))
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .text("# gained");  
+    .text("# followers gained");  
 
 
   /* --- Brush + Line Clip DEFINITIONS --- */
 
   // Define brush
-  var brush = d3.brush().on("end", brushended),
-      idleTimeout,
+  var brush = d3.brushX()
+    .extent( [ [0,0], [width, height_timeLeft] ] )
+    .on("end", brushended)
+  
+  var idleTimeout,
       idleDelay = 350;
 
   // Add a clipPath: everything out of this area won't be drawn.
@@ -429,10 +432,8 @@ function createViz(error, ...args) {
     if (!brushBounds) {
       if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
       xScale_timeLeft.domain(xDomain_timeLeft);
-      yScale_timeLeft.domain(yDomain_timeLeft);
     } else {
-      xScale_timeLeft.domain([brushBounds[0][0], brushBounds[1][0]].map(xScale_timeLeft.invert, xScale_timeLeft));
-      yScale_timeLeft.domain([brushBounds[1][1], brushBounds[0][1]].map(yScale_timeLeft.invert, yScale_timeLeft));
+      xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
       svg_line_timeLeft.select(".brush").call(brush.move, null);
     }
     zoom();
