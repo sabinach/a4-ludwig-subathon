@@ -9,7 +9,7 @@ var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 var margin_viewers = { top: 360, right: 200, bottom: 250, left: 60 };
 var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
 
-var margin_subFollows = { top: 50, right: 200, bottom: 10, left: 60 };
+var margin_subFollows = { top: 565, right: 200, bottom: 50, left: 60 };
 var height_subFollows = svg_height - margin_subFollows.top - margin_subFollows.bottom;
 
 var margin_text = 20; //global
@@ -63,6 +63,7 @@ function createViz(error, ...args) {
   // reformat xy data (timeLeftJson)
   const timeStreamed_hours = Array.from(Array(timeLeftJson.timeLeft.length), (_,x) => x*0.5);
   const timeLeft_hours = timeLeftJson.timeLeft.map(d => parseTimeLeft(d));
+
   const timeLeftJson_zip = timeStreamed_hours.map((timeStreamed, index) => {
     return {
       timeStreamed: timeStreamed, 
@@ -118,9 +119,9 @@ function createViz(error, ...args) {
 
   const datetime_followers = followersJson.data.labels;
   const num_followers = followersJson.data.datasets[1].data; // hardcoded index for "Followers"
-  const gained_followers = num_followers.map((val, index) => {
-    const deltaFollowers = val - (num_followers[index - 1] || 0)
-    return deltaFollowers<=0 ? null : deltaFollowers
+  const delta_followers = num_followers.map((val, index) => {
+    const delta = val - (num_followers[index - 1] || 0)
+    return delta<=0 ? null : delta
   });
 
   //console.log("datetime_followers: ", datetime_followers)
@@ -136,7 +137,7 @@ function createViz(error, ...args) {
         timeStreamed: null,
         datetime: parseDatetime(datetime), 
         numFollowers: num_followers[index],
-        gainedFollowers: gained_followers[index]
+        gainedFollowers: delta_followers[index]
       }
     })
     .filter(followers => followers.datetime >= subathonStartDate && followers.datetime <= subathonEndDate)
@@ -150,6 +151,9 @@ function createViz(error, ...args) {
     });
 
   console.log("followers_zip: ", followers_zip)
+
+  const gainedFollowers = followers_zip.map(d => d.gainedFollowers)
+  console.log("gainedFollowers: ", gainedFollowers)
 
   /* --------------------------------------------- */
   // HIGHLIGHTS
@@ -219,6 +223,14 @@ function createViz(error, ...args) {
   var xAxis_viewers = d3.axisBottom(xScale_viewers),
       yAxis_viewers = d3.axisLeft(yScale_viewers);
 
+  // Define xy axes (subFollows) -- TODO: plot BOTH subs and follows
+  var xDomain_subFollows = [0, d3.max(timeStreamed_hours)],
+      yDomain_subFollows = [0, d3.max(gainedFollowers)];
+  var xScale_subFollows = d3.scaleLinear().domain(xDomain_subFollows).range([ 0, width ]),
+      yScale_subFollows = d3.scaleLinear().domain(yDomain_subFollows).range([ height_subFollows, 0 ]);
+  var xAxis_subFollows = d3.axisBottom(xScale_subFollows),
+      yAxis_subFollows = d3.axisLeft(yScale_subFollows);
+
   // Define line (timeLeft)
   var drawLine_timeLeft = d3.line()
     .defined(d => !isNaN(d.timeLeft))
@@ -230,6 +242,12 @@ function createViz(error, ...args) {
     .defined(d => !isNaN(d.numViewers))
     .x(d => xScale_viewers(d.timeStreamed))
     .y(d => yScale_viewers(d.numViewers))
+
+  // Define line (subFollows)
+  var drawLine_subFollows = d3.line()
+    .defined(d => !isNaN(d.gainedFollowers))
+    .x(d => xScale_subFollows(d.timeStreamed))
+    .y(d => yScale_subFollows(d.gainedFollowers))
 
   /*
   // Define line (highlights)
@@ -296,6 +314,37 @@ function createViz(error, ...args) {
     .style("text-anchor", "middle")
     .text("# viewers");  
 
+  /* ---------- */
+
+  // Add x-axis (subFollows)
+  svg.append("g")
+    .attr("class", "axis axis--x")
+    .attr("transform", "translate(0," + (height_subFollows + margin_subFollows.top - margin_text) + ")")
+    .call(xAxis_subFollows);
+
+  // Add y-axis (subFollows)
+  svg.append("g")
+    .attr("class", "axis axis--y")
+    .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
+    .call(yAxis_subFollows)
+
+  // Add x-axis label (subFollows)
+  svg.append("text")             
+    .attr("transform",
+          "translate(" + (width/2) + " ," + (height_subFollows + margin_subFollows.top + margin_text) + ")")
+    .style("text-anchor", "middle")
+    .text("# hours streamed");
+
+  // Add y-axis label (subFollows)
+  svg.append("text")
+    .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ") rotate(-90) ")
+    .attr("y", 0 - margin_subFollows.left)
+    .attr("x", 0 - (height_subFollows / 2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("# gained");  
+
+
   /* --- Brush + Line Clip DEFINITIONS --- */
 
   // Define brush
@@ -343,6 +392,21 @@ function createViz(error, ...args) {
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
     .attr("d", drawLine_viewers);
+
+  /* ---------- */
+
+  var svg_line_subFollows = svg.append('g')
+    .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
+
+  // Add line (subFollows)
+  svg_line_subFollows.append("path")
+    .datum(followers_zip)
+    .attr("class", "line")
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 1.5)
+    .attr("d", drawLine_subFollows);
+
 
   /* --- Node DEFINITIONS --- */
 
