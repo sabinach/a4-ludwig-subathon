@@ -6,9 +6,10 @@ var svg_height = 750;
 var margin_timeLeft = { top: 10, right: 200, bottom: 450, left: 60 };
 var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 
-var margin_viewers = { top: 400, right: 200, bottom: 200, left: 60 };
+var margin_viewers = { top: 360, right: 200, bottom: 250, left: 60 };
 var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
 
+var margin_text = 20; //global
 var width = svg_width - margin_timeLeft.left - margin_timeLeft.right; // global
   
 // append the svg object to the body of the page
@@ -35,6 +36,10 @@ var parseTimeLeft = timeLeft => parseInt(timeLeft.split(":")[0]) + parseInt(time
 
 console.log("subathonStartDate: ", subathonStartDate) 
 console.log("subathonEndDate: ", subathonEndDate) // TODO -- update!
+
+
+/* ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------- */
 
 
 // create viz with imported data
@@ -95,6 +100,9 @@ function createViz(error, ...args) {
       }
     }
   }) 
+
+  const numViewers = viewers_zip.map(d => {return d.numViewers})
+  console.log("numViewers: ", numViewers)
 
   console.log("viewers_zip: ", viewers_zip)
 
@@ -181,7 +189,7 @@ function createViz(error, ...args) {
 
   /* --- Simple Line DEFINITIONS --- */
 
-  // Define xy axes
+  // Define xy axes (timeLeft)
   var xDomain_timeLeft = [0, d3.max(timeStreamed_hours)],
       yDomain_timeLeft = [0, d3.max(timeLeft_hours)];
   var xScale_timeLeft = d3.scaleLinear().domain(xDomain_timeLeft).range([ 0, width ]),
@@ -189,37 +197,53 @@ function createViz(error, ...args) {
   var xAxis_timeLeft = d3.axisBottom(xScale_timeLeft),
       yAxis_timeLeft = d3.axisLeft(yScale_timeLeft);
 
+  // Define xy axes (viewers)
+  var xDomain_viewers = [0, d3.max(timeStreamed_hours)],
+      yDomain_viewers = [0, d3.max(numViewers)];
+  var xScale_viewers = d3.scaleLinear().domain(xDomain_viewers).range([ 0, width ]),
+      yScale_viewers = d3.scaleLinear().domain(yDomain_viewers).range([ height_viewers, 0 ]);
+  var xAxis_viewers = d3.axisBottom(xScale_viewers),
+      yAxis_viewers = d3.axisLeft(yScale_viewers);
+
   // Define line (timeLeft)
-  var line_timeLeft = d3.line()
+  var drawLine_timeLeft = d3.line()
     .defined(d => !isNaN(d.timeLeft))
     .x(d => xScale_timeLeft(d.timeStreamed))
     .y(d => yScale_timeLeft(d.timeLeft))
 
+  // Define line (viewers)
+  var drawLine_viewers = d3.line()
+    .defined(d => !isNaN(d.numViewers))
+    .x(d => xScale_viewers(d.timeStreamed))
+    .y(d => yScale_viewers(d.numViewers))
+
+  /*
   // Define line (highlights)
   var line_highlights = d3.line()
     .defined(d => !isNaN(d.value))
     .x(d => xScale_timeLeft(d.timeStreamed))
     .y(d => yScale_timeLeft(d.timeLeft))
+  */
 
-  // Add x-axis
+  // Add x-axis (timeLeft)
   svg.append("g")
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + height_timeLeft + ")")
     .call(xAxis_timeLeft);
 
-  // Add y-axis
+  // Add y-axis (timeLeft)
   svg.append("g")
     .attr("class", "axis axis--y")
     .call(yAxis_timeLeft)
 
-  // Add x-axis label
+  // Add x-axis label (timeLeft)
   svg.append("text")             
     .attr("transform",
-          "translate(" + (width/2) + " ," + (height_timeLeft + margin_timeLeft.top + 20) + ")")
+          "translate(" + (width/2) + " ," + (height_timeLeft + margin_timeLeft.top + margin_text) + ")")
     .style("text-anchor", "middle")
     .text("# hours streamed");
 
-  // Add y-axis label
+  // Add y-axis label (timeLeft)
   svg.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin_timeLeft.left)
@@ -227,6 +251,36 @@ function createViz(error, ...args) {
     .attr("dy", "1em")
     .style("text-anchor", "middle")
     .text("# hours left");  
+
+  /* ---------- */
+
+  // Add x-axis (viewers)
+  svg.append("g")
+    .attr("class", "axis axis--x")
+    .attr("transform", "translate(0," + (height_viewers + margin_viewers.top - margin_text) + ")")
+    .call(xAxis_viewers);
+
+  // Add y-axis (viewers)
+  svg.append("g")
+    .attr("class", "axis axis--y")
+    .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ")")
+    .call(yAxis_viewers)
+
+  // Add x-axis label (viewers)
+  svg.append("text")             
+    .attr("transform",
+          "translate(" + (width/2) + " ," + (height_viewers + margin_viewers.top + margin_text) + ")")
+    .style("text-anchor", "middle")
+    .text("# hours streamed");
+
+  // Add y-axis label (viewers)
+  svg.append("text")
+    .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ") rotate(-90) ")
+    .attr("y", 0 - margin_viewers.left)
+    .attr("x", 0 - (height_viewers / 2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("# viewers");  
 
   /* --- Brush + Line Clip DEFINITIONS --- */
 
@@ -236,8 +290,8 @@ function createViz(error, ...args) {
       idleDelay = 350;
 
   // Add a clipPath: everything out of this area won't be drawn.
-  var clip = svg.append("defs").append("svg:clipPath")
-    .attr("id", "clip")
+  var clip_timeLeft = svg.append("defs").append("svg:clipPath")
+    .attr("id", "clip_timeLeft")
     .append("svg:rect")
     .attr("width", width)
     .attr("height", height_timeLeft)
@@ -245,27 +299,41 @@ function createViz(error, ...args) {
     .attr("y", 0);
 
   // Create the line svg: where both the line and the brush take place
-  var svg_line = svg.append('g')
-    .attr("clip-path", "url(#clip)");
+  var svg_line_timeLeft = svg.append('g')
+    .attr("clip-path", "url(#clip_timeLeft)");
 
   // Add line (timeLeft)
-  svg_line.append("path")
+  svg_line_timeLeft.append("path")
     .datum(timeLeftJson_zip)
     .attr("class", "line")
     .attr("fill", "none")
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
-    .attr("d", line_timeLeft);
+    .attr("d", drawLine_timeLeft);
 
   // Add brush
-  svg_line.append("g")
+  svg_line_timeLeft.append("g")
     .attr("class", "brush")
     .call(brush);
+
+  /* ---------- */
+
+  var svg_line_viewers = svg.append('g')
+    .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ")")
+
+  // Add line (viewers)
+  svg_line_viewers.append("path")
+    .datum(viewers_zip)
+    .attr("class", "line")
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 1.5)
+    .attr("d", drawLine_viewers);
 
   /* --- Node DEFINITIONS --- */
 
   // Add nodes (event highlights)
-  svg_line.selectAll("circle")
+  svg_line_timeLeft.selectAll("circle")
     .data(highlights_zip)
     .enter().append("circle")
     .attr("cx", d => xScale_timeLeft(d.timeStreamed))
@@ -287,7 +355,7 @@ function createViz(error, ...args) {
     } else {
       xScale_timeLeft.domain([brushBounds[0][0], brushBounds[1][0]].map(xScale_timeLeft.invert, xScale_timeLeft));
       yScale_timeLeft.domain([brushBounds[1][1], brushBounds[0][1]].map(yScale_timeLeft.invert, yScale_timeLeft));
-      svg_line.select(".brush").call(brush.move, null);
+      svg_line_timeLeft.select(".brush").call(brush.move, null);
     }
     zoom();
   }
@@ -300,8 +368,8 @@ function createViz(error, ...args) {
     var t = svg.transition().duration(750);
     svg.select(".axis--x").transition(t).call(xAxis_timeLeft);
     svg.select(".axis--y").transition(t).call(yAxis_timeLeft);
-    svg_line.selectAll(".line").transition(t).attr("d", line_timeLeft);
-    svg_line.selectAll("circle").transition(t)
+    svg_line_timeLeft.selectAll(".line").transition(t).attr("d", drawLine_timeLeft);
+    svg_line_timeLeft.selectAll("circle").transition(t)
       .attr("cx", d => xScale_timeLeft(d.timeStreamed))
       .attr("cy", d => yScale_timeLeft(d.timeLeft));
   }
@@ -311,21 +379,21 @@ function createViz(error, ...args) {
   function highlightsNode_mouseover(d, i){
     d3.select(this).transition().duration(100).style("fill", "#d30715");
 
-    svg_line.selectAll("#tooltip").data([d]).enter().append("text")
+    svg_line_timeLeft.selectAll("#tooltip").data([d]).enter().append("text")
       .attr("id", "tooltip")
       .text((d, i) => d.title + "\n" + d.desc + "\n" + d.url + "\n" + (d.timeStreamed, d.timeLeft))
       .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
       .attr("x", d => xScale_timeLeft(d.timeStreamed))
 
     /*
-    svg_line.selectAll("#tooltip_path").data([d]).enter().append("line")
+    svg_line_timeLeft.selectAll("#tooltip_path").data([d]).enter().append("line")
       .attr("id", "tooltip_path")
       .attr("class", "line")
-      .attr("d", highlightsLine)
-      .attr("x1", d => xScale(d.timeStreamed))
-      .attr("x2", d => xScale(d.timeStreamed))
-      .attr("y1", height)
-      .attr("y2", d => yScale(d.timeLeft))
+      .attr("d", line_highlights)
+      .attr("x1", d => xScale_timeLeft(d.timeStreamed))
+      .attr("x2", d => xScale_timeLeft(d.timeStreamed))
+      .attr("y1", height_timeLeft)
+      .attr("y2", d => yScale_timeLeft(d.timeLeft))
       .attr("stroke", "black")
       .style("stroke-dasharray", ("3, 3"));
     */
@@ -333,11 +401,16 @@ function createViz(error, ...args) {
 
   function highlightsNode_mouseout(d, i){
     d3.select(this).transition().duration(100).style("fill", "#fcb0b5");
-    svg_line.selectAll("#tooltip").remove();
-    svg_line.selectAll("#tooltip_path").remove();
+    svg_line_timeLeft.selectAll("#tooltip").remove();
+    svg_line_timeLeft.selectAll("#tooltip_path").remove();
   }
 
 };
+
+
+/* ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------- */
+
 
 // read json files
 d3.queue()
