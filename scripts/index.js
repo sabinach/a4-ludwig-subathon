@@ -568,10 +568,10 @@ function createViz(error, ...args) {
     .style("border-radius", "5px")
     .style("padding", "10px")
 
-  // Show tooltip
+  // Show tooltip (show the first highlight event)
   tooltip
     .style("opacity", 1)
-    .html("<b>Title</b>" + " (<a href='xxx' target='_blank'>video</a>)</h4>" + "<br>Datetime<br><br>" + "EMBED VIDEO HERE" + "<br><br>") 
+    .html("<b>" + highlights_zip[0].title + "</b>" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(highlights_zip[0].datetime) + "<br><br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br><br>") 
 
   // Add nodes (event highlights)
   svg_line_timeLeft.selectAll("circle")
@@ -586,19 +586,22 @@ function createViz(error, ...args) {
 
   /* --- Highlights FUNCTIONS --- */
 
+  // create embed html
+  function getHtmlEmbed(type, embed, parentDomain){
+    var htmlEmbed;
+    if (type=="twitch"){
+      htmlEmbed = "<iframe src='" + embed + parentDomain + "' frameborder='0' allowfullscreen='true' scrolling='no' height='300' width='400'></iframe>"
+    }else if(type=="youtube"){
+      htmlEmbed = "<iframe src='" + embed + "' frameborder='0' allowfullscreen='true' scrolling='no' height='300' width='400'></iframe>"
+    }
+    return htmlEmbed
+  }
+
   function mouseover_highlights(d, i){
     //clear previous 
     svg_line_timeLeft.selectAll("circle").style("fill", "#fcb0b5");
     svg_line_timeLeft.selectAll("#tooltip").remove();
     svg_line_timeLeft.selectAll("#tooltip_path").remove();
-
-    // create embed html
-    var html_embed;
-    if (d.type=="twitch"){
-      html_embed = "<iframe src='" + d.embed + parentDomain + "' frameborder='0' allowfullscreen='true' scrolling='no' height='300' width='400'></iframe>"
-    }else if(d.type=="youtube"){
-      html_embed = "<iframe src='" + d.embed + "' frameborder='0' allowfullscreen='true' scrolling='no' height='300' width='400'></iframe>"
-    }
 
     // add color and text to current
     d3.select(this).transition().duration(100).style("fill", "#d30715");
@@ -608,8 +611,10 @@ function createViz(error, ...args) {
       .text(d.timeLeft.toFixed(1) + " hrs")
       .attr("x", d => xScale_timeLeft(d.timeStreamed))
       .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
+
+    // update tooltip
     tooltip
-      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(new Date) + "<br><br>" + html_embed + "<br><br>") 
+      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(d.datetime) + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br><br>") 
   }
 
 
