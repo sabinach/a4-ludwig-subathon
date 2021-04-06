@@ -1,9 +1,22 @@
 .row {
-  display: flex;
+	display: flex;
 }
 
 /* Create two equal columns that sits next to each other */
 .column {
-  flex: 50%;
-  padding: 10px;
+	flex: 50%;
+	padding: 10px;
+}
+
+#tooltip_timeLeft {
+	height: 18px;
+	opacity: 0;
+	pointer-events: none;
+	position: absolute;
+	text-align: center;
+}
+
+body {
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-size: 14px;
 }

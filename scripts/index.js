@@ -1,5 +1,5 @@
 // video embed settings
-var parentDomain = "6859-sp21.github.io" // deploy: 6859-sp21.github.io
+var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
                                // test: 127.0.0.1
 
 // set canvas dimensions
@@ -73,6 +73,9 @@ function createViz(error, ...args) {
   // reformat xy data (timeLeftJson)
   const timeStreamed_hours = Array.from(Array(timeLeftJson.timeLeft.length), (_,x) => x*0.5);
   const timeLeft_hours = timeLeftJson.timeLeft.map(d => parseTimeLeft(d));
+
+  console.log("timeStreamed_hours: ", timeStreamed_hours)
+  console.log("timeLeft_hours: ", timeLeft_hours)
 
   const timeLeftJson_zip = timeStreamed_hours.map((timeStreamed, index) => {
     return {
@@ -367,12 +370,16 @@ function createViz(error, ...args) {
 
   /* ---------- */
 
+  // Define line svg (timeLeft): where both the line and the brush take place
+  var svg_line_timeLeft = svg.append('g')
+    .attr("clip-path", "url(#clip_timeLeft)");
+
   // Define brush (timeleft)
   var brush_timeLeft = d3.brushX()
     .extent( [ [0,0], [width, height_timeLeft] ] )
     .on("end", brushended_timeLeft)
 
-  // Add a clipPath (timeLeft): everything out of this area won't be drawn.
+  // Define clipPath (timeLeft): everything out of this area won't be drawn.
   var clip_timeLeft = svg.append("defs").append("svg:clipPath")
     .attr("id", "clip_timeLeft")
     .append("svg:rect")
@@ -381,9 +388,10 @@ function createViz(error, ...args) {
     .attr("x", 0)
     .attr("y", 0);
 
-  // Create the line svg (timeLeft): where both the line and the brush take place
-  var svg_line_timeLeft = svg.append('g')
-    .attr("clip-path", "url(#clip_timeLeft)");
+  // Add brush (timeLeft)
+  svg_line_timeLeft.append("g")
+    .attr("class", "brush_timeLeft")
+    .call(brush_timeLeft)
 
   // Add line (timeLeft)
   svg_line_timeLeft.append("path")
@@ -392,12 +400,7 @@ function createViz(error, ...args) {
     .attr("fill", "none")
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
-    .attr("d", drawLine_timeLeft);
-
-  // Add brush (timeLeft)
-  svg_line_timeLeft.append("g")
-    .attr("class", "brush_timeLeft")
-    .call(brush_timeLeft);
+    .attr("d", drawLine_timeLeft)
 
   /* ---------- */
 
@@ -556,12 +559,12 @@ function createViz(error, ...args) {
     svg_line_subFollows.selectAll(".line_subFollows").transition(t).attr("d", drawLine_subFollows);
   }
 
-  /* --- Highlights DEFINITIONS --- */
+  /* --- Highlights Tooltip DEFINITIONS --- */
 
   // Create tooltip
-  var tooltip = d3.select("#highlights-viz")
+  var tooltip_highlights = d3.select("#highlights-viz")
     .append("div")
-    .attr("class", "tooltip")
+    .attr("class", "tooltip_highlights")
     .style("background-color", "white")
     .style("border", "solid")
     .style("border-width", "1px")
@@ -569,7 +572,7 @@ function createViz(error, ...args) {
     .style("padding", "10px")
 
   // Show tooltip (show the first highlight event)
-  tooltip
+  tooltip_highlights
     .style("opacity", 1)
     .html("<b>" + highlights_zip[0].title + "</b>" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(highlights_zip[0].datetime) + "<br><br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br><br>") 
 
@@ -579,12 +582,12 @@ function createViz(error, ...args) {
     .enter().append("circle")
     .attr("cx", d => xScale_timeLeft(d.timeStreamed))
     .attr("cy", d =>  yScale_timeLeft(d.timeLeft))
-    .attr("r", (d, i) => 5)
+    .attr("r", (d, i) => 6)
     .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
-    .on("mouseover", mouseover_highlights)
+    .on("mouseover", mouseover_highlights) //TODO
 
-  /* --- Highlights FUNCTIONS --- */
+  /* --- Highlights Tooltip FUNCTIONS --- */
 
   // create embed html
   function getHtmlEmbed(type, embed, parentDomain){
@@ -600,22 +603,52 @@ function createViz(error, ...args) {
   function mouseover_highlights(d, i){
     //clear previous 
     svg_line_timeLeft.selectAll("circle").style("fill", "#fcb0b5");
-    svg_line_timeLeft.selectAll("#tooltip").remove();
+    svg_line_timeLeft.selectAll("#tooltip_highlights").remove();
     svg_line_timeLeft.selectAll("#tooltip_path").remove();
 
     // add color and text to current
     d3.select(this).transition().duration(100).style("fill", "#d30715");
-    svg_line_timeLeft.selectAll("#tooltip").data([d]).enter()
+    svg_line_timeLeft.selectAll("#tooltip_highlights").data([d]).enter()
       .append("text")
-      .attr("id", "tooltip")
+      .attr("id", "tooltip_highlights")
       .text(d.timeLeft.toFixed(1) + " hrs")
       .attr("x", d => xScale_timeLeft(d.timeStreamed))
       .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
 
     // update tooltip
-    tooltip
+    tooltip_highlights
       .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(d.datetime) + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br><br>") 
   }
+
+  /** ------------------ Hover Tooltip (timeLeft) ------------------ **/
+
+  var tooltip_timeLeft = d3.select('#line-viz')
+    .append('div')
+    .attr('id', 'tooltip_timeLeft');
+
+  svg_line_timeLeft.selectAll(".dot")
+   .data(timeLeftJson_zip)
+   .enter()
+   .append("circle")
+   .attr("class", "dot")
+   .attr("r", 2)
+   .attr("cx", d => xScale_timeLeft(d.timeStreamed))
+   .attr("cy", d => yScale_timeLeft(d.timeLeft))
+   .attr("opacity", 0)
+   .style("fill", "#4292c6")
+   .on('mouseover', d => {
+     tooltip_timeLeft.transition()
+       .duration(100)
+       .style('opacity', .9);
+     tooltip_timeLeft.text(d.timeLeft.toFixed(1))
+       .style('left', `${d3.event.pageX + 2}px`)
+       .style('top', `${d3.event.pageY - 18}px`);
+   })
+   .on('mouseout', () => {
+     tooltip_timeLeft.transition()
+       .duration(300)
+       .style('opacity', 0);
+   });
 
 
 };
