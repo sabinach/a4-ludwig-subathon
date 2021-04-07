@@ -1,5 +1,5 @@
 // video embed settings
-var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
+var parentDomain = "6859-sp21.github.io" // deploy: 6859-sp21.github.io
                                // test: 127.0.0.1
 
 console.log("parentDomain: ", parentDomain);
@@ -233,7 +233,7 @@ function createViz(error, ...args) {
     rects
       .attr("transform", d => `translate(${d.x0},${d.y0})`)
       .attr("width", d => d.x1 - d.x0)
-      .attr("height", d => d.y1 - d.y0);
+      .attr("height", d => d.y1 - d.y0)
 
     // add rectangle
     rects.enter().append("rect")
@@ -304,7 +304,6 @@ function createViz(error, ...args) {
         .style("opacity", 1)
 
     /** -------- **/
-
     /*
     // and to add the text labels
     svg_treemap
@@ -814,7 +813,7 @@ function createViz(error, ...args) {
     .attr("r", (d, i) => 6)
     .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
-    //.on("mouseover", mouseover_highlights) //TODO
+    .on("mouseover", mouseover_highlights) //TODO
 
   /* --- Highlights Tooltip FUNCTIONS --- */
 
