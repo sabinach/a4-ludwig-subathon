@@ -570,8 +570,6 @@ function createViz(error, ...args) {
   // Define focus circle (timeLeft)
   var focus_text_timeLeft = svg.append("g")
     .append("text")
-    .attr("text-anchor", "middle")
-    .attr("alignment-baseline", "middle")
     .style("opacity", 0)
 
   // Define vertical line (timeLeft)
@@ -594,8 +592,6 @@ function createViz(error, ...args) {
   // Define focus circle (viewers)
   var focus_text_viewers = svg.append("g")
     .append("text")
-    .attr("text-anchor", "middle")
-    .attr("alignment-baseline", "middle")
     .style("opacity", 0)
     .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ")")
 
@@ -620,8 +616,6 @@ function createViz(error, ...args) {
   // Define focus circle (subFollows)
   var focus_text_subFollows = svg.append("g")
     .append("text")
-    .attr("text-anchor", "middle")
-    .attr("alignment-baseline", "middle")
     .style("opacity", 0)
     .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
 
@@ -633,6 +627,83 @@ function createViz(error, ...args) {
     .attr("y2", height_subFollows)
     .style("opacity", 0)
     .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
+
+  function mouseoverFocus(){
+    focus_circle_timeLeft.style("opacity", 1)
+    focus_text_timeLeft.style("opacity", 1)
+    focus_vertLine_timeLeft.style("opacity", 1)
+    focus_circle_viewers.style("opacity", 1)
+    focus_text_viewers.style("opacity", 1)
+    focus_vertLine_viewers.style("opacity", 1)
+    focus_circle_subFollows.style("opacity", 1)
+    focus_text_subFollows.style("opacity", 1)
+    focus_vertLine_subFollows.style("opacity", 1)
+  }
+
+  function mouseoutFocus(){
+    focus_circle_timeLeft.style("opacity", 0)
+    focus_text_timeLeft.style("opacity", 0)
+    focus_vertLine_timeLeft.style("opacity", 0)
+    focus_circle_viewers.style("opacity", 0)
+    focus_text_viewers.style("opacity", 0)
+    focus_vertLine_viewers.style("opacity", 0)
+    focus_circle_subFollows.style("opacity", 0)
+    focus_text_subFollows.style("opacity", 0)
+    focus_vertLine_subFollows.style("opacity", 0)
+  }
+
+  function mousemoveFocus(){
+    // timeLeft
+    var x0_timeLeft = xScale_timeLeft.invert(d3.mouse(this)[0]),
+        i_timeLeft = bisectHour(timeLeftJson_zip, x0_timeLeft, 1),
+        selectedData_timeLeft = timeLeftJson_zip[i_timeLeft]
+    focus_circle_timeLeft
+      .attr("cx", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
+      .attr("cy", yScale_timeLeft(selectedData_timeLeft.timeLeft))
+    focus_text_timeLeft
+      .html(selectedData_timeLeft.timeLeft.toFixed(1) + " hrs")
+      .attr("x", xScale_timeLeft(selectedData_timeLeft.timeStreamed) + 5)
+      .attr("y", yScale_timeLeft(selectedData_timeLeft.timeLeft) - 15)
+    focus_vertLine_timeLeft
+      .attr("x1", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
+      .attr("y1", height_timeLeft)
+      .attr("x2", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
+      .attr("y2", 0); 
+
+    // viewers
+    var x0_viewers= xScale_viewers.invert(d3.mouse(this)[0]),
+        i_viewers = bisectHour(viewers_zip, x0_viewers, 1),
+        selectedData_viewers = viewers_zip[i_viewers]
+    focus_circle_viewers
+      .attr("cx", xScale_viewers(selectedData_viewers.timeStreamed))
+      .attr("cy", yScale_viewers(selectedData_viewers.numViewers))
+    focus_text_viewers
+      .html(selectedData_viewers.numViewers + " viewers")
+      .attr("x", xScale_viewers(selectedData_viewers.timeStreamed) + 5)
+      .attr("y", yScale_viewers(selectedData_viewers.numViewers) - 15)
+    focus_vertLine_viewers
+      .attr("x1", xScale_viewers(selectedData_viewers.timeStreamed))
+      .attr("y1", height_viewers)
+      .attr("x2", xScale_viewers(selectedData_viewers.timeStreamed))
+      .attr("y2", 0); 
+
+    // subfollows
+    var x0_subFollows = xScale_subFollows.invert(d3.mouse(this)[0]),
+        i_subFollows = bisectHour(followers_zip, x0_subFollows, 1),
+        selectedData_subFollows = followers_zip[i_subFollows]
+    focus_circle_subFollows
+      .attr("cx", xScale_subFollows(selectedData_subFollows.timeStreamed))
+      .attr("cy", yScale_subFollows(selectedData_subFollows.gainedFollowers))
+    focus_text_subFollows
+      .html(selectedData_subFollows.gainedFollowers + " followers")
+      .attr("x", xScale_subFollows(selectedData_subFollows.timeStreamed) + 5)
+      .attr("y", yScale_subFollows(selectedData_subFollows.gainedFollowers) - 15)
+    focus_vertLine_subFollows
+      .attr("x1", xScale_subFollows(selectedData_subFollows.timeStreamed))
+      .attr("y1", height_subFollows)
+      .attr("x2", xScale_subFollows(selectedData_subFollows.timeStreamed))
+      .attr("y2", 0); 
+  }
 
   /* --- Brush + Line Clip DEFINITIONS --- */
 
@@ -673,33 +744,10 @@ function createViz(error, ...args) {
   svg_line_timeLeft.append("g")
     .attr("class", "brush")
     .call(brush_timeLeft)
-    .on('mouseover', () => {
-      focus_circle_timeLeft.style("opacity", 1)
-      focus_text_timeLeft.style("opacity", 1)
-      focus_vertLine_timeLeft.style("opacity", 1)
-    })
-    .on('mousemove', function (d, i) {
-      var x0_timeLeft = xScale_timeLeft.invert(d3.mouse(this)[0]),
-          i_timeLeft = bisectHour(timeLeftJson_zip, x0_timeLeft, 1),
-          selectedData_timeLeft = timeLeftJson_zip[i_timeLeft]
-      focus_circle_timeLeft
-        .attr("cx", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
-        .attr("cy", yScale_timeLeft(selectedData_timeLeft.timeLeft))
-      focus_text_timeLeft
-        .html(selectedData_timeLeft.timeLeft.toFixed(1))
-        .attr("x", xScale_timeLeft(selectedData_timeLeft.timeStreamed) + 15)
-        .attr("y", yScale_timeLeft(selectedData_timeLeft.timeLeft)-20)
-      focus_vertLine_timeLeft
-        .attr("x1", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
-        .attr("y1", height_timeLeft)
-        .attr("x2", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
-        .attr("y2", 0); 
-    })
-    .on('mouseout', () => {
-      focus_circle_timeLeft.style("opacity", 0)
-      focus_text_timeLeft.style("opacity", 0)
-      focus_vertLine_timeLeft.style("opacity", 0)
-    });
+    .on('mouseover', mouseoverFocus)
+    .on('mousemove', mousemoveFocus)
+    .on('mouseout', mouseoutFocus);
+
 
   /* ---------- */
 
@@ -735,33 +783,9 @@ function createViz(error, ...args) {
   svg_line_viewers.append("g")
     .attr("class", "brush_viewers")
     .call(brush_viewers)
-    .on('mouseover', () => {
-      focus_circle_viewers.style("opacity", 1)
-      focus_text_viewers.style("opacity", 1)
-      focus_vertLine_viewers.style("opacity", 1)
-    })
-    .on('mousemove', function (d, i) {
-      var x0_viewers= xScale_viewers.invert(d3.mouse(this)[0]),
-          i_viewers = bisectHour(viewers_zip, x0_viewers, 1),
-          selectedData_viewers = viewers_zip[i_viewers]
-      focus_circle_viewers
-        .attr("cx", xScale_viewers(selectedData_viewers.timeStreamed))
-        .attr("cy", yScale_viewers(selectedData_viewers.numViewers))
-      focus_text_viewers
-        .html("viewers")
-        .attr("x", xScale_viewers(selectedData_viewers.timeStreamed) + 15)
-        .attr("y", yScale_viewers(selectedData_viewers.numViewers)-20)
-      focus_vertLine_viewers
-        .attr("x1", xScale_viewers(selectedData_viewers.timeStreamed))
-        .attr("y1", height_viewers)
-        .attr("x2", xScale_viewers(selectedData_viewers.timeStreamed))
-        .attr("y2", 0); 
-    })
-    .on('mouseout', () => {
-      focus_circle_viewers.style("opacity", 0)
-      focus_text_viewers.style("opacity", 0)
-      focus_vertLine_viewers.style("opacity", 0)
-    });
+    .on('mouseover', mouseoverFocus)
+    .on('mousemove', mousemoveFocus)
+    .on('mouseout', mouseoutFocus);
 
   /* ---------- */
 
@@ -797,33 +821,9 @@ function createViz(error, ...args) {
   svg_line_subFollows.append("g")
     .attr("class", "brush_subFollows")
     .call(brush_subFollows)
-    .on('mouseover', () => {
-      focus_circle_subFollows.style("opacity", 1)
-      focus_text_subFollows.style("opacity", 1)
-      focus_vertLine_subFollows.style("opacity", 1)
-    })
-    .on('mousemove', function (d, i) {
-      var x0_subFollows = xScale_subFollows.invert(d3.mouse(this)[0]),
-          i_subFollows = bisectHour(followers_zip, x0_subFollows, 1),
-          selectedData_subFollows = followers_zip[i_subFollows]
-      focus_circle_subFollows
-        .attr("cx", xScale_subFollows(selectedData_subFollows.timeStreamed))
-        .attr("cy", yScale_subFollows(selectedData_subFollows.gainedFollowers))
-      focus_text_subFollows
-        .html("followers")
-        .attr("x", xScale_subFollows(selectedData_subFollows.timeStreamed) + 15)
-        .attr("y", yScale_subFollows(selectedData_subFollows.gainedFollowers)-20)
-      focus_vertLine_subFollows
-        .attr("x1", xScale_subFollows(selectedData_subFollows.timeStreamed))
-        .attr("y1", height_subFollows)
-        .attr("x2", xScale_subFollows(selectedData_subFollows.timeStreamed))
-        .attr("y2", 0); 
-    })
-    .on('mouseout', () => {
-      focus_circle_subFollows.style("opacity", 0)
-      focus_text_subFollows.style("opacity", 0)
-      focus_vertLine_subFollows.style("opacity", 0)
-    });
+    .on('mouseover', mouseoverFocus)
+    .on('mousemove', mousemoveFocus)
+    .on('mouseout', mouseoutFocus);
 
   /* --- Brush + Line Clip FUNCTIONS --- */
 
