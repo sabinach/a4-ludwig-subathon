@@ -628,18 +628,6 @@ function createViz(error, ...args) {
     .style("opacity", 0)
     .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
 
-  function mouseoverFocus(){
-    focus_circle_timeLeft.style("opacity", 1)
-    focus_text_timeLeft.style("opacity", 1)
-    focus_vertLine_timeLeft.style("opacity", 1)
-    focus_circle_viewers.style("opacity", 1)
-    focus_text_viewers.style("opacity", 1)
-    focus_vertLine_viewers.style("opacity", 1)
-    focus_circle_subFollows.style("opacity", 1)
-    focus_text_subFollows.style("opacity", 1)
-    focus_vertLine_subFollows.style("opacity", 1)
-  }
-
   function mouseoutFocus(){
     focus_circle_timeLeft.style("opacity", 0)
     focus_text_timeLeft.style("opacity", 0)
@@ -657,52 +645,86 @@ function createViz(error, ...args) {
     var x0_timeLeft = xScale_timeLeft.invert(d3.mouse(this)[0]),
         i_timeLeft = bisectHour(timeLeftJson_zip, x0_timeLeft, 1),
         selectedData_timeLeft = timeLeftJson_zip[i_timeLeft]
-    focus_circle_timeLeft
-      .attr("cx", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
-      .attr("cy", yScale_timeLeft(selectedData_timeLeft.timeLeft))
-    focus_text_timeLeft
-      .html(selectedData_timeLeft.timeLeft.toFixed(1) + " hrs")
-      .attr("x", xScale_timeLeft(selectedData_timeLeft.timeStreamed) + 5)
-      .attr("y", yScale_timeLeft(selectedData_timeLeft.timeLeft) - 15)
-    focus_vertLine_timeLeft
-      .attr("x1", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
-      .attr("y1", height_timeLeft)
-      .attr("x2", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
-      .attr("y2", 0); 
+    if(selectedData_timeLeft){
+      var xTransformed_timeLeft = xScale_timeLeft(selectedData_timeLeft.timeStreamed),
+          yTransformed_timeLeft = yScale_timeLeft(selectedData_timeLeft.timeLeft)
+      focus_circle_timeLeft
+        .attr("cx", xTransformed_timeLeft)
+        .attr("cy", yTransformed_timeLeft)
+        .style("opacity", 1)
+      focus_text_timeLeft
+        .html(selectedData_timeLeft.timeLeft.toFixed(1) + " hrs")
+        .attr("x", xTransformed_timeLeft + 5)
+        .attr("y", yTransformed_timeLeft - 25)
+        .style("opacity", 1)
+      focus_vertLine_timeLeft
+        .attr("x1", xTransformed_timeLeft)
+        .attr("y1", height_timeLeft)
+        .attr("x2", xTransformed_timeLeft)
+        .attr("y2", 0)
+        .style("opacity", 1)
+    }else{
+      focus_circle_timeLeft.style("opacity", 0)
+      focus_text_timeLeft.style("opacity", 0)
+      focus_vertLine_timeLeft.style("opacity", 0)
+    }
 
     // viewers
     var x0_viewers= xScale_viewers.invert(d3.mouse(this)[0]),
         i_viewers = bisectHour(viewers_zip, x0_viewers, 1),
         selectedData_viewers = viewers_zip[i_viewers]
-    focus_circle_viewers
-      .attr("cx", xScale_viewers(selectedData_viewers.timeStreamed))
-      .attr("cy", yScale_viewers(selectedData_viewers.numViewers))
-    focus_text_viewers
-      .html(selectedData_viewers.numViewers + " viewers")
-      .attr("x", xScale_viewers(selectedData_viewers.timeStreamed) + 5)
-      .attr("y", yScale_viewers(selectedData_viewers.numViewers) - 15)
-    focus_vertLine_viewers
-      .attr("x1", xScale_viewers(selectedData_viewers.timeStreamed))
-      .attr("y1", height_viewers)
-      .attr("x2", xScale_viewers(selectedData_viewers.timeStreamed))
-      .attr("y2", 0); 
+    if(selectedData_viewers){ 
+      var xTransformed_viewers = xScale_viewers(selectedData_viewers.timeStreamed),
+          yTransformed_viewers = yScale_viewers(selectedData_viewers.numViewers)
+      focus_circle_viewers
+        .attr("cx", xTransformed_viewers)
+        .attr("cy", yTransformed_viewers)
+        .style("opacity", 1)
+      focus_text_viewers
+        .html(selectedData_viewers.numViewers + " viewers")
+        .attr("x", xTransformed_viewers + 5)
+        .attr("y", yTransformed_viewers - 25)
+        .style("opacity", 1)
+      focus_vertLine_viewers
+        .attr("x1", xTransformed_viewers)
+        .attr("y1", height_viewers)
+        .attr("x2", xTransformed_viewers)
+        .attr("y2", 0)
+        .style("opacity", 1)
+    }else{
+      focus_circle_viewers.style("opacity", 0)
+      focus_text_viewers.style("opacity", 0)
+      focus_vertLine_viewers.style("opacity", 0)
+    }
 
     // subfollows
     var x0_subFollows = xScale_subFollows.invert(d3.mouse(this)[0]),
         i_subFollows = bisectHour(followers_zip, x0_subFollows, 1),
         selectedData_subFollows = followers_zip[i_subFollows]
-    focus_circle_subFollows
-      .attr("cx", xScale_subFollows(selectedData_subFollows.timeStreamed))
-      .attr("cy", yScale_subFollows(selectedData_subFollows.gainedFollowers))
-    focus_text_subFollows
-      .html(selectedData_subFollows.gainedFollowers + " followers")
-      .attr("x", xScale_subFollows(selectedData_subFollows.timeStreamed) + 5)
-      .attr("y", yScale_subFollows(selectedData_subFollows.gainedFollowers) - 15)
-    focus_vertLine_subFollows
-      .attr("x1", xScale_subFollows(selectedData_subFollows.timeStreamed))
-      .attr("y1", height_subFollows)
-      .attr("x2", xScale_subFollows(selectedData_subFollows.timeStreamed))
-      .attr("y2", 0); 
+    if(selectedData_subFollows){ 
+      var xTransformed_subFollows = xScale_subFollows(selectedData_subFollows.timeStreamed),
+          yTransformed_subFollows = yScale_subFollows(selectedData_subFollows.gainedFollowers)
+      focus_circle_subFollows
+        .attr("cx", xTransformed_subFollows)
+        .attr("cy", yTransformed_subFollows)
+        .style("opacity", 1)
+      focus_text_subFollows
+        .html(selectedData_subFollows.gainedFollowers + " new followers")
+        .attr("x", xTransformed_subFollows + 5)
+        .attr("y", yTransformed_subFollows - 25)
+        .style("opacity", 1)
+      focus_vertLine_subFollows
+        .attr("x1", xTransformed_subFollows)
+        .attr("y1", height_subFollows)
+        .attr("x2", xTransformed_subFollows)
+        .attr("y2", 0)
+        .style("opacity", 1)
+    }else{
+      focus_circle_subFollows.style("opacity", 0)
+      focus_text_subFollows.style("opacity", 0)
+      focus_vertLine_subFollows.style("opacity", 0)
+    }
+
   }
 
   /* --- Brush + Line Clip DEFINITIONS --- */
@@ -744,7 +766,6 @@ function createViz(error, ...args) {
   svg_line_timeLeft.append("g")
     .attr("class", "brush")
     .call(brush_timeLeft)
-    .on('mouseover', mouseoverFocus)
     .on('mousemove', mousemoveFocus)
     .on('mouseout', mouseoutFocus);
 
@@ -783,7 +804,6 @@ function createViz(error, ...args) {
   svg_line_viewers.append("g")
     .attr("class", "brush_viewers")
     .call(brush_viewers)
-    .on('mouseover', mouseoverFocus)
     .on('mousemove', mousemoveFocus)
     .on('mouseout', mouseoutFocus);
 
@@ -821,7 +841,6 @@ function createViz(error, ...args) {
   svg_line_subFollows.append("g")
     .attr("class", "brush_subFollows")
     .call(brush_subFollows)
-    .on('mouseover', mouseoverFocus)
     .on('mousemove', mousemoveFocus)
     .on('mouseout', mouseoutFocus);
 
