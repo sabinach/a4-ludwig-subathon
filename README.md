@@ -1,7 +1,18 @@
-# Ludwig Subathon
+# Highlights from Ludwig's X-Day Subathon
 
-### Website URL
+## 6.859 Spring 2021 - A4 Interactive Data Visualization
+
+#### Project Description
+tbd
+
+### Project URL
 https://6859-sp21.github.io/a4-ludwig-subathon/
+
+#### Project Deliverables
+- Final Submission [Paper]()
+- MVP [Video](https://youtu.be/nUda4JRYS7U) [Slides](https://docs.google.com/presentation/d/1e-SIilkMOaA-3OfUn5qYDrHJ5L7LxpdqVNObbwEFuuA/edit?usp=sharing)
+
+-----------------------------
 
 ### Overview
 
