@@ -12,14 +12,19 @@
 		<!-- Viz / Infographics -->
 		<div class="row">
 			<!-- Left Side -->
-			<div class="column">
-				<div id="line-viz"></div>
+			<div class="column"> <!-- style="background-color: #A9A9A9" -->
+				<form> <!-- style="text-align: right; padding-right: 50px" -->
+				  <label><input type="radio" name="mode" value="sumBySize" checked> By Game</label>
+				  <label><input type="radio" name="mode" value="sumByCount"> By Day/Night</label>
+				  <label><input type="radio" name="mode" value="sumBySize" checked> None</label>
+				</form>
+				<div id="line-viz" style="padding-top: 15px"></div>
 			</div>
 			<!-- Right Side -->
-			<div class="column">
+			<div class="column"> <!-- style="background-color: grey" -->
 				<div id="info-viz"></div>
 				<div id="highlights-viz"></div>
-				<div id="treemap-viz"></div>
+				<div id="treemap-viz" style="text-align: center;"></div>
 			</div>
 		</div>
 

@@ -35,9 +35,9 @@ var svg = d3.select("#line-viz")
 /* ---------------------- */
 
 // set the dimensions and margins of the graph
-var margin_treemap = {top: 20, right: 10, bottom: 10, left: 10},
-  width_treemap = 420 - margin_treemap.left - margin_treemap.right,
-  height_treemap = 320 - margin_treemap.top - margin_treemap.bottom;
+var margin_treemap = {top: 15, right: 5, bottom: 10, left: 0},
+  width_treemap = 410 - margin_treemap.left - margin_treemap.right,
+  height_treemap = 300 - margin_treemap.top - margin_treemap.bottom;
 
 // append the svg_treemap object to the body of the page
 var svg_treemap = d3.select("#treemap-viz")
@@ -168,6 +168,8 @@ function createViz(error, ...args) {
   })
 
   console.log("gamePlayed_count: ", gamePlayed_count);
+
+  /** -------- **/
 
   // stratify the data: reformatting for d3.js
   var root = d3.stratify()
@@ -655,6 +657,25 @@ function createViz(error, ...args) {
     svg_line_subFollows.selectAll(".line_subFollows").transition(t).attr("d", drawLine_subFollows);
   }
 
+  /* --- Information Tooltip DEFINITIONS --- */
+
+  //style="width:300px; height:100px; padding: 10px; border: 1px solid black"
+
+  // Create tooltip
+  var tooltip_info = d3.select("#info-viz")
+    .append("div")
+    .attr("class", "tooltip_info")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+    .style("margin-bottom", "10px")
+    .style("width", "400px")
+
+  tooltip_info
+    .html("<b>Some cool statistics summary</b>" + "<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.") 
+
   /* --- Highlights Tooltip DEFINITIONS --- */
 
   // Create tooltip
@@ -668,10 +689,13 @@ function createViz(error, ...args) {
     .style("padding", "10px")
     .style("width", "400px")
 
+  // "<b>" + highlights_zip[0].title + "</b>" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(highlights_zip[0].datetime) + " EST" + "<br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br>"
+  // "<br><br>time streamed: " + highlights_zip[0].timeStreamed.toFixed(2) + " hrs" + "<br>time left: " + highlights_zip[0].timeLeft.toFixed(2) + " hrs" +
+
   // Show tooltip (show the first highlight event)
   tooltip_highlights
     .style("opacity", 1)
-    .html("<b>" + highlights_zip[0].title + "</b>" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(highlights_zip[0].datetime) + " EST" + "<br><br>time streamed: " + highlights_zip[0].timeStreamed.toFixed(2) + " hrs" + "<br>time left: " + highlights_zip[0].timeLeft.toFixed(2) + " hrs" + "<br><br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br>") 
+    .html("<b>Subathon Highlight</b><br>" + formatDatetime(highlights_zip[0].datetime) + " EST" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br>") 
 
   // Add nodes (event highlights)
   svg_line_timeLeft.selectAll(".dot-highlight")
@@ -709,14 +733,13 @@ function createViz(error, ...args) {
     svg_line_timeLeft.selectAll("#tooltip_highlights").data([d]).enter()
       .append("text")
       .attr("id", "tooltip_highlights")
-      //.text(d.timeLeft.toFixed(1) + " hrs")
-      .text(d.title.slice(0,10)+"..")
+      .text(d.timeLeft.toFixed(1) + " hrs")
       .attr("x", d => xScale_timeLeft(d.timeStreamed))
       .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
 
     // update tooltip
     tooltip_highlights
-      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(d.datetime) + " EST" + "<br><br>time streamed: " + d.timeStreamed.toFixed(2) + " hrs" + "<br>time left: " + d.timeLeft.toFixed(2) + " hrs" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
+      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(d.datetime) + " EST" + "<br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
   }
 
   /** ------------------ Hover Tooltip (timeLeft) ------------------ **/
