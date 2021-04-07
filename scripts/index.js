@@ -627,15 +627,11 @@ function createViz(error, ...args) {
     .attr("stroke-width", 1.5)
     .attr("d", drawLine_timeLeft)
 
-  // Add brush (timeLeft)
+  // Add brush + hover (timeLeft)
   svg_line_timeLeft.append("g")
     .attr("class", "brush")
     .call(brush_timeLeft)
-    .on('mouseover', function () {
-      focus_circle_timeLeft.style("opacity", 1)
-      focus_text_timeLeft.style("opacity", 1)
-      focus_vertLine_timeLeft.style("opacity", 1)
-    })
+    .on('mouseover', mouseoverHover)
     .on('mousemove', function (d, i) {
       var x0 = xScale_timeLeft.invert(d3.mouse(this)[0]),
           i = bisectHour(timeLeftJson_zip, x0, 1),
@@ -651,14 +647,22 @@ function createViz(error, ...args) {
         .attr("x1", xScale_timeLeft(selectedData.timeStreamed))
         .attr("y1", height_timeLeft)
         .attr("x2", xScale_timeLeft(selectedData.timeStreamed))
-        .attr("y2", 0); // this one
-
+        .attr("y2", 0); 
     })
-    .on('mouseout', function () {
-      focus_circle_timeLeft.style("opacity", 0)
-      focus_text_timeLeft.style("opacity", 0)
-      focus_vertLine_timeLeft.style("opacity", 0)
-    });
+    .on('mouseout', mouseoutHover);
+
+  function mouseoverHover(){
+    focus_circle_timeLeft.style("opacity", 1)
+    focus_text_timeLeft.style("opacity", 1)
+    focus_vertLine_timeLeft.style("opacity", 1)
+  }
+
+  function mouseoutHover(){
+    focus_circle_timeLeft.style("opacity", 0)
+    focus_text_timeLeft.style("opacity", 0)
+    focus_vertLine_timeLeft.style("opacity", 0)
+  }
+
 
 
 
