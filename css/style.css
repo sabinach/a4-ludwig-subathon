@@ -17,6 +17,6 @@
 }
 
 body {
-	font-family: "Helvetica Neue", Helvetica, sans-serif;
-	font-size: 14px;
+  font: 12px sans-serif;
+  position: relative;
 }

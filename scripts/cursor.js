@@ -1,5 +1,3 @@
-console.log("hello")
-
 // This allows to find the closest X index of the mouse:
 var bisect = d3.bisector(function(d) { return d.timeStreamed; }).left;
 

@@ -2,6 +2,10 @@
 var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
                                // test: 127.0.0.1
 
+console.log("parentDomain: ", parentDomain);
+
+/* ---------------------- */
+
 // set canvas dimensions
 var svg_width = 650;
 var svg_height = 750;
@@ -28,6 +32,24 @@ var svg = d3.select("#line-viz")
   .attr("transform",
     "translate(" + margin_timeLeft.left + "," + margin_timeLeft.top + ")");
 
+/* ---------------------- */
+
+// set the dimensions and margins of the graph
+var margin_treemap = {top: 20, right: 10, bottom: 10, left: 10},
+  width_treemap = 420 - margin_treemap.left - margin_treemap.right,
+  height_treemap = 320 - margin_treemap.top - margin_treemap.bottom;
+
+// append the svg_treemap object to the body of the page
+var svg_treemap = d3.select("#treemap-viz")
+  .append("svg")
+    .attr("width", width_treemap + margin_treemap.left + margin_treemap.right)
+    .attr("height", height_treemap + margin_treemap.top + margin_treemap.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin_treemap.left + "," + margin_treemap.top + ")");
+
+/* ---------------------- */
+
 // string to d3 datetime conversion function
 var parseDatetime = d3.timeParse("%Y-%m-%d %H:%M");
 
@@ -45,7 +67,6 @@ var parseTimeLeft = timeLeft => parseInt(timeLeft.split(":")[0]) + parseInt(time
 var formatDatetime = d3.timeFormat("%B %d, %Y %H:%M %p")
 
 var formatTime = d3.timeFormat("%B %d, %Y");
-console.log(formatTime(new Date)); // "June 30, 2015"
 
 console.log("subathonStartDate: ", subathonStartDate) 
 console.log("subathonEndDate: ", subathonEndDate) // TODO -- update!
@@ -66,6 +87,9 @@ function createViz(error, ...args) {
   const viewersJson = args[1];
   const followersJson = args[2];
   const highlightsJson = args[3];
+  const gameImagesJson = args[4];
+
+  console.log("gameImagesJson: ", gameImagesJson)
 
   /* --------------------------------------------- */
   // TIME LEFT / SUBS GAINED
@@ -126,6 +150,78 @@ function createViz(error, ...args) {
   console.log("numViewers: ", numViewers)
 
   console.log("viewers_zip: ", viewers_zip)
+
+  /** -------- **/
+  // Create game output json based on start/end dates
+
+  var gamePlayed_count = [
+    {"game":"Origin","count": "","parent":""}
+  ]
+
+  viewers_zip.forEach((viewers) => {
+    var foundIndex = gamePlayed_count.findIndex(gamePlayed => gamePlayed.game === viewers.game);
+    if (foundIndex>0){
+      gamePlayed_count[foundIndex].count += 1
+    }else{
+      gamePlayed_count.push({"game":viewers.game,"count":1,"parent":"Origin"});
+    }
+  })
+
+  console.log("gamePlayed_count: ", gamePlayed_count);
+
+  // stratify the data: reformatting for d3.js
+  var root = d3.stratify()
+    .id(function(d) { return d.game; })   // Name of the entity (column name is name in csv)
+    .parentId(function(d) { return d.parent; })   // Name of the parent (column name is parent in csv)
+    (gamePlayed_count);
+  
+  root
+    .sum(function(d) { return +d.count })   // Compute the numeric value for each entity
+    .sort(function(a, b) { return b.height - a.height || b.value - a.value; });
+
+  // Then d3.treemap computes the position of each element of the hierarchy
+  d3.treemap()
+    .size([width_treemap, height_treemap])
+    .padding(0.1)
+    (root)
+
+  // use this information to add rectangles:
+  svg_treemap
+    .selectAll("rect")
+    .data(root.leaves())
+    .enter()
+    .append("rect")
+      .attr('x', function (d) { return d.x0; })
+      .attr('y', function (d) { return d.y0; })
+      .attr('width', function (d) { return d.x1 - d.x0; })
+      .attr('height', function (d) { return d.y1 - d.y0; })
+      .style("stroke", "black")
+      .style("fill", "slateblue")
+
+  // and to add the text labels
+  svg_treemap
+    .selectAll("text")
+    .data(root.leaves())
+    .enter()
+    .append("text")
+      .attr("x", function(d){ return d.x0+10})    // +10 to adjust position (more right)
+      .attr("y", function(d){ return d.y0+20})   // +20 to adjust position (lower)
+      .text(function(d){ return d.data.game + " \n(" + Math.floor((d.data.count/viewers_zip.length)*100) + "%)" })
+      .attr("font-size", "10px")
+      .attr("fill", "black")
+
+  /*
+  // and to add the text labels
+  svg_treemap
+    .selectAll("image")
+    .data(root.leaves())
+    .enter()
+    .append("image")
+      .attr("x", function(d){ return d.x0+10})   // +10 to adjust position (more right)
+      .attr("y", function(d){ return d.y0+30})   // +20 to adjust position (lower)
+      .attr("width", d => (d.x1 - d.x0)/5)
+      .attr("xlink:href", gameImagesJson.GeoGuessr);
+  */
 
   /* --------------------------------------------- */
   // FOLLOWERS
@@ -570,11 +666,12 @@ function createViz(error, ...args) {
     .style("border-width", "1px")
     .style("border-radius", "5px")
     .style("padding", "10px")
+    .style("width", "400px")
 
   // Show tooltip (show the first highlight event)
   tooltip_highlights
     .style("opacity", 1)
-    .html("<b>" + highlights_zip[0].title + "</b>" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(highlights_zip[0].datetime) + " EST" + "<br><br>time streamed: " + highlights_zip[0].timeStreamed.toFixed(2) + " hrs" + "<br>time left: " + highlights_zip[0].timeLeft.toFixed(2) + " hrs" + "<br><br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br><br>") 
+    .html("<b>" + highlights_zip[0].title + "</b>" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(highlights_zip[0].datetime) + " EST" + "<br><br>time streamed: " + highlights_zip[0].timeStreamed.toFixed(2) + " hrs" + "<br>time left: " + highlights_zip[0].timeLeft.toFixed(2) + " hrs" + "<br><br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br>") 
 
   // Add nodes (event highlights)
   svg_line_timeLeft.selectAll(".dot-highlight")
@@ -586,7 +683,7 @@ function createViz(error, ...args) {
     .attr("r", (d, i) => 6)
     .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
-    .on("mouseover", mouseover_highlights) //TODO
+    //.on("mouseover", mouseover_highlights) //TODO
 
   /* --- Highlights Tooltip FUNCTIONS --- */
 
@@ -619,7 +716,7 @@ function createViz(error, ...args) {
 
     // update tooltip
     tooltip_highlights
-      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(d.datetime) + " EST" + "<br><br>time streamed: " + d.timeStreamed.toFixed(2) + " hrs" + "<br>time left: " + d.timeLeft.toFixed(2) + " hrs" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br><br>") 
+      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(d.datetime) + " EST" + "<br><br>time streamed: " + d.timeStreamed.toFixed(2) + " hrs" + "<br>time left: " + d.timeLeft.toFixed(2) + " hrs" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
   }
 
   /** ------------------ Hover Tooltip (timeLeft) ------------------ **/
@@ -670,4 +767,5 @@ d3.queue()
   .defer(d3.json, "data/viewers.json")
   .defer(d3.json, "data/followers.json")
   .defer(d3.json, "data/highlights.json")
+  .defer(d3.json, "data/gameImages.json")
   .await(createViz)
