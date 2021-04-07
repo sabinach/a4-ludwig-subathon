@@ -219,42 +219,91 @@ function createViz(error, ...args) {
       .padding(0.1)
       (root)
 
+    // animation transition time
+    const duration = 100;
+
+    /** -------- **/
+    // rectangle
+
+    // create rectangle object
+    const rects = svg_treemap.selectAll(".rect").data(root.leaves())
+
+    //remove rectangle
+    rects.exit().remove();
+    rects
+      .attr("transform", d => `translate(${d.x0},${d.y0})`)
+      .attr("width", d => d.x1 - d.x0)
+      .attr("height", d => d.y1 - d.y0);
+
     // add rectangle
-    svg_treemap
-      .selectAll("rect")
-      .data(root.leaves())
-      .enter()
-      .append("rect")
-        .attr('x', function (d) { return d.x0; })
-        .attr('y', function (d) { return d.y0; })
-        .attr('width', function (d) { return d.x1 - d.x0; })
-        .attr('height', function (d) { return d.y1 - d.y0; })
+    rects.enter().append("rect")
+        .attr("class", "rect")
+        .attr("transform", d => `translate(${d.x0},${d.y0})`)
+        .attr("width", d => d.x1 - d.x0)
+        .attr("height", d => d.y1 - d.y0)
         .style("stroke", "black")
         .style("fill", "#9cbdd9")
+        .style("opacity", 1e-6)
+      .transition().duration(duration)
+        .style("opacity", 1)
+
+    /** -------- **/
+    // title
+
+    // create title object
+    const title = svg_treemap.selectAll(".title").data(root.leaves())
+
+    //remove title
+    title
+      .exit().remove()
+
+    // transform title
+    title
+      .html(d => `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
+      .attr("transform", d => `translate(${d.x0},${d.y0})`)
 
     // add title
-    svg_treemap
-      .selectAll("text")
-      .data(root.leaves())
-      .enter()
-      .append("text")
-        .attr("x", function(d){ return d.x0+5})    // +right
-        .attr("y", function(d){ return d.y0+13})   // +lower
-        .text(function(d){ return d.data.game })
-        .attr("font-size", "8px")
-        .attr("fill", "black")
+    title.enter().append("text")
+        .attr("class", "title")
+        .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
+        .attr("dx", 5)  // +right
+        .attr("dy", 13) // +lower
+        .html(d => `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
+        .style("font-size", "8px")
+        .style("fill", "black")
+        .style("opacity", 1e-6)
+      .transition().duration(duration)
+        .style("opacity", 1)
 
-    // add percentage
-    svg_treemap
-      .selectAll("vals")
-      .data(root.leaves())
-      .enter()
-      .append("text")
-        .attr("x", function(d){ return d.x0+5})    // +right
-        .attr("y", function(d){ return d.y0+23})   // +lower
-        .text(function(d){ return (d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%" })
-        .attr("font-size", "8px")
-        .attr("fill", "black")
+    /** -------- **/
+    // percent
+
+    // create percent object
+    const percent = svg_treemap.selectAll(".percent").data(root.leaves())
+
+    //remove percent
+    percent
+      .exit().remove()
+
+    // transform percent
+    percent
+      .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
+      .attr("transform", d => `translate(${d.x0},${d.y0})`)
+
+    // add percent
+    percent.enter().append("text")
+        .attr("class", "percent")
+        .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
+        .attr("dx", 5)  // +right
+        .attr("dy", 23) // +lower
+        .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
+        .style("font-size", "8px")
+        .style("fill", "black")
+        .style("opacity", 1e-6)
+      .transition().duration(duration)
+        .style("opacity", 1)
+
+    /** -------- **/
 
     /*
     // and to add the text labels
