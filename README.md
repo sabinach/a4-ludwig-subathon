@@ -9,9 +9,18 @@ Subathon Dates:
 - START: March 14, 2021 (2:00pm PST = 5:00pm EST) 
 - END: XXX
 
+Current Data Extracted from Subathon Tracker (manually updated):
+- START: 0 hr
+- END: 563.5 hr
+
 Current Data Extracted from SullyGnome (manually updated):
-- START: March 02, 2021
-- END: March 31, 2021
+- START: March 08, 2021, 0:00  est(?)
+- END: April 07, 2021, 23:00 est(?)
+
+Note to self:
+- all dates converted to EST
+- subathon tracker (add # hr of time streamed to 5pm EST start)
+- sullygnome (assume already in est) -- TODO: need to confirm
 
 Dataset Credits To:
 - [baddog86, smartax1111, itzdanbarz, and ogsheeper](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#)
