@@ -1,5 +1,5 @@
 // video embed settings
-var parentDomain = "6859-sp21.github.io" // deploy: 6859-sp21.github.io
+var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
                                // test: 127.0.0.1
 
 console.log("parentDomain: ", parentDomain);
@@ -49,6 +49,7 @@ var svg_treemap = d3.select("#treemap-viz")
           "translate(" + margin_treemap.left + "," + margin_treemap.top + ")");
 
 /* ---------------------- */
+// utils
 
 // string to d3 datetime conversion function
 var parseDatetime = d3.timeParse("%Y-%m-%d %H:%M");
@@ -70,6 +71,8 @@ var formatTime = d3.timeFormat("%B %d, %Y");
 
 console.log("subathonStartDate: ", subathonStartDate) 
 console.log("subathonEndDate: ", subathonEndDate) // TODO -- update!
+
+var bisectHour = d3.bisector(function(d) { return d.timeStreamed; }).left;
 
 
 /* ------------------------------------------------------------------- */
@@ -563,6 +566,25 @@ function createViz(error, ...args) {
 
   /* ---------- */
 
+
+
+
+
+
+
+  // Define focus circle (timeLeft)
+  var focus_circle_timeLeft = svg.append("g")
+    .append("circle")
+    .style("fill", "black")
+    .attr("stroke", "black")
+    .attr("r", 3)
+    .style("opacity", 0)
+
+
+
+
+
+
   // Define line svg (timeLeft): where both the line and the brush take place
   var svg_line_timeLeft = svg.append('g')
     .attr("clip-path", "url(#clip_timeLeft)");
@@ -581,11 +603,6 @@ function createViz(error, ...args) {
     .attr("x", 0)
     .attr("y", 0);
 
-  // Add brush (timeLeft)
-  svg_line_timeLeft.append("g")
-    .attr("class", "brush_timeLeft")
-    .call(brush_timeLeft)
-
   // Add line (timeLeft)
   svg_line_timeLeft.append("path")
     .datum(timeLeftJson_zip)
@@ -594,6 +611,36 @@ function createViz(error, ...args) {
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
     .attr("d", drawLine_timeLeft)
+
+  // Add brush (timeLeft)
+  svg_line_timeLeft.append("g")
+    .attr("class", "brush")
+    .call(brush_timeLeft)
+
+    // here
+    .on('mouseover', function () {
+      focus_circle_timeLeft.style("opacity", 1)
+    })
+    .on('mousemove', function (d, i) {
+      var x0 = xScale_timeLeft.invert(d3.mouse(this)[0]),
+          i = bisectHour(timeLeftJson_zip, x0, 1),
+          selectedData = timeLeftJson_zip[i]
+      focus_circle_timeLeft
+        .attr("cx", xScale_timeLeft(selectedData.timeStreamed))
+        .attr("cy", yScale_timeLeft(selectedData.timeLeft))
+    })
+    .on('mouseout', function () {
+      focus_circle_timeLeft.style("opacity", 0)
+    });
+
+
+
+
+
+
+
+
+
 
   /* ---------- */
 
@@ -801,7 +848,7 @@ function createViz(error, ...args) {
   // Show tooltip (show the first highlight event)
   tooltip_highlights
     .style("opacity", 1)
-    .html("<b>Subathon Highlight</b><br>" + formatDatetime(highlights_zip[0].datetime) + " EST" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br>") 
+    .html("<b>Event Highlight</b><br>" + formatDatetime(highlights_zip[0].datetime) + " EST" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br>") 
 
   // Add nodes (event highlights)
   svg_line_timeLeft.selectAll(".dot-highlight")
@@ -845,7 +892,7 @@ function createViz(error, ...args) {
 
     // update tooltip
     tooltip_highlights
-      .html("<b>" + d.title + "</b>" + " (<a href='" + d.url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(d.datetime) + " EST" + "<br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
+      .html("<b>Event Highlight</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
   }
 
   /** ------------------ Hover Tooltip (timeLeft) ------------------ **/
@@ -880,8 +927,6 @@ function createViz(error, ...args) {
    });
 
    */
-
-  /** ------------------ ------------------ ------------------ **/
 
 };
 
