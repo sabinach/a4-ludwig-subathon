@@ -587,6 +587,14 @@ function createViz(error, ...args) {
     .attr("alignment-baseline", "middle")
     .style("opacity", 0)
 
+  // Define vertical line (timeLeft)
+  var focus_vertLine_timeLeft = svg.append("g")
+    .append("line")
+    .attr("class", "vert-hover-line hover-line")
+    .attr("y1", 0)
+    .attr("y2", height_timeLeft)
+    .style("opacity", 0)
+
 
 
 
@@ -623,11 +631,10 @@ function createViz(error, ...args) {
   svg_line_timeLeft.append("g")
     .attr("class", "brush")
     .call(brush_timeLeft)
-
-    // here
     .on('mouseover', function () {
       focus_circle_timeLeft.style("opacity", 1)
       focus_text_timeLeft.style("opacity", 1)
+      focus_vertLine_timeLeft.style("opacity", 1)
     })
     .on('mousemove', function (d, i) {
       var x0 = xScale_timeLeft.invert(d3.mouse(this)[0]),
@@ -638,12 +645,19 @@ function createViz(error, ...args) {
         .attr("cy", yScale_timeLeft(selectedData.timeLeft))
       focus_text_timeLeft
         .html(selectedData.timeLeft.toFixed(1))
-        .attr("x", xScale_timeLeft(selectedData.timeStreamed)-10)
+        .attr("x", xScale_timeLeft(selectedData.timeStreamed))
         .attr("y", yScale_timeLeft(selectedData.timeLeft)-20)
+      focus_vertLine_timeLeft
+        .attr("x1", xScale_timeLeft(selectedData.timeStreamed))
+        .attr("y1", height_timeLeft)
+        .attr("x2", xScale_timeLeft(selectedData.timeStreamed))
+        .attr("y2", 0); // this one
+
     })
     .on('mouseout', function () {
       focus_circle_timeLeft.style("opacity", 0)
       focus_text_timeLeft.style("opacity", 0)
+      focus_vertLine_timeLeft.style("opacity", 0)
     });
 
 
@@ -873,7 +887,7 @@ function createViz(error, ...args) {
     .attr("r", (d, i) => 6)
     .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
-    .on("mouseover", mouseover_highlights) //TODO
+    //.on("mouseover", mouseover_highlights) //TODO
 
   /* --- Highlights Tooltip FUNCTIONS --- */
 
