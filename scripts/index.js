@@ -557,20 +557,7 @@ function createViz(error, ...args) {
     .style("text-anchor", "middle")
     .text("# followers gained");  
 
-
-  /* --- Brush + Line Clip DEFINITIONS --- */
-
-  // Define animation time
-  var idleTimeout,
-      idleDelay = 350;
-
-  /* ---------- */
-
-
-
-
-
-
+  /* --- Focus / Hover DEFINITIONS --- */
 
   // Define focus circle (timeLeft)
   var focus_circle_timeLeft = svg.append("g")
@@ -595,10 +582,65 @@ function createViz(error, ...args) {
     .attr("y2", height_timeLeft)
     .style("opacity", 0)
 
+  // Define focus circle (viewers)
+  var focus_circle_viewers = svg.append("g")
+    .append("circle")
+    .style("fill", "black")
+    .attr("stroke", "black")
+    .attr("r", 3)
+    .style("opacity", 0)
+    .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ")")
 
+  // Define focus circle (viewers)
+  var focus_text_viewers = svg.append("g")
+    .append("text")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("opacity", 0)
+    .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ")")
 
+  // Define vertical line (viewers)
+  var focus_vertLine_viewers = svg.append("g")
+    .append("line")
+    .attr("class", "vert-hover-line hover-line")
+    .attr("y1", 0)
+    .attr("y2", height_viewers)
+    .style("opacity", 0)
+    .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ")")
 
+  // Define focus circle (subFollows)
+  var focus_circle_subFollows = svg.append("g")
+    .append("circle")
+    .style("fill", "black")
+    .attr("stroke", "black")
+    .attr("r", 3)
+    .style("opacity", 0)
+    .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
 
+  // Define focus circle (subFollows)
+  var focus_text_subFollows = svg.append("g")
+    .append("text")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("opacity", 0)
+    .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
+
+  // Define vertical line (subFollows)
+  var focus_vertLine_subFollows = svg.append("g")
+    .append("line")
+    .attr("class", "vert-hover-line hover-line")
+    .attr("y1", 0)
+    .attr("y2", height_subFollows)
+    .style("opacity", 0)
+    .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
+
+  /* --- Brush + Line Clip DEFINITIONS --- */
+
+  // Define animation time
+  var idleTimeout,
+      idleDelay = 350;
+
+  /* ---------- */
 
   // Define line svg (timeLeft): where both the line and the brush take place
   var svg_line_timeLeft = svg.append('g')
@@ -631,47 +673,33 @@ function createViz(error, ...args) {
   svg_line_timeLeft.append("g")
     .attr("class", "brush")
     .call(brush_timeLeft)
-    .on('mouseover', mouseoverHover)
+    .on('mouseover', () => {
+      focus_circle_timeLeft.style("opacity", 1)
+      focus_text_timeLeft.style("opacity", 1)
+      focus_vertLine_timeLeft.style("opacity", 1)
+    })
     .on('mousemove', function (d, i) {
-      var x0 = xScale_timeLeft.invert(d3.mouse(this)[0]),
-          i = bisectHour(timeLeftJson_zip, x0, 1),
-          selectedData = timeLeftJson_zip[i]
+      var x0_timeLeft = xScale_timeLeft.invert(d3.mouse(this)[0]),
+          i_timeLeft = bisectHour(timeLeftJson_zip, x0_timeLeft, 1),
+          selectedData_timeLeft = timeLeftJson_zip[i_timeLeft]
       focus_circle_timeLeft
-        .attr("cx", xScale_timeLeft(selectedData.timeStreamed))
-        .attr("cy", yScale_timeLeft(selectedData.timeLeft))
+        .attr("cx", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
+        .attr("cy", yScale_timeLeft(selectedData_timeLeft.timeLeft))
       focus_text_timeLeft
-        .html(selectedData.timeLeft.toFixed(1))
-        .attr("x", xScale_timeLeft(selectedData.timeStreamed))
-        .attr("y", yScale_timeLeft(selectedData.timeLeft)-20)
+        .html(selectedData_timeLeft.timeLeft.toFixed(1))
+        .attr("x", xScale_timeLeft(selectedData_timeLeft.timeStreamed) + 15)
+        .attr("y", yScale_timeLeft(selectedData_timeLeft.timeLeft)-20)
       focus_vertLine_timeLeft
-        .attr("x1", xScale_timeLeft(selectedData.timeStreamed))
+        .attr("x1", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
         .attr("y1", height_timeLeft)
-        .attr("x2", xScale_timeLeft(selectedData.timeStreamed))
+        .attr("x2", xScale_timeLeft(selectedData_timeLeft.timeStreamed))
         .attr("y2", 0); 
     })
-    .on('mouseout', mouseoutHover);
-
-  function mouseoverHover(){
-    focus_circle_timeLeft.style("opacity", 1)
-    focus_text_timeLeft.style("opacity", 1)
-    focus_vertLine_timeLeft.style("opacity", 1)
-  }
-
-  function mouseoutHover(){
-    focus_circle_timeLeft.style("opacity", 0)
-    focus_text_timeLeft.style("opacity", 0)
-    focus_vertLine_timeLeft.style("opacity", 0)
-  }
-
-
-
-
-
-
-
-
-
-
+    .on('mouseout', () => {
+      focus_circle_timeLeft.style("opacity", 0)
+      focus_text_timeLeft.style("opacity", 0)
+      focus_vertLine_timeLeft.style("opacity", 0)
+    });
 
   /* ---------- */
 
@@ -706,7 +734,34 @@ function createViz(error, ...args) {
   // Add brush (viewers)
   svg_line_viewers.append("g")
     .attr("class", "brush_viewers")
-    .call(brush_viewers);
+    .call(brush_viewers)
+    .on('mouseover', () => {
+      focus_circle_viewers.style("opacity", 1)
+      focus_text_viewers.style("opacity", 1)
+      focus_vertLine_viewers.style("opacity", 1)
+    })
+    .on('mousemove', function (d, i) {
+      var x0_viewers= xScale_viewers.invert(d3.mouse(this)[0]),
+          i_viewers = bisectHour(viewers_zip, x0_viewers, 1),
+          selectedData_viewers = viewers_zip[i_viewers]
+      focus_circle_viewers
+        .attr("cx", xScale_viewers(selectedData_viewers.timeStreamed))
+        .attr("cy", yScale_viewers(selectedData_viewers.numViewers))
+      focus_text_viewers
+        .html("viewers")
+        .attr("x", xScale_viewers(selectedData_viewers.timeStreamed) + 15)
+        .attr("y", yScale_viewers(selectedData_viewers.numViewers)-20)
+      focus_vertLine_viewers
+        .attr("x1", xScale_viewers(selectedData_viewers.timeStreamed))
+        .attr("y1", height_viewers)
+        .attr("x2", xScale_viewers(selectedData_viewers.timeStreamed))
+        .attr("y2", 0); 
+    })
+    .on('mouseout', () => {
+      focus_circle_viewers.style("opacity", 0)
+      focus_text_viewers.style("opacity", 0)
+      focus_vertLine_viewers.style("opacity", 0)
+    });
 
   /* ---------- */
 
@@ -741,7 +796,34 @@ function createViz(error, ...args) {
   // Add brush (subFollows)
   svg_line_subFollows.append("g")
     .attr("class", "brush_subFollows")
-    .call(brush_subFollows);
+    .call(brush_subFollows)
+    .on('mouseover', () => {
+      focus_circle_subFollows.style("opacity", 1)
+      focus_text_subFollows.style("opacity", 1)
+      focus_vertLine_subFollows.style("opacity", 1)
+    })
+    .on('mousemove', function (d, i) {
+      var x0_subFollows = xScale_subFollows.invert(d3.mouse(this)[0]),
+          i_subFollows = bisectHour(followers_zip, x0_subFollows, 1),
+          selectedData_subFollows = followers_zip[i_subFollows]
+      focus_circle_subFollows
+        .attr("cx", xScale_subFollows(selectedData_subFollows.timeStreamed))
+        .attr("cy", yScale_subFollows(selectedData_subFollows.gainedFollowers))
+      focus_text_subFollows
+        .html("followers")
+        .attr("x", xScale_subFollows(selectedData_subFollows.timeStreamed) + 15)
+        .attr("y", yScale_subFollows(selectedData_subFollows.gainedFollowers)-20)
+      focus_vertLine_subFollows
+        .attr("x1", xScale_subFollows(selectedData_subFollows.timeStreamed))
+        .attr("y1", height_subFollows)
+        .attr("x2", xScale_subFollows(selectedData_subFollows.timeStreamed))
+        .attr("y2", 0); 
+    })
+    .on('mouseout', () => {
+      focus_circle_subFollows.style("opacity", 0)
+      focus_text_subFollows.style("opacity", 0)
+      focus_vertLine_subFollows.style("opacity", 0)
+    });
 
   /* --- Brush + Line Clip FUNCTIONS --- */
 
