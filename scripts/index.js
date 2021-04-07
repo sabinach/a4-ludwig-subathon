@@ -154,22 +154,38 @@ function createViz(error, ...args) {
   /** -------- **/
   // Create game output json based on start/end dates
 
-  var gamePlayed_count = [
-    {"game":"Origin","count": "0","parent":""}
-  ]
+  function generateGamePlayedCount(viewers_zip, start, end, type){
+    var gamePlayed_count = [
+      {"game":"Origin","count": 0,"parent":""}
+    ]
 
-  viewers_zip.forEach((viewers) => {
-    var foundIndex = gamePlayed_count.findIndex(gamePlayed => gamePlayed.game === viewers.game);
-    if (foundIndex>0){
-      gamePlayed_count[foundIndex].count += 1
-    }else{
-      gamePlayed_count.push({"game":viewers.game,"count":1,"parent":"Origin"});
-    }
-  })
+    // filter by date and sum the # of games occurred within count
+    viewers_zip.forEach((viewers) => {
+      var withinBounds;
+      if (type==="datetime"){
+        withinBounds = viewers.datetime >= start && viewers.datetime <= end;
+      }else if(type==="hour"){
+        withinBounds = viewers.timeStreamed >= start && viewers.timeStreamed <= end;
+      }
+      if (withinBounds){
+        var foundIndex = gamePlayed_count.findIndex(gamePlayed => gamePlayed.game === viewers.game);
+        if (foundIndex>=0){
+          gamePlayed_count[foundIndex].count += 1
+        }else{
+          gamePlayed_count.push({"game":viewers.game,"count":1,"parent":"Origin"});
+        }
+      }
+    })
 
-  // make sure no elements is less than 1% of total
-  gamePlayed_count = gamePlayed_count.filter(d => (d.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) > 0.5 || d.game==="Origin")
+    console.log("gamePlayed_count (before): ", gamePlayed_count)
 
+    // make sure no elements is less than 1% of total
+    gamePlayed_count = gamePlayed_count.filter(d => (d.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) > 0.5 || d.game==="Origin")
+
+    return gamePlayed_count
+  }
+
+  gamePlayed_count = generateGamePlayedCount(viewers_zip, subathonStartDate, subathonEndDate, "datetime")
   console.log("gamePlayed_count (filtered): ", gamePlayed_count)
 
   /** -------- **/
@@ -234,10 +250,10 @@ function createViz(error, ...args) {
     .data(root.leaves())
     .enter()
     .append("image")
-      .attr("x", function(d){ return d.x0+10})   // +10 to adjust position (more right)
-      .attr("y", function(d){ return d.y0+30})   // +20 to adjust position (lower)
-      .attr("width", d => (d.x1 - d.x0)/5)
-      .attr("xlink:href", gameImagesJson.GeoGuessr);
+      .attr("x", function(d){ return d.x0+5})   // +right
+      .attr("y", function(d){ return d.y0+26})  // +lower
+      .attr("width", d => 25)
+      .attr("xlink:href", d => gameImagesJson[d.data.game]);
   */
 
   /* --------------------------------------------- */
@@ -598,11 +614,32 @@ function createViz(error, ...args) {
       xScale_timeLeft.domain(xDomain_timeLeft);
       xScale_viewers.domain(xDomain_viewers);
       xScale_subFollows.domain(xDomain_subFollows);
+      // reset treemap
     } else {
+
+      // do not move this -- must be before xScale domain shift!
+      var newStart = [brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft)[0]; 
+      var newEnd = [brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft)[1];
+
+      // update domain for line graphs
       xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
       xScale_viewers.domain([brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers));
       xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
       svg_line_timeLeft.select(".brush_timeLeft").call(brush_timeLeft.move, null);
+      
+
+
+
+
+      // change treemap range TODO
+      var gamePlayed_count = generateGamePlayedCount(viewers_zip, newStart, newEnd, "hour")
+      console.log("gamePlayed_count (new): ", gamePlayed_count)
+
+
+
+
+
+
     }
     zoom_timeLeft();
     zoom_viewers();
