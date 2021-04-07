@@ -35,8 +35,8 @@ var svg = d3.select("#line-viz")
 /* ---------------------- */
 
 // set the dimensions and margins of the graph
-var margin_treemap = {top: 15, right: 5, bottom: 10, left: 0},
-  width_treemap = 410 - margin_treemap.left - margin_treemap.right,
+var margin_treemap = {top: 15, right: 8, bottom: 10, left: 5},
+  width_treemap = 425 - margin_treemap.left - margin_treemap.right,
   height_treemap = 300 - margin_treemap.top - margin_treemap.bottom;
 
 // append the svg_treemap object to the body of the page
@@ -155,7 +155,7 @@ function createViz(error, ...args) {
   // Create game output json based on start/end dates
 
   var gamePlayed_count = [
-    {"game":"Origin","count": "","parent":""}
+    {"game":"Origin","count": "0","parent":""}
   ]
 
   viewers_zip.forEach((viewers) => {
@@ -167,7 +167,10 @@ function createViz(error, ...args) {
     }
   })
 
-  console.log("gamePlayed_count: ", gamePlayed_count);
+  // make sure no elements is less than 1% of total
+  gamePlayed_count = gamePlayed_count.filter(d => (d.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) > 0.5 || d.game==="Origin")
+
+  console.log("gamePlayed_count (filtered): ", gamePlayed_count)
 
   /** -------- **/
 
@@ -187,7 +190,7 @@ function createViz(error, ...args) {
     .padding(0.1)
     (root)
 
-  // use this information to add rectangles:
+  // add rectangle
   svg_treemap
     .selectAll("rect")
     .data(root.leaves())
@@ -198,18 +201,30 @@ function createViz(error, ...args) {
       .attr('width', function (d) { return d.x1 - d.x0; })
       .attr('height', function (d) { return d.y1 - d.y0; })
       .style("stroke", "black")
-      .style("fill", "slateblue")
+      .style("fill", "#9cbdd9")
 
-  // and to add the text labels
+  // add title
   svg_treemap
     .selectAll("text")
     .data(root.leaves())
     .enter()
     .append("text")
-      .attr("x", function(d){ return d.x0+10})    // +10 to adjust position (more right)
-      .attr("y", function(d){ return d.y0+20})   // +20 to adjust position (lower)
-      .text(function(d){ return d.data.game + " \n(" + Math.floor((d.data.count/viewers_zip.length)*100) + "%)" })
-      .attr("font-size", "10px")
+      .attr("x", function(d){ return d.x0+5})    // +right
+      .attr("y", function(d){ return d.y0+13})   // +lower
+      .text(function(d){ return d.data.game })
+      .attr("font-size", "8px")
+      .attr("fill", "black")
+
+  // add percentage
+  svg_treemap
+    .selectAll("vals")
+    .data(root.leaves())
+    .enter()
+    .append("text")
+      .attr("x", function(d){ return d.x0+5})    // +right
+      .attr("y", function(d){ return d.y0+23})   // +lower
+      .text(function(d){ return (d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%" })
+      .attr("font-size", "8px")
       .attr("fill", "black")
 
   /*
@@ -674,7 +689,7 @@ function createViz(error, ...args) {
     .style("width", "400px")
 
   tooltip_info
-    .html("<b>Some cool statistics summary</b>" + "<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.") 
+    .html("<b>Some cool timeframe-specific statistics</b>" + "<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.") 
 
   /* --- Highlights Tooltip DEFINITIONS --- */
 
