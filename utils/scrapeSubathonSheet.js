@@ -17,9 +17,9 @@ const scrapeSpreadsheet = () => {
 
             let evaluated = await page.evaluate(() => {
 				
-				const timeStreamedDomId = "td.s179"; 	// hardcoded dom element id -- TODO: incorrect values scraped
-				const timeLeftDomId = "td.s180";		// hardcoded dom element id
-				const subsGainedDomId = "td.s183";		// hardcoded dom element id
+				const timeStreamedDomId = "td.s180"; 	// hardcoded dom element id -- TODO: incorrect values scraped
+				const timeLeftDomId = "td.s181";		// hardcoded dom element id
+				const subsGainedDomId = "td.s184";		// hardcoded dom element id
 
                 const timeStreamedDom = document.querySelectorAll(timeStreamedDomId);
                 const timeLeftDom = document.querySelectorAll(timeLeftDomId);

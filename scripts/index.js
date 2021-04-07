@@ -550,6 +550,13 @@ function createViz(error, ...args) {
 
   /* --- Focus / Hover DEFINITIONS --- */
 
+  // Define focus text (date)
+  var focus_text_date = svg.append("g")
+    .append("text")
+    .attr("transform", "translate(" + (-32) + ", " + (-30) + ")")
+    .style("font-weight", "bold")
+    .style("opacity", 1)
+
   // Define focus circle (timeLeft)
   var focus_circle_timeLeft = svg.append("g")
     .append("circle")
@@ -558,7 +565,7 @@ function createViz(error, ...args) {
     .attr("r", 3)
     .style("opacity", 0)
 
-  // Define focus circle (timeLeft)
+  // Define focus text (timeLeft)
   var focus_text_timeLeft = svg.append("g")
     .append("text")
     .style("opacity", 0)
@@ -580,7 +587,7 @@ function createViz(error, ...args) {
     .style("opacity", 0)
     .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ")")
 
-  // Define focus circle (viewers)
+  // Define focus text (viewers)
   var focus_text_viewers = svg.append("g")
     .append("text")
     .style("opacity", 0)
@@ -604,7 +611,7 @@ function createViz(error, ...args) {
     .style("opacity", 0)
     .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
 
-  // Define focus circle (subFollows)
+  // Define focus text (subFollows)
   var focus_text_subFollows = svg.append("g")
     .append("text")
     .style("opacity", 0)
@@ -629,6 +636,7 @@ function createViz(error, ...args) {
     focus_circle_subFollows.style("opacity", 0)
     focus_text_subFollows.style("opacity", 0)
     focus_vertLine_subFollows.style("opacity", 0)
+    focus_text_date.style("opacity", 0)
   }
 
   function mousemoveFocus(){
@@ -700,7 +708,7 @@ function createViz(error, ...args) {
         .attr("cy", yTransformed_subFollows)
         .style("opacity", 1)
       focus_text_subFollows
-        .html(selectedData_subFollows.gainedFollowers + " new followers")
+        .html(selectedData_subFollows.gainedFollowers + " follows")
         .attr("x", xTransformed_subFollows + 5)
         .attr("y", yTransformed_subFollows - 25)
         .style("opacity", 1)
@@ -714,6 +722,15 @@ function createViz(error, ...args) {
       focus_circle_subFollows.style("opacity", 0)
       focus_text_subFollows.style("opacity", 0)
       focus_vertLine_subFollows.style("opacity", 0)
+    }
+
+    // date
+    if(selectedData_timeLeft || selectedData_viewers || selectedData_subFollows){
+      focus_text_date
+        .text("") // TODO - Math.round(x0_timeLeft*2)/2
+        .style("opacity", 1)
+    }else{
+      focus_text_date.style("opacity", 0)
     }
 
   }
@@ -971,7 +988,7 @@ function createViz(error, ...args) {
   // Show tooltip (show the first highlight event)
   tooltip_highlights
     .style("opacity", 1)
-    .html("<b>Event Highlight</b><br>" + formatDatetime(highlights_zip[0].datetime) + " EST" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br>") 
+    .html("<b>" + highlights_zip[2].title + "</b><br>" + formatDatetime(highlights_zip[2].datetime) + " EST" + " (<a href='" + highlights_zip[2].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[2].type, highlights_zip[2].embed, parentDomain) + "<br>") 
 
   // Add nodes (event highlights)
   svg_line_timeLeft.selectAll(".dot-highlight")
@@ -983,7 +1000,7 @@ function createViz(error, ...args) {
     .attr("r", (d, i) => 6)
     .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
-    //.on("mouseover", mouseover_highlights) //TODO
+    .on("mouseover", mouseover_highlights) //TODO
 
   /* --- Highlights Tooltip FUNCTIONS --- */
 
@@ -1015,7 +1032,7 @@ function createViz(error, ...args) {
 
     // update tooltip
     tooltip_highlights
-      .html("<b>Event Highlight</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
+      .html("<b>" + d.title + "</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
   }
 
 };
