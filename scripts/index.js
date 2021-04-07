@@ -11,13 +11,13 @@ var svg_width = 650;
 var svg_height = 750;
 
 // set the dimensions and margins
-var margin_timeLeft = { top: 40, right: 50, bottom: 450, left: 60 };
+var margin_timeLeft = { top: 40, right: 60, bottom: 450, left: 45 };
 var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 
-var margin_viewers = { top: 360, right: 50, bottom: 250, left: 60 };
+var margin_viewers = { top: 360, right: 60, bottom: 250, left: 45 };
 var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
 
-var margin_subFollows = { top: 563, right: 50, bottom: 50, left: 60 };
+var margin_subFollows = { top: 563, right: 60, bottom: 50, left: 45 };
 var height_subFollows = svg_height - margin_subFollows.top - margin_subFollows.bottom;
 
 var margin_text = 20; //global
@@ -484,18 +484,15 @@ function createViz(error, ...args) {
   // Add x-axis label (timeLeft)
   svg.append("text")             
     .attr("transform",
-          "translate(" + (width/2) + " ," + (height_timeLeft + margin_timeLeft.top + margin_text) + ")")
+          "translate(" + width + " ," + (height_timeLeft + margin_timeLeft.top - 10) + ")")
     .style("text-anchor", "middle")
     .text("# hours streamed");
 
   // Add y-axis label (timeLeft)
   svg.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin_timeLeft.left)
-    .attr("x",0 - (height_timeLeft / 2))
-    .attr("dy", "1em")
+    .attr("transform", "translate(0, -10)")
     .style("text-anchor", "middle")
-    .text("# hours left");  
+    .text("# Hours Left");  
 
   /* ---------- */
 
@@ -514,18 +511,15 @@ function createViz(error, ...args) {
   // Add x-axis label (viewers)
   svg.append("text")             
     .attr("transform",
-          "translate(" + (width/2) + " ," + (height_viewers + margin_viewers.top + margin_text) + ")")
+          "translate(" + width + " ," + (height_viewers + margin_viewers.top + 10) + ")")
     .style("text-anchor", "middle")
     .text("# hours streamed");
 
   // Add y-axis label (viewers)
   svg.append("text")
-    .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ") rotate(-90) ")
-    .attr("y", 0 - margin_viewers.left)
-    .attr("x", 0 - (height_viewers / 2))
-    .attr("dy", "1em")
+    .attr("transform", "translate(0," + (margin_viewers.top - margin_text - 10) + ")")
     .style("text-anchor", "middle")
-    .text("# viewers");  
+    .text("# Viewers");  
 
   /* ---------- */
 
@@ -544,18 +538,15 @@ function createViz(error, ...args) {
   // Add x-axis label (subFollows)
   svg.append("text")             
     .attr("transform",
-          "translate(" + (width/2) + " ," + (height_subFollows + margin_subFollows.top + margin_text) + ")")
+          "translate(" + width + " ," + (height_subFollows + margin_subFollows.top + 10) + ")")
     .style("text-anchor", "middle")
     .text("# hours streamed");
 
   // Add y-axis label (subFollows)
   svg.append("text")
-    .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ") rotate(-90) ")
-    .attr("y", 0 - margin_subFollows.left)
-    .attr("x", 0 - (height_subFollows / 2))
-    .attr("dy", "1em")
+    .attr("transform", "translate(0," + (margin_subFollows.top - margin_text - 10) + ")")
     .style("text-anchor", "middle")
-    .text("# followers gained");  
+    .text("# New Followers");  
 
   /* --- Focus / Hover DEFINITIONS --- */
 
