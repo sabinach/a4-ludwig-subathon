@@ -11,7 +11,7 @@ var svg_width = 650;
 var svg_height = 750;
 
 // set the dimensions and margins
-var margin_timeLeft = { top: 10, right: 50, bottom: 450, left: 60 };
+var margin_timeLeft = { top: 40, right: 50, bottom: 450, left: 60 };
 var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 
 var margin_viewers = { top: 360, right: 50, bottom: 250, left: 60 };
@@ -580,6 +580,13 @@ function createViz(error, ...args) {
     .attr("r", 3)
     .style("opacity", 0)
 
+  // Define focus circle (timeLeft)
+  var focus_text_timeLeft = svg.append("g")
+    .append("text")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("opacity", 0)
+
 
 
 
@@ -620,6 +627,7 @@ function createViz(error, ...args) {
     // here
     .on('mouseover', function () {
       focus_circle_timeLeft.style("opacity", 1)
+      focus_text_timeLeft.style("opacity", 1)
     })
     .on('mousemove', function (d, i) {
       var x0 = xScale_timeLeft.invert(d3.mouse(this)[0]),
@@ -628,9 +636,14 @@ function createViz(error, ...args) {
       focus_circle_timeLeft
         .attr("cx", xScale_timeLeft(selectedData.timeStreamed))
         .attr("cy", yScale_timeLeft(selectedData.timeLeft))
+      focus_text_timeLeft
+        .html(selectedData.timeLeft.toFixed(1))
+        .attr("x", xScale_timeLeft(selectedData.timeStreamed)-10)
+        .attr("y", yScale_timeLeft(selectedData.timeLeft)-20)
     })
     .on('mouseout', function () {
       focus_circle_timeLeft.style("opacity", 0)
+      focus_text_timeLeft.style("opacity", 0)
     });
 
 
@@ -894,39 +907,6 @@ function createViz(error, ...args) {
     tooltip_highlights
       .html("<b>Event Highlight</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
   }
-
-  /** ------------------ Hover Tooltip (timeLeft) ------------------ **/
-
-  /*
-
-  var tooltip_timeLeft = d3.select('#line-viz')
-    .append('div')
-    .attr('id', 'tooltip_timeLeft');
-
-  svg_line_timeLeft.selectAll(".dot-timeLeft")
-   .data(timeLeftJson_zip)
-   .enter().append("circle")
-   .attr("class", "dot-timeLeft")
-   .attr("r", 2)
-   .attr("cx", d => xScale_timeLeft(d.timeStreamed))
-   .attr("cy", d => yScale_timeLeft(d.timeLeft))
-   .attr("opacity", 0)
-   .style("fill", "#4292c6")
-   .on('mouseover', d => {
-     tooltip_timeLeft.transition()
-       .duration(100)
-       .style('opacity', .9);
-     tooltip_timeLeft.text(d.timeLeft.toFixed(1))
-       .style('left', `${d3.event.pageX + 2}px`)
-       .style('top', `${d3.event.pageY - 18}px`);
-   })
-   .on('mouseout', () => {
-     tooltip_timeLeft.transition()
-       .duration(300)
-       .style('opacity', 0);
-   });
-
-   */
 
 };
 
