@@ -894,11 +894,20 @@ function createViz(error, ...args) {
       xScale_timeLeft.domain(xDomain_timeLeft);
       xScale_viewers.domain(xDomain_viewers);
       xScale_subFollows.domain(xDomain_subFollows);
+      // reset treemap
+      redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
     } else {
+      // do not move this -- must be before xScale domain shift!
+      var newStart = [brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers)[0]; 
+      var newEnd = [brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers)[1];
+
       xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
       xScale_viewers.domain([brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers));
       xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
       svg_line_viewers.select(".brush_viewers").call(brush_viewers.move, null);
+
+      // update treemap range
+      redrawTreemap(newStart, newEnd, "hour")
     }
     zoom_timeLeft();
     zoom_viewers();
@@ -912,11 +921,20 @@ function createViz(error, ...args) {
       xScale_timeLeft.domain(xDomain_timeLeft);
       xScale_viewers.domain(xDomain_viewers);
       xScale_subFollows.domain(xDomain_subFollows);
+      // reset treemap
+      redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
     } else {
+      // do not move this -- must be before xScale domain shift!
+      var newStart = [brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows)[0]; 
+      var newEnd = [brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows)[1];
+
       xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
       xScale_viewers.domain([brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers));
       xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
       svg_line_subFollows.select(".brush_subFollows").call(brush_subFollows.move, null);
+
+      // update treemap range
+      redrawTreemap(newStart, newEnd, "hour")
     }
     zoom_timeLeft();
     zoom_viewers();

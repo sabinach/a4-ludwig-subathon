@@ -5,12 +5,12 @@
 #### Project Description
 tbd
 
-### Project URL
+#### Project URL
 https://6859-sp21.github.io/a4-ludwig-subathon/
 
 #### Project Deliverables
-- Final Submission [Paper]()
-- MVP [Video](https://youtu.be/nUda4JRYS7U) [Slides](https://docs.google.com/presentation/d/1e-SIilkMOaA-3OfUn5qYDrHJ5L7LxpdqVNObbwEFuuA/edit?usp=sharing)
+- Final Submission [[Paper]()]
+- MVP [[Video](https://youtu.be/nUda4JRYS7U)] [[Slides](https://docs.google.com/presentation/d/1e-SIilkMOaA-3OfUn5qYDrHJ5L7LxpdqVNObbwEFuuA/edit?usp=sharing)]
 
 -----------------------------
 
