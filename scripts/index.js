@@ -182,11 +182,12 @@ function createViz(error, ...args) {
     // make sure no elements is less than 1% of total
     gamePlayed_count = gamePlayed_count.filter(d => (d.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) > 0.5 || d.game==="Origin")
 
+    console.log("gamePlayed_count (filtered): ", gamePlayed_count)
+
     return gamePlayed_count
   }
 
-  gamePlayed_count = generateGamePlayedCount(viewers_zip, subathonStartDate, subathonEndDate, "datetime")
-  console.log("gamePlayed_count (filtered): ", gamePlayed_count)
+  var gamePlayed_count = generateGamePlayedCount(viewers_zip, subathonStartDate, subathonEndDate, "datetime")
 
   /** -------- **/
 
@@ -195,66 +196,81 @@ function createViz(error, ...args) {
     .id(function(d) { return d.game; })   // Name of the entity (column name is name in csv)
     .parentId(function(d) { return d.parent; })   // Name of the parent (column name is parent in csv)
     (gamePlayed_count);
-  
-  root
-    .sum(function(d) { return +d.count })   // Compute the numeric value for each entity
-    .sort(function(a, b) { return b.height - a.height || b.value - a.value; });
 
-  // Then d3.treemap computes the position of each element of the hierarchy
-  d3.treemap()
-    .size([width_treemap, height_treemap])
-    .padding(0.1)
-    (root)
 
-  // add rectangle
-  svg_treemap
-    .selectAll("rect")
-    .data(root.leaves())
-    .enter()
-    .append("rect")
-      .attr('x', function (d) { return d.x0; })
-      .attr('y', function (d) { return d.y0; })
-      .attr('width', function (d) { return d.x1 - d.x0; })
-      .attr('height', function (d) { return d.y1 - d.y0; })
-      .style("stroke", "black")
-      .style("fill", "#9cbdd9")
+  // delete and redraw the treemap
+  function redrawTreemap(start, end, type){
 
-  // add title
-  svg_treemap
-    .selectAll("text")
-    .data(root.leaves())
-    .enter()
-    .append("text")
-      .attr("x", function(d){ return d.x0+5})    // +right
-      .attr("y", function(d){ return d.y0+13})   // +lower
-      .text(function(d){ return d.data.game })
-      .attr("font-size", "8px")
-      .attr("fill", "black")
+    // get new gamePlayed count
+    gamePlayed_count = generateGamePlayedCount(viewers_zip, start, end, type)
 
-  // add percentage
-  svg_treemap
-    .selectAll("vals")
-    .data(root.leaves())
-    .enter()
-    .append("text")
-      .attr("x", function(d){ return d.x0+5})    // +right
-      .attr("y", function(d){ return d.y0+23})   // +lower
-      .text(function(d){ return (d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%" })
-      .attr("font-size", "8px")
-      .attr("fill", "black")
+    root = d3.stratify()
+      .id(function(d) { return d.game; })   // Name of the entity (column name is name in csv)
+      .parentId(function(d) { return d.parent; })   // Name of the parent (column name is parent in csv)
+      (gamePlayed_count);
+    
+    root
+      .sum(function(d) { return +d.count })   // Compute the numeric value for each entity
+      .sort(function(a, b) { return b.height - a.height || b.value - a.value; });
 
-  /*
-  // and to add the text labels
-  svg_treemap
-    .selectAll("image")
-    .data(root.leaves())
-    .enter()
-    .append("image")
-      .attr("x", function(d){ return d.x0+5})   // +right
-      .attr("y", function(d){ return d.y0+26})  // +lower
-      .attr("width", d => 25)
-      .attr("xlink:href", d => gameImagesJson[d.data.game]);
-  */
+    // Then d3.treemap computes the position of each element of the hierarchy
+    d3.treemap()
+      .size([width_treemap, height_treemap])
+      .padding(0.1)
+      (root)
+
+    // add rectangle
+    svg_treemap
+      .selectAll("rect")
+      .data(root.leaves())
+      .enter()
+      .append("rect")
+        .attr('x', function (d) { return d.x0; })
+        .attr('y', function (d) { return d.y0; })
+        .attr('width', function (d) { return d.x1 - d.x0; })
+        .attr('height', function (d) { return d.y1 - d.y0; })
+        .style("stroke", "black")
+        .style("fill", "#9cbdd9")
+
+    // add title
+    svg_treemap
+      .selectAll("text")
+      .data(root.leaves())
+      .enter()
+      .append("text")
+        .attr("x", function(d){ return d.x0+5})    // +right
+        .attr("y", function(d){ return d.y0+13})   // +lower
+        .text(function(d){ return d.data.game })
+        .attr("font-size", "8px")
+        .attr("fill", "black")
+
+    // add percentage
+    svg_treemap
+      .selectAll("vals")
+      .data(root.leaves())
+      .enter()
+      .append("text")
+        .attr("x", function(d){ return d.x0+5})    // +right
+        .attr("y", function(d){ return d.y0+23})   // +lower
+        .text(function(d){ return (d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%" })
+        .attr("font-size", "8px")
+        .attr("fill", "black")
+
+    /*
+    // and to add the text labels
+    svg_treemap
+      .selectAll("image")
+      .data(root.leaves())
+      .enter()
+      .append("image")
+        .attr("x", function(d){ return d.x0+5})   // +right
+        .attr("y", function(d){ return d.y0+26})  // +lower
+        .attr("width", d => 25)
+        .attr("xlink:href", d => gameImagesJson[d.data.game]);
+    */
+  }
+
+  redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
 
   /* --------------------------------------------- */
   // FOLLOWERS
@@ -615,8 +631,9 @@ function createViz(error, ...args) {
       xScale_viewers.domain(xDomain_viewers);
       xScale_subFollows.domain(xDomain_subFollows);
       // reset treemap
-    } else {
-
+      redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
+    } 
+    else {
       // do not move this -- must be before xScale domain shift!
       var newStart = [brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft)[0]; 
       var newEnd = [brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft)[1];
@@ -626,20 +643,9 @@ function createViz(error, ...args) {
       xScale_viewers.domain([brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers));
       xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
       svg_line_timeLeft.select(".brush_timeLeft").call(brush_timeLeft.move, null);
-      
 
-
-
-
-      // change treemap range TODO
-      var gamePlayed_count = generateGamePlayedCount(viewers_zip, newStart, newEnd, "hour")
-      console.log("gamePlayed_count (new): ", gamePlayed_count)
-
-
-
-
-
-
+      // update treemap range
+      redrawTreemap(newStart, newEnd, "hour")
     }
     zoom_timeLeft();
     zoom_viewers();
