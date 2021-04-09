@@ -9,7 +9,7 @@ tbd
 https://6859-sp21.github.io/a4-ludwig-subathon/
 
 #### Project Deliverables
-- Final Submission [[Paper]()]
+- Final Submission [[Writeup]()]
 - MVP [[Video](https://youtu.be/nUda4JRYS7U)] [[Slides](https://docs.google.com/presentation/d/1e-SIilkMOaA-3OfUn5qYDrHJ5L7LxpdqVNObbwEFuuA/edit?usp=sharing)]
 
 -----------------------------
@@ -25,20 +25,21 @@ Current Data Extracted from Subathon Tracker (manually updated):
 - END: 563.5 hr
 
 Current Data Extracted from SullyGnome (manually updated):
-- START: March 08, 2021, 0:00  est(?)
-- END: April 07, 2021, 23:00 est(?)
+- START: March 09, 2021, 0:00  est
+- END: April 08, 2021, 23:00 est
 
-Note to self:
+Notes to self:
 - all dates converted to EST
-- subathon tracker (add # hr of time streamed to 5pm EST start)
-- sullygnome (assume already in est) -- TODO: need to confirm
+- subathon tracker (add # hr of time streamed to 5pm EST start to get datetime)
+- sullygnome (make sure to convert to EST on the bottom left dropdown of the website)
+- make sure before scraping BOTH spreadsheets that the COLUMN DIVS are correct bc it's hardcoded in the script, and constantly changing in real-time since the subathon is ongoing
 
 Dataset Credits To:
 - [baddog86, smartax1111, itzdanbarz, and ogsheeper](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#)
 - [SullyGnome](https://sullygnome.com/channel/ludwig)
 	* [viewers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelViewers/30/0/12171601/ludwig/%20/%20/0/0/%20/) 
 	* [followers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelFollowers/7/0/12171601/ludwig/%20/%20/0/0/%20/)
-- [Twitch Highlight Clips](https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#)
+- [Twitch Highlight Clips](https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#) (From Sabina watching hours of VODs + Crowdsourced from Twitch, Youtube, and Reddit)
 
 ### To Preprocess Data:
 ```
