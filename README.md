@@ -2,11 +2,11 @@
 
 ## 6.859 Spring 2021 - A4 Interactive Data Visualization
 
-#### Project Description
-Kinda a meme project :) 
-
-#### Project URL
+#### Deploy URL
 https://6859-sp21.github.io/a4-ludwig-subathon/
+
+#### Project Description
+XXX. Kind of a meme project :) More details to come when I do the actual writeup..
 
 #### Project Deliverables
 - Final Submission [[Writeup]()]
@@ -28,12 +28,6 @@ Current Data Extracted from SullyGnome (manually updated):
 - START: March 09, 2021, 0:00 EST
 - END: April 08, 2021, 23:00 EST
 
-Notes to self:
-- all dates are converted to EST
-- subathon tracker (to calculate datetime, add # hr of time streamed to 5pm EST start)
-- sullygnome (make sure to convert to EST on the bottom left dropdown of the website before downloading .json)
-- before scraping, make sure BOTH spreadsheets' COLUMN DIVS are still correct bc it's HARDCODED in the script, and constantly changing in real-time since the subathon is ongoing
-
 Dataset Credits To:
 - [baddog86, smartax1111, itzdanbarz, and ogsheeper](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#)
 - [SullyGnome](https://sullygnome.com/channel/ludwig)
@@ -47,18 +41,22 @@ cd utils/
 node scrapeSubathonSheet.js
 node scrapeHighlightsSheet.js
 ```
-
 ### To Run Locally:
 
-- Use Brackets IDE. 
+- Use Brackets IDE for test server 
 - Open ```index.html``` via 'Live Preview'
 
 ### To Deploy:
 
 - ```index.html``` should be in the root folder.
-- ```parentDomain``` in ```scripts/index.js``` MUST match the domain above (ie. ```6859-sp21.github.io``` on deploy, or ```127.0.0.1``` when testing)
+- ```parentDomain``` in ```scripts/index.js``` MUST match the domain above (ie. ```6859-sp21.github.io``` on deploy, or ```127.0.0.1``` when testing via Brackets)
 - Since the website is hosted on Github Pages, just push to the github repo to deploy updates. 
-
 
 ### Tools Used:
 - [JSON Formatter](https://jsonformatter.curiousconcept.com/)
+
+### Dev Notes to Self:
+- all dates are converted to EST
+- subathon tracker (to calculate datetime, add # hr of time streamed to 5pm EST start)
+- sullygnome (make sure to convert to EST on the bottom left dropdown of the website before downloading .json)
+- before scraping, make sure BOTH spreadsheets' COLUMN DIVS are still correct bc it's HARDCODED in the script, and constantly changing in real-time since the subathon is ongoing
