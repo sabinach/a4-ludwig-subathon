@@ -18,3 +18,10 @@ body {
     stroke-dasharray: 2,4;
 }
 
+/*
+.area_timeLeft {
+  fill: none;
+  stroke: url(#temperature-gradient);
+  stroke-width: 1.5px;
+}
+*/

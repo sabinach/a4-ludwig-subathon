@@ -780,6 +780,62 @@ function createViz(error, ...args) {
     .attr("d", drawLine_timeLeft)
     .attr("opacity", 1)
 
+
+
+
+
+  /*
+  const testData = {
+    labels: ["Clear", "Few clouds", "Scattered clouds", "Broken clouds", "Overcast", "Indefinite ceiling (vertical visibility)"],
+    colors: ["deepskyblue", "lightskyblue", "lightblue", "#aaaaaa", "#666666", "#666666"]
+  }
+  const color = d3.scaleOrdinal(
+            data.conditions === undefined ? data.map(d => d.condition) : data.conditions, 
+            data.colors === undefined ? d3.schemeCategory10 : data.colors
+          ).unknown("black")
+  const colorId = DOM.uid("color");
+
+  svg_line_timeLeft.append("linearGradient")
+      .attr("id", colorId.id)
+      .attr("gradientUnits", "userSpaceOnUse")
+      .attr("x1", 0)
+      .attr("x2", width)
+    .selectAll("stop")
+    .data(data)
+    .join("stop")
+      .attr("offset", d => x(d.date) / width)
+      .attr("stop-color", d => color(d.condition));
+  */
+
+
+
+  /*
+  // Add gradient (timeLeft)
+  svg_line_timeLeft.append("linearGradient")
+      .attr("id", "temperature-gradient")
+      .attr("gradientUnits", "userSpaceOnUse")
+      .attr("x1", 0).attr("y1", yScale_timeLeft(50))
+      .attr("x2", 0).attr("y2", yScale_timeLeft(60))
+    .selectAll("stop")
+      .data([
+        {offset: "0%", color: "black"},
+        {offset: "50%", color: "black"},
+        {offset: "50%", color: "red"},
+        {offset: "100%", color: "red"}
+      ])
+    .enter().append("stop")
+      .attr("offset", function(d) { return d.offset; })
+      .attr("stop-color", function(d) { return d.color; });
+
+  // Add area (timeLeft)
+  svg_line_timeLeft.append("path")
+    .datum(timeLeftJson_zip)
+    .attr("class", "area_timeLeft")
+    .attr("d", drawArea_timeLeft)
+    .attr("opacity", 0)
+  */
+
+
   // Add area (timeLeft)
   svg_line_timeLeft.append("path")
     .datum(timeLeftJson_zip)
@@ -789,6 +845,12 @@ function createViz(error, ...args) {
     .attr("fill", "#cce5df")
     .attr("d", drawArea_timeLeft)
     .attr("opacity", 0)
+
+
+
+
+
+
 
   // Add brush + hover (timeLeft)
   svg_line_timeLeft.append("g")
@@ -1095,7 +1157,7 @@ function createViz(error, ...args) {
     if(mode!=="byLudwigModcast"){
     }
 
-    if(mode!=="byDayNight"){
+    if(mode!=="byTime"){
     }
 
   }
@@ -1128,7 +1190,7 @@ function createViz(error, ...args) {
       
     }
 
-    else if(this.value === "byDayNight"){
+    else if(this.value === "byTime"){
       
     }
   });
