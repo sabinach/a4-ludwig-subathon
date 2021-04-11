@@ -35,8 +35,8 @@ Dataset Credits To:
 	* [viewers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelViewers/30/0/12171601/ludwig/%20/%20/0/0/%20/) 
 	* [followers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelFollowers/7/0/12171601/ludwig/%20/%20/0/0/%20/)
 	* gameImages.json (manually checked the image urls loaded in the website, and just stored the ones I needed)
-- [Twitch Highlight Clips](https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#) (Consolidated via Sabina watching hours of VODs oops + Crowdsourced from Twitch, Youtube, and Reddit)
-	* highlights.json
+- [Twitch Highlight Clips](https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#)
+	* highlights.json (consolidated from: Sabina watching hours of VODs + Crowdsourced from Twitch, Youtube, and Reddit)
 
 ### To Preprocess Data (from baddog86 + highlights):
 ```

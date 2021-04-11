@@ -154,9 +154,10 @@ function createViz(error, ...args) {
 
   console.log("viewers_zip: ", viewers_zip)
 
-  /** -------- **/
-  // Create game output json based on start/end dates
+  /* --------------------------------------------- */
+  // TREEMAP
 
+  // Create game output json based on start/end dates
   function generateGamePlayedCount(viewers_zip, start, end, type){
     var gamePlayed_count = [
       {"game":"Origin","count": 0,"parent":""}
@@ -193,6 +194,7 @@ function createViz(error, ...args) {
   var gamePlayed_count = generateGamePlayedCount(viewers_zip, subathonStartDate, subathonEndDate, "datetime")
 
   /** -------- **/
+  // treemap hierarchy
 
   // stratify the data: reformatting for d3.js
   var root = d3.stratify()
@@ -1018,6 +1020,7 @@ function createViz(error, ...args) {
     .attr("r", (d, i) => 6)
     .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
+    .style("opacity", 0) // initialize off
     .on("mouseover", mouseover_highlights) //TODO
 
   /* --- Highlights Tooltip FUNCTIONS --- */
@@ -1034,24 +1037,73 @@ function createViz(error, ...args) {
   }
 
   function mouseover_highlights(d, i){
-    //clear previous 
-    svg_line_timeLeft.selectAll(".dot-highlight").style("fill", "#fcb0b5");
-    svg_line_timeLeft.selectAll("#tooltip_highlights").remove();
-    svg_line_timeLeft.selectAll("#tooltip_path").remove();
+    // only if ON
+    if (svg_line_timeLeft.selectAll(".dot-highlight").style("opacity") === "1"){
+      //clear previous 
+      svg_line_timeLeft.selectAll(".dot-highlight").style("fill", "#fcb0b5");
+      svg_line_timeLeft.selectAll("#tooltip_highlights").remove();
+      svg_line_timeLeft.selectAll("#tooltip_path").remove();
 
-    // add color and text to current
-    d3.select(this).transition().duration(100).style("fill", "#d30715");
-    svg_line_timeLeft.selectAll("#tooltip_highlights").data([d]).enter()
-      .append("text")
-      .attr("id", "tooltip_highlights")
-      .text(d.timeLeft.toFixed(1) + " hrs")
-      .attr("x", d => xScale_timeLeft(d.timeStreamed))
-      .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
+      // add color and text to current
+      d3.select(this).transition().duration(100).style("fill", "#d30715");
+      svg_line_timeLeft.selectAll("#tooltip_highlights").data([d]).enter()
+        .append("text")
+        .attr("id", "tooltip_highlights")
+        .text(d.timeLeft.toFixed(1) + " hrs")
+        .attr("x", d => xScale_timeLeft(d.timeStreamed))
+        .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
 
-    // update tooltip
-    tooltip_highlights
-      .html("<b>" + d.title + "</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
+      // update tooltip
+      tooltip_highlights
+        .html("<b>" + d.title + "</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
+    }
   }
+
+  /* --------------------------------------------- */
+  // RADIO TOGGLE
+
+  function clearModeExcept(mode){
+    if(mode!=="byHighlights"){
+      svg_line_timeLeft.selectAll(".dot-highlight")
+        .style("opacity", 0)
+      svg_line_timeLeft.selectAll("#tooltip_highlights").remove();
+      svg_line_timeLeft.selectAll("#tooltip_path").remove();
+    }
+
+    if(mode!=="byActivity"){
+    }
+
+    if(mode!=="byLudwigModcast"){
+    }
+
+    if(mode!=="byDayNight"){
+    }
+
+  }
+
+  d3.selectAll(("input[name='mode']")).on("change", function(){
+    if(this.value === "byHighlights"){
+      svg_line_timeLeft.selectAll(".dot-highlight")
+        .style("opacity", 1)
+    }
+
+    else if(this.value === "byActivity"){
+
+    }
+
+    else if(this.value === "byLudwigModcast"){
+      
+    }
+
+    else if(this.value === "byDayNight"){
+      
+    }
+    clearModeExcept(this.value);
+  });
+
+  /* --------------------------------------------- */
+  // RESET BUTTON
+
 
 };
 
