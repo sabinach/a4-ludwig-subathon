@@ -18,7 +18,7 @@ const scrapeSpreadsheet = () => {
             let evaluated = await page.evaluate(() => {
 				
 				const headers = ['datetime', 'type', 'title', 'url', 'embed', 'description'];
-				const types = ['twitch', 'youtube'];
+				const types = ['twitch clip', 'youtube', 'twitch'];
 
                 const datetimeDomId = "td.s0";
 				const typeDomId = "td.s0"; 			// hardcoded dom element id

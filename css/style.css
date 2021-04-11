@@ -1,19 +1,19 @@
 body {
-  font: 12px sans-serif;
-  position: relative;
+    font: 12px sans-serif;
+    position: relative;
 }
 
 .row {
-	display: flex;
+    display: flex;
 }
 
 .column {
-	flex: 50%;
-	padding: 10px;
+    flex: 50%;
+    padding: 10px;
 }
 
 .hover-line {
-  stroke: #6F257F;
-  stroke-width: 2px;
-  stroke-dasharray: 2,4;
+    stroke: #6F257F;
+    stroke-width: 2px;
+    stroke-dasharray: 2,4;
 }

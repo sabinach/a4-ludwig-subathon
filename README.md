@@ -1,16 +1,16 @@
 # Highlights from Ludwig's X-Day Subathon
 
-## 6.859 Spring 2021 - A4 Interactive Data Visualization
-
-#### Deploy URL
-https://6859-sp21.github.io/a4-ludwig-subathon/
+## MIT 6.859 Spring 2021
 
 #### Project Description
-XXX. Kind of a meme project :) More details to come when I do the actual writeup..
+Kind of a meme project :) More details to come when I do the actual writeup..
 
 #### Project Deliverables
 - Final Submission [[Writeup]()]
 - MVP [[Video](https://youtu.be/nUda4JRYS7U)] [[Slides](https://docs.google.com/presentation/d/1e-SIilkMOaA-3OfUn5qYDrHJ5L7LxpdqVNObbwEFuuA/edit?usp=sharing)]
+
+#### Deploy URL
+https://6859-sp21.github.io/a4-ludwig-subathon/
 
 -----------------------------
 
@@ -30,12 +30,15 @@ Current Data Extracted from SullyGnome (manually updated):
 
 Dataset Credits To:
 - [baddog86, smartax1111, itzdanbarz, and ogsheeper](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#)
+	* timeLeft.json
 - [SullyGnome](https://sullygnome.com/channel/ludwig)
 	* [viewers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelViewers/30/0/12171601/ludwig/%20/%20/0/0/%20/) 
 	* [followers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelFollowers/7/0/12171601/ludwig/%20/%20/0/0/%20/)
+	* gameImages.json (manually checked the image urls loaded in the website, and just stored the ones I needed)
 - [Twitch Highlight Clips](https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#) (Consolidated via Sabina watching hours of VODs oops + Crowdsourced from Twitch, Youtube, and Reddit)
+	* highlights.json
 
-### To Preprocess Data:
+### To Preprocess Data (from baddog86 + highlights):
 ```
 cd utils/
 node scrapeSubathonSheet.js
@@ -55,7 +58,7 @@ node scrapeHighlightsSheet.js
 ### Tools Used:
 - [JSON Formatter](https://jsonformatter.curiousconcept.com/)
 
-### Dev Notes to Self:
+### Notes to Self:
 - all dates are converted to EST
 - subathon tracker (to calculate datetime, add # hr of time streamed to 5pm EST start)
 - sullygnome (make sure to convert to EST on the bottom left dropdown of the website before downloading .json)
