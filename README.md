@@ -1,10 +1,10 @@
-# Highlights from Ludwig's X-Day Subathon
+# Highlights from Ludwig's 30-Day Subathon
 
 ## MIT 6.859 Spring 2021
 
 #### Project Description
-Kind of a meme project :) More details to come when I do the actual writeup..    
-At the rate the subathon is going, I will finish/submit this website the day that Ludwig hits the 31-day cap!!!
+- Kind of a meme project :) More details to come when I do the actual writeup..    
+- At the rate the subathon is going, I will finish/submit this website the exact day that Ludwig hits the 31-day cap!!!
 
 #### Project Deliverables
 - Final Submission [[Writeup]()]
@@ -18,8 +18,8 @@ https://6859-sp21.github.io/a4-ludwig-subathon/
 ### Overview
 
 Subathon Dates:
-- START: March 14, 2021 (2:00pm PST = 5:00pm EST) 
-- END: XXX
+- START: March 14, 2021 @ 2:00pm PST (5:00pm EST) ([First Day VOD](https://youtu.be/2dwZZAGx5Gc))
+- END: April 13, 2021 @ 8:59pm PST (11:59am EST) ([Last Day VOD]())
 
 Current Data Extracted from Subathon Tracker (manually updated):
 - START: 0 hr
@@ -37,6 +37,8 @@ Dataset Credits To:
 	* [followers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelFollowers/7/0/12171601/ludwig/%20/%20/0/0/%20/)
 	* gameImages.json 
 		- I just manually checked the image urls loaded in the website and stored the ones I needed)
+- [Twitch Tracker](https://twitchtracker.com/ludwig/subscribers)
+	* subscribers.json (per day)
 - [Twitch Highlight Clips](https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#)
 	* highlights.json 
 		- Consolidated from: Sabina watching hours of VODs + Crowdsourced from Twitch, Youtube, and Reddit
