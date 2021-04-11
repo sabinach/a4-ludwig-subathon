@@ -1,5 +1,3 @@
-import { Course } from './utils.js';
-
 // video embed settings
 var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
                                // test: 127.0.0.1
@@ -780,15 +778,24 @@ function createViz(error, ...args) {
     .attr("stroke-width", 1.5)
     .attr("fill", "none")
     .attr("d", drawLine_timeLeft)
-    //.attr("fill", "#cce5df")
-    //.attr("d", drawArea_timeLeft)
+    .attr("opacity", 1)
+
+  // Add area (timeLeft)
+  svg_line_timeLeft.append("path")
+    .datum(timeLeftJson_zip)
+    .attr("class", "area_timeLeft")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 1.5)
+    .attr("fill", "#cce5df")
+    .attr("d", drawArea_timeLeft)
+    .attr("opacity", 0)
 
   // Add brush + hover (timeLeft)
   svg_line_timeLeft.append("g")
     .attr("class", "brush")
     .call(brush_timeLeft)
     .on('mousemove', mousemoveFocus)
-    .on('mouseout', mouseoutFocus);
+    .on('mouseout', mouseoutFocus)
 
 
   /* ---------- */
@@ -1053,7 +1060,6 @@ function createViz(error, ...args) {
       //clear previous 
       svg_line_timeLeft.selectAll(".dot-highlight").style("fill", "#fcb0b5");
       svg_line_timeLeft.selectAll("#tooltip_highlights").remove();
-      svg_line_timeLeft.selectAll("#tooltip_path").remove();
 
       // add color and text to current
       d3.select(this).transition().duration(100).style("fill", "#d30715");
@@ -1075,12 +1081,11 @@ function createViz(error, ...args) {
 
   function clearModeExcept(mode){
     // remove the following modes
-
     if(mode!=="byHighlights"){
       svg_line_timeLeft.selectAll(".dot-highlight")
         .style("opacity", 0)
-      svg_line_timeLeft.selectAll("#tooltip_highlights").remove();
-      svg_line_timeLeft.selectAll("#tooltip_path").remove();
+      svg_line_timeLeft.selectAll("#tooltip_highlights")
+        .style("opacity", 0)
     }
 
     if(mode!=="byActivity"){
@@ -1099,39 +1104,23 @@ function createViz(error, ...args) {
 
     if(this.value === "byHighlights"){
       // clear previous graphs
-      svg_line_timeLeft.selectAll(".line_timeLeft").remove();
-      svg_line_timeLeft.selectAll(".area_timeLeft").remove();
-      // redraw line
-      svg_line_timeLeft.append("path")
-        .datum(timeLeftJson_zip)
-        .attr("class", "area_timeLeft")
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", 1.5)
-        .attr("fill", "none")
-        .attr("d", drawLine_timeLeft)
-        //.attr("fill", "#cce5df")
-        //.attr("d", drawArea_timeLeft)
+      svg_line_timeLeft.selectAll(".line_timeLeft")
+        .style("opacity", 1)
+      svg_line_timeLeft.selectAll(".area_timeLeft")
+        .style("opacity", 0)
 
       svg_line_timeLeft.selectAll(".dot-highlight")
+        .style("opacity", 1)
+      svg_line_timeLeft.selectAll(".tooltip_highlights")
         .style("opacity", 1)
     }
 
     else if(this.value === "byActivity"){
       // clear previous graphs
-      svg_line_timeLeft.selectAll(".line_timeLeft").remove();
-      svg_line_timeLeft.selectAll(".area_timeLeft").remove();
-
-      svg_line_timeLeft.append("path")
-        .datum(timeLeftJson_zip)
-        .attr("class", "area_timeLeft")
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", 1.5)
-        //.attr("fill", "none")
-        //.attr("d", drawLine_timeLeft)
-        .attr("fill", "#cce5df")
-        .attr("d", drawArea_timeLeft)
-
-      Course();
+      svg_line_timeLeft.selectAll(".line_timeLeft")
+        .style("opacity", 0)
+      svg_line_timeLeft.selectAll(".area_timeLeft")
+        .style("opacity", 1)
     }
 
     else if(this.value === "byLudwigModcast"){
