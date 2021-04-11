@@ -966,6 +966,7 @@ function createViz(error, ...args) {
     svg.select(".axis--x--timeLeft").transition(t).call(xAxis_timeLeft);
     svg.select(".axis--y--timeLeft").transition(t).call(yAxis_timeLeft);
     svg_line_timeLeft.selectAll(".line_timeLeft").transition(t).attr("d", drawLine_timeLeft);
+    svg_line_timeLeft.selectAll(".area_timeLeft").transition(t).attr("d", drawLine_timeLeft);
     svg_line_timeLeft.selectAll("circle").transition(t)
       .attr("cx", d => xScale_timeLeft(d.timeStreamed))
       .attr("cy", d => yScale_timeLeft(d.timeLeft));
