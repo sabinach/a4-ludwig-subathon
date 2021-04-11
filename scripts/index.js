@@ -1104,6 +1104,22 @@ function createViz(error, ...args) {
   /* --------------------------------------------- */
   // RESET BUTTON
 
+  var resetButton = d3.select("#reset-button")
+  resetButton
+    .on("click", () => resetZoom());
+
+  function resetZoom(){
+    // reset domains
+    xScale_timeLeft.domain(xDomain_timeLeft);
+    xScale_viewers.domain(xDomain_viewers);
+    xScale_subFollows.domain(xDomain_subFollows);
+    // reset line graphs
+    zoom_timeLeft();
+    zoom_viewers();
+    zoom_subFollows();
+    // reset treemap
+    redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
+  }
 
 };
 
