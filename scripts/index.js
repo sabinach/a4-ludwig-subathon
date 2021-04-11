@@ -1,3 +1,5 @@
+import { Course } from './utils.js';
+
 // video embed settings
 var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
                                // test: 127.0.0.1
@@ -139,7 +141,7 @@ function createViz(error, ...args) {
         game: null,
         numViewers: null
       })
-      for (j = 0; j < gamePlayed_viewers.length; j++) {
+      for (var j = 0; j < gamePlayed_viewers.length; j++) {
         if(gamePlayed_viewers[j].data[i]!==null){
           viewers_zip[viewers_zip.length-1].game = gamePlayed_viewers[j].label;
           viewers_zip[viewers_zip.length-1].numViewers = gamePlayed_viewers[j].data[i];
@@ -458,6 +460,13 @@ function createViz(error, ...args) {
     .x(d => xScale_timeLeft(d.timeStreamed))
     .y(d => yScale_timeLeft(d.timeLeft))
 
+  // Define area (timeLeft)
+  var drawArea_timeLeft = d3.area()
+    .defined(d => !isNaN(d.timeLeft))
+    .x(d => xScale_timeLeft(d.timeStreamed))
+    .y0(yScale_timeLeft(0))
+    .y1(d => yScale_timeLeft(d.timeLeft))
+
   // Define line (viewers)
   var drawLine_viewers = d3.line()
     .defined(d => !isNaN(d.numViewers))
@@ -767,10 +776,12 @@ function createViz(error, ...args) {
   svg_line_timeLeft.append("path")
     .datum(timeLeftJson_zip)
     .attr("class", "line_timeLeft")
-    .attr("fill", "none")
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
+    .attr("fill", "none")
     .attr("d", drawLine_timeLeft)
+    //.attr("fill", "#cce5df")
+    //.attr("d", drawArea_timeLeft)
 
   // Add brush + hover (timeLeft)
   svg_line_timeLeft.append("g")
@@ -1020,7 +1031,7 @@ function createViz(error, ...args) {
     .attr("r", (d, i) => 6)
     .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
-    .style("opacity", 0) // initialize off
+    .style("opacity", 1) // initialize ON
     .on("mouseover", mouseover_highlights) //TODO
 
   /* --- Highlights Tooltip FUNCTIONS --- */
@@ -1063,6 +1074,8 @@ function createViz(error, ...args) {
   // RADIO TOGGLE
 
   function clearModeExcept(mode){
+    // remove the following modes
+
     if(mode!=="byHighlights"){
       svg_line_timeLeft.selectAll(".dot-highlight")
         .style("opacity", 0)
@@ -1082,13 +1095,43 @@ function createViz(error, ...args) {
   }
 
   d3.selectAll(("input[name='mode']")).on("change", function(){
+    clearModeExcept(this.value);
+
     if(this.value === "byHighlights"){
+      // clear previous graphs
+      svg_line_timeLeft.selectAll(".line_timeLeft").remove();
+      svg_line_timeLeft.selectAll(".area_timeLeft").remove();
+      // redraw line
+      svg_line_timeLeft.append("path")
+        .datum(timeLeftJson_zip)
+        .attr("class", "area_timeLeft")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+        .attr("fill", "none")
+        .attr("d", drawLine_timeLeft)
+        //.attr("fill", "#cce5df")
+        //.attr("d", drawArea_timeLeft)
+
       svg_line_timeLeft.selectAll(".dot-highlight")
         .style("opacity", 1)
     }
 
     else if(this.value === "byActivity"){
+      // clear previous graphs
+      svg_line_timeLeft.selectAll(".line_timeLeft").remove();
+      svg_line_timeLeft.selectAll(".area_timeLeft").remove();
 
+      svg_line_timeLeft.append("path")
+        .datum(timeLeftJson_zip)
+        .attr("class", "area_timeLeft")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+        //.attr("fill", "none")
+        //.attr("d", drawLine_timeLeft)
+        .attr("fill", "#cce5df")
+        .attr("d", drawArea_timeLeft)
+
+      Course();
     }
 
     else if(this.value === "byLudwigModcast"){
@@ -1098,7 +1141,6 @@ function createViz(error, ...args) {
     else if(this.value === "byDayNight"){
       
     }
-    clearModeExcept(this.value);
   });
 
   /* --------------------------------------------- */

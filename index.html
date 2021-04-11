@@ -16,11 +16,11 @@
 			<!-- Left Side -->
 			<div class="column"> <!-- style="background-color: #A9A9A9" -->
 				<form style="display:inline-block;"> <!-- style="text-align: right; padding-right: 50px" -->
-					<label><input type="radio" name="mode" value="byHighlights"> By Highlights</label>
+					<label><input type="radio" name="mode" value="byHighlights" checked> By Highlights</label>
 					<label><input type="radio" name="mode" value="byActivity"> By Activity</label>
 					<label><input type="radio" name="mode" value="byLudwigModcast"> By Ludwig/Modcast</label>
 					<label><input type="radio" name="mode" value="byDayNight"> By Day/Night</label>
-					<label><input type="radio" name="mode" value="byNone" checked> None</label>
+					<label><input type="radio" name="mode" value="byNone"> None</label>
 				</form>
 				<button id="reset-button" style="display:inline-block;float:right;margin-right:50px">Reset Graphs</button>
 				<div id="line-viz" style="padding-top: 15px"></div>
@@ -50,6 +50,6 @@
 		</p>
 
 		<!-- Scripts -->
-		<script type="text/javascript" src="scripts/index.js"></script>
+		<script type="module"  src="scripts/index.js"></script>
 	</body>
 </html>

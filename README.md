@@ -3,7 +3,8 @@
 ## MIT 6.859 Spring 2021
 
 #### Project Description
-Kind of a meme project :) More details to come when I do the actual writeup..
+Kind of a meme project :) More details to come when I do the actual writeup..    
+At the rate the subathon is going, I will finish/submit this website the day that Ludwig hits the 31-day cap!!!
 
 #### Project Deliverables
 - Final Submission [[Writeup]()]
@@ -34,9 +35,11 @@ Dataset Credits To:
 - [SullyGnome](https://sullygnome.com/channel/ludwig)
 	* [viewers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelViewers/30/0/12171601/ludwig/%20/%20/0/0/%20/) 
 	* [followers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelFollowers/7/0/12171601/ludwig/%20/%20/0/0/%20/)
-	* gameImages.json (manually checked the image urls loaded in the website, and just stored the ones I needed)
+	* gameImages.json 
+		- I just manually checked the image urls loaded in the website and stored the ones I needed)
 - [Twitch Highlight Clips](https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#)
-	* highlights.json (consolidated from: Sabina watching hours of VODs + Crowdsourced from Twitch, Youtube, and Reddit)
+	* highlights.json 
+		- Consolidated from: Sabina watching hours of VODs + Crowdsourced from Twitch, Youtube, and Reddit
 
 ### To Preprocess Data (from baddog86 + highlights):
 ```
