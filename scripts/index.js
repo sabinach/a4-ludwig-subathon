@@ -499,7 +499,7 @@ function createViz(error, ...args) {
 
   // Add y-axis label (timeLeft)
   svg.append("text")
-    .attr("transform", "translate(0, -10)")
+    .attr("transform", "translate(15, 20) rotate(-90)")
     .style("text-anchor", "middle")
     .text("# Hours Left");  
 
@@ -526,7 +526,7 @@ function createViz(error, ...args) {
 
   // Add y-axis label (viewers)
   svg.append("text")
-    .attr("transform", "translate(0," + (margin_viewers.top - margin_text - 10) + ")")
+    .attr("transform", "translate(15," + (margin_viewers.top - margin_text + 15) + ") rotate(-90)")
     .style("text-anchor", "middle")
     .text("# Viewers");  
 
@@ -553,7 +553,7 @@ function createViz(error, ...args) {
 
   // Add y-axis label (subFollows)
   svg.append("text")
-    .attr("transform", "translate(0," + (margin_subFollows.top - margin_text - 10) + ")")
+    .attr("transform", "translate(15," + (margin_subFollows.top - margin_text + 35) + ") rotate(-90)")
     .style("text-anchor", "middle")
     .text("# New Followers");  
 
