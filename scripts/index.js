@@ -802,7 +802,7 @@ function createViz(error, ...args) {
   // Activity Coloring
 
   var activityList_unique = []
-  activityList_unique = gamePlayed_viewers.map((d) => d.label.replace(/\s+/g, ''))
+  activityList_unique = gamePlayed_viewers.map((d) => d.label.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''))
 
   var activityList_keys = []
   var activityList_data = []
@@ -825,10 +825,10 @@ function createViz(error, ...args) {
           gainedFollowers: followers.gainedFollowers
         })
       if (d.game !== prevActivity){
-        activityList_keys.push(d.game.replace(/\s+/g, '') + " " + d.timeStreamed) // ie. JustChatting-1
+        activityList_keys.push(d.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '') + " " + d.timeStreamed) // ie. JustChatting-1
         activityList_data.push({
           data: prevActivityList,
-          game: d.game.replace(/\s+/g, ''),
+          game: d.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''),
           timeStreamed: d.timeStreamed
         })
         // reset items
@@ -853,24 +853,65 @@ function createViz(error, ...args) {
   // color palette
   var color = d3.scaleOrdinal()
     .domain(activityList_unique)
-    .range(d3.schemeSet2);
+    .range(d3.schemeSet2); //https://github.com/d3/d3-scale-chromatic
 
   activityList_data.forEach(activity => {
     // Add area (timeLeft)
     svg_line_timeLeft.append("path")
       .datum(activity.data)
-      .attr("class", d => "area_timeLeft " + activity.game.replace(/\s+/g, '') + " " + activity.timeStreamed)
+      .attr("class", d => "area_timeLeft " + activity.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '') + " " + activity.timeStreamed)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
-      .attr("fill", color(activity.game.replace(/\s+/g, '')))
+      .attr("fill", color(activity.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')))
       .attr("d", drawArea_timeLeft)
       .attr("opacity", 0)
   })
 
 
 
+  /* ------------------------------------- */
+  // Activity Legend
 
+  // What to do when one group is hovered
+  var highlightGame_timeLeft = function(d){
+    console.log(d)
+    // reduce opacity of all groups
+    d3.selectAll(".area_timeLeft").style("opacity", 0.1)
+    // expect the one that is hovered
+    d3.selectAll("." + d).style("opacity", 1)
+  }
 
+  // And when it is not hovered anymore
+  var noHighlightGame_timeLeft = function(d){
+    d3.selectAll(".area_timeLeft").style("opacity", 1)
+  }
+
+  var legendDotSize = 20
+  svg.selectAll("activity_legend_colors")
+    .data(activityList_unique)
+    .enter()
+    .append("rect")
+      .attr("x", 400)
+      .attr("y", function(d,i){ return 10 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("width", legendDotSize)
+      .attr("height", legendDotSize)
+      .style("fill", function(d){ return color(d)})
+      .on("mouseover", highlightGame_timeLeft)
+      .on("mouseleave", noHighlightGame_timeLeft)
+
+  // Add one dot in the legend for each name.
+  svg.selectAll("activity_legend_text")
+    .data(activityList_unique)
+    .enter()
+    .append("text")
+      .attr("x", 400 + legendDotSize*1.2)
+      .attr("y", function(d,i){ return 10 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+      .style("fill", function(d){ return color(d)})
+      .text(function(d){ return d})
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle")
+      .on("mouseover", highlightGame_timeLeft)
+      .on("mouseleave", noHighlightGame_timeLeft)
 
 
 
