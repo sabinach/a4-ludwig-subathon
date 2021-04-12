@@ -795,19 +795,7 @@ function createViz(error, ...args) {
   for (var i =0; i < viewers_zip.length; i++){
     const d = viewers_zip[i]
     if(d.game!==null || d.numViewers!==null){
-      if (d.game !== prevActivity){
-        activityList_keys.push(d.game.replace(/\s+/g, '') + " " + d.timeStreamed) // ie. JustChatting-1
-        activityList_data.push({
-          data: prevActivityList,
-          game: d.game.replace(/\s+/g, ''),
-          timeStreamed: d.timeStreamed
-        })
-        // reset items
-        prevActivity = d.game
-        prevActivityList = []
-      }
-      else{
-        const timeLeft = timeLeftJson_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
+      const timeLeft = timeLeftJson_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
         const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
         prevActivityList.push({
           timeStreamed: d.timeStreamed,
@@ -818,6 +806,24 @@ function createViz(error, ...args) {
           numFollowers: followers.numFollowers,
           gainedFollowers: followers.gainedFollowers
         })
+      if (d.game !== prevActivity){
+        activityList_keys.push(d.game.replace(/\s+/g, '') + " " + d.timeStreamed) // ie. JustChatting-1
+        activityList_data.push({
+          data: prevActivityList,
+          game: d.game.replace(/\s+/g, ''),
+          timeStreamed: d.timeStreamed
+        })
+        // reset items
+        prevActivity = d.game
+        prevActivityList = [{
+          timeStreamed: d.timeStreamed,
+          datetime: d.datetime,
+          game: d.game,
+          timeLeft: timeLeft ? timeLeft.timeLeft : null,
+          numViewers: d.numViewers,
+          numFollowers: followers.numFollowers,
+          gainedFollowers: followers.gainedFollowers
+        }]
       }
     }
   }
