@@ -951,12 +951,8 @@ function createViz(error, ...args) {
     var brushBounds = d3.event.selection;
     if (!brushBounds) {
       if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
-      xScale_timeLeft.domain(xDomain_timeLeft);
-      yScale_timeLeft.domain(yDomain_timeLeft);
-      xScale_viewers.domain(xDomain_viewers);
-      yScale_viewers.domain(yDomain_viewers);
-      xScale_subFollows.domain(xDomain_subFollows);
-      yScale_subFollows.domain(yDomain_subFollows);
+      // scale axes
+      scaleDomain("original")
       // reset treemap
       redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
     } 
@@ -965,6 +961,84 @@ function createViz(error, ...args) {
       var newStart = [brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft)[0]; 
       var newEnd = [brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft)[1];
 
+      // scale axes
+      scaleDomain("transformed", brushBounds)
+      
+      // clear brush grey area
+      svg_line_timeLeft.select(".brush_timeLeft").call(brush_timeLeft.move, null);
+
+      // update treemap range
+      redrawTreemap(newStart, newEnd, "hour")
+    }
+    zoom_timeLeft();
+    zoom_viewers();
+    zoom_subFollows();
+  }
+
+  function brushended_viewers() {
+    var brushBounds = d3.event.selection;
+    if (!brushBounds) {
+      if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+      // scale axes
+      scaleDomain("original")
+      // reset treemap
+      redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
+    } else {
+      // do not move this -- must be before xScale domain shift!
+      var newStart = [brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers)[0]; 
+      var newEnd = [brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers)[1];
+
+      // scale axes
+      scaleDomain("transformed", brushBounds)
+      
+      // clear brush grey area
+      svg_line_viewers.select(".brush_viewers").call(brush_viewers.move, null);
+
+      // update treemap range
+      redrawTreemap(newStart, newEnd, "hour")
+    }
+    zoom_timeLeft();
+    zoom_viewers();
+    zoom_subFollows();
+  }
+
+  function brushended_subFollows() {
+    var brushBounds = d3.event.selection;
+    if (!brushBounds) {
+      if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+      // scale axes
+      scaleDomain("original")
+      // reset treemap
+      redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
+    } else {
+      // do not move this -- must be before xScale domain shift!
+      var newStart = [brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows)[0]; 
+      var newEnd = [brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows)[1];
+
+      // scale axes
+      scaleDomain("transformed", brushBounds)
+      
+      // clear brush grey area
+      svg_line_subFollows.select(".brush_subFollows").call(brush_subFollows.move, null);
+
+      // update treemap range
+      redrawTreemap(newStart, newEnd, "hour")
+    }
+    zoom_timeLeft();
+    zoom_viewers();
+    zoom_subFollows();
+  }
+
+  function scaleDomain(type, brushBounds=null){
+    if(type==="original"){
+      xScale_timeLeft.domain(xDomain_timeLeft);
+      yScale_timeLeft.domain(yDomain_timeLeft);
+      xScale_viewers.domain(xDomain_viewers);
+      yScale_viewers.domain(yDomain_viewers);
+      xScale_subFollows.domain(xDomain_subFollows);
+      yScale_subFollows.domain(yDomain_subFollows);
+    }
+    else if(type==="transformed"){
       // timeLeft
       var i0_timeLeft = bisectHour(timeLeftJson_zip, xScale_timeLeft.invert(brushBounds[0]), 1),
           i1_timeLeft = bisectHour(timeLeftJson_zip, xScale_timeLeft.invert(brushBounds[1]), 1),
@@ -985,68 +1059,7 @@ function createViz(error, ...args) {
       yScale_viewers.domain([0, yMax_viewers]);
       xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
       yScale_subFollows.domain([0, yMax_subfollows]);
-      svg_line_timeLeft.select(".brush_timeLeft").call(brush_timeLeft.move, null);
-
-      // update treemap range
-      redrawTreemap(newStart, newEnd, "hour")
     }
-    zoom_timeLeft();
-    zoom_viewers();
-    zoom_subFollows();
-  }
-
-  function brushended_viewers() {
-    var brushBounds = d3.event.selection;
-    if (!brushBounds) {
-      if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
-      xScale_timeLeft.domain(xDomain_timeLeft);
-      xScale_viewers.domain(xDomain_viewers);
-      xScale_subFollows.domain(xDomain_subFollows);
-      // reset treemap
-      redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
-    } else {
-      // do not move this -- must be before xScale domain shift!
-      var newStart = [brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers)[0]; 
-      var newEnd = [brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers)[1];
-
-      xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
-      xScale_viewers.domain([brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers));
-      xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
-      svg_line_viewers.select(".brush_viewers").call(brush_viewers.move, null);
-
-      // update treemap range
-      redrawTreemap(newStart, newEnd, "hour")
-    }
-    zoom_timeLeft();
-    zoom_viewers();
-    zoom_subFollows();
-  }
-
-  function brushended_subFollows() {
-    var brushBounds = d3.event.selection;
-    if (!brushBounds) {
-      if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
-      xScale_timeLeft.domain(xDomain_timeLeft);
-      xScale_viewers.domain(xDomain_viewers);
-      xScale_subFollows.domain(xDomain_subFollows);
-      // reset treemap
-      redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
-    } else {
-      // do not move this -- must be before xScale domain shift!
-      var newStart = [brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows)[0]; 
-      var newEnd = [brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows)[1];
-
-      xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
-      xScale_viewers.domain([brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers));
-      xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
-      svg_line_subFollows.select(".brush_subFollows").call(brush_subFollows.move, null);
-
-      // update treemap range
-      redrawTreemap(newStart, newEnd, "hour")
-    }
-    zoom_timeLeft();
-    zoom_viewers();
-    zoom_subFollows();
   }
 
   function zoom_timeLeft() {
@@ -1230,9 +1243,7 @@ function createViz(error, ...args) {
 
   function resetZoom(){
     // reset domains
-    xScale_timeLeft.domain(xDomain_timeLeft);
-    xScale_viewers.domain(xDomain_viewers);
-    xScale_subFollows.domain(xDomain_subFollows);
+    scaleDomain("original")
     // reset line graphs
     zoom_timeLeft();
     zoom_viewers();
