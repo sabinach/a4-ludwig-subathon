@@ -799,7 +799,7 @@ function createViz(error, ...args) {
 
 
   /* ------------------------------------- */
-  // Activity Coloring
+  // Activity Coloring (timeLeft)
 
   var activityList_unique = []
   activityList_unique = gamePlayed_viewers.map((d) => d.label.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''))
@@ -870,48 +870,55 @@ function createViz(error, ...args) {
 
 
   /* ------------------------------------- */
-  // Activity Legend
+  // Activity Legend (timeLeft)
 
   // What to do when one group is hovered
-  var highlightGame_timeLeft = function(d){
-    console.log(d)
-    // reduce opacity of all groups
-    d3.selectAll(".area_timeLeft").style("opacity", 0.1)
-    // expect the one that is hovered
-    d3.selectAll("." + d).style("opacity", 1)
+  var mouseover_highlightActivity = function(d){
+    if (svg.selectAll(".activity_legend_colors").style("opacity") === "1"){
+      // reduce opacity of all groups
+      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 0.1)
+      // expect the one that is hovered
+      svg_line_timeLeft.selectAll("." + d).style("opacity", 1)
+    }
   }
 
   // And when it is not hovered anymore
-  var noHighlightGame_timeLeft = function(d){
-    d3.selectAll(".area_timeLeft").style("opacity", 1)
+  var mouseleave_highlightActivity = function(d){
+    if (svg.selectAll(".activity_legend_colors").style("opacity") === "1"){
+      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 1)
+    }
   }
 
-  var legendDotSize = 20
+  var legendDotSize = 5
   svg.selectAll("activity_legend_colors")
     .data(activityList_unique)
     .enter()
     .append("rect")
+      .attr("class", "activity_legend_colors")
       .attr("x", 400)
       .attr("y", function(d,i){ return 10 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
       .attr("width", legendDotSize)
       .attr("height", legendDotSize)
       .style("fill", function(d){ return color(d)})
-      .on("mouseover", highlightGame_timeLeft)
-      .on("mouseleave", noHighlightGame_timeLeft)
+      .style("opacity", 0)
+      .on("mouseover", mouseover_highlightActivity)
+      .on("mouseleave", mouseleave_highlightActivity)
 
   // Add one dot in the legend for each name.
   svg.selectAll("activity_legend_text")
     .data(activityList_unique)
     .enter()
     .append("text")
+      .attr("class", "activity_legend_text")
       .attr("x", 400 + legendDotSize*1.2)
       .attr("y", function(d,i){ return 10 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
       .style("fill", function(d){ return color(d)})
       .text(function(d){ return d})
       .attr("text-anchor", "left")
       .style("alignment-baseline", "middle")
-      .on("mouseover", highlightGame_timeLeft)
-      .on("mouseleave", noHighlightGame_timeLeft)
+      .style("opacity", 0)
+      .on("mouseover", mouseover_highlightActivity)
+      .on("mouseleave", mouseleave_highlightActivity)
 
 
 
@@ -1250,6 +1257,10 @@ function createViz(error, ...args) {
     }
 
     if(mode!=="byActivity"){
+      svg.selectAll(".activity_legend_colors")
+        .style("opacity", 0)
+      svg.selectAll(".activity_legend_text")
+        .style("opacity", 0)
     }
 
     if(mode!=="byLudwigModcast"){
@@ -1281,6 +1292,11 @@ function createViz(error, ...args) {
       svg_line_timeLeft.selectAll(".line_timeLeft")
         .style("opacity", 0)
       svg_line_timeLeft.selectAll(".area_timeLeft")
+        .style("opacity", 1)
+
+      svg.selectAll(".activity_legend_colors")
+        .style("opacity", 1)
+      svg.selectAll(".activity_legend_text")
         .style("opacity", 1)
     }
 
