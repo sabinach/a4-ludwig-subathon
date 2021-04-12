@@ -1290,7 +1290,7 @@ function createViz(error, ...args) {
     else if(this.value === "byActivity"){
       // clear previous graphs
       svg_line_timeLeft.selectAll(".line_timeLeft")
-        .style("opacity", 0)
+        .style("opacity", 1)
       svg_line_timeLeft.selectAll(".area_timeLeft")
         .style("opacity", 1)
 
