@@ -458,23 +458,11 @@ function createViz(error, ...args) {
     .x(d => xScale_timeLeft(d.timeStreamed))
     .y(d => yScale_timeLeft(d.timeLeft))
 
-  /*
   // Define area (timeLeft)
   var drawArea_timeLeft = d3.area()
-    .defined(d => !isNaN(d.timeLeft))
     .x(d => xScale_timeLeft(d.timeStreamed))
     .y0(yScale_timeLeft(0))
     .y1(d => yScale_timeLeft(d.timeLeft))
-  */
-
-  /*
-  var drawArea_timeLeft = d3.area()
-    .defined(d => !isNaN(d.timeLeft))
-    .x(d => xScale_timeLeft(d.timeStreamed))
-    .y0(yScale_timeLeft(0))
-    .y1(d => yScale_timeLeft(d.timeLeft))
-  */
-
 
   // Define line (viewers)
   var drawLine_viewers = d3.line()
@@ -848,14 +836,10 @@ function createViz(error, ...args) {
     svg_line_timeLeft.append("path")
       .datum(activity.data)
       .attr("class", d => "area_timeLeft " + activity.game.replace(/\s+/g, '') + " " + activity.timeStreamed)
-      .attr("stroke", "steelblue")
+      //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", color(activity.game.replace(/\s+/g, '')))
-      .attr("d", d3.area()
-        .x(d => xScale_timeLeft(d.timeStreamed))
-        .y0(yScale_timeLeft(0))
-        .y1(d => yScale_timeLeft(d.timeLeft))
-      )
+      .attr("d", drawArea_timeLeft)
       .attr("opacity", 0)
   })
 
@@ -871,7 +855,7 @@ function createViz(error, ...args) {
 
   // Add brush + hover (timeLeft)
   svg_line_timeLeft.append("g")
-    .attr("class", "brush")
+    .attr("class", "brush_timeLeft")
     .call(brush_timeLeft)
     .on('mousemove', mousemoveFocus)
     .on('mouseout', mouseoutFocus)
