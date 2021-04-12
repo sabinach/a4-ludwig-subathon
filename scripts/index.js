@@ -5,6 +5,24 @@ var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
 console.log("parentDomain: ", parentDomain);
 
 /* ---------------------- */
+// helper utils (todo - currently not used)
+
+d3.selection.prototype.moveToFront = function() {
+  return this.each(function(){
+    this.parentNode.appendChild(this);
+  });
+};
+
+d3.selection.prototype.moveToBack = function() {
+    return this.each(function() {
+        var firstChild = this.parentNode.firstChild;
+        if (firstChild) {
+            this.parentNode.insertBefore(this, firstChild);
+        }
+    });
+};
+
+/* ---------------------- */
 
 // set canvas dimensions
 var svg_width = 650;
@@ -963,7 +981,7 @@ function createViz(error, ...args) {
 
       // scale axes
       scaleDomain("transformed", brushBounds)
-      
+
       // clear brush grey area
       svg_line_timeLeft.select(".brush_timeLeft").call(brush_timeLeft.move, null);
 
