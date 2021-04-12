@@ -952,8 +952,11 @@ function createViz(error, ...args) {
     if (!brushBounds) {
       if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
       xScale_timeLeft.domain(xDomain_timeLeft);
+      yScale_timeLeft.domain(yDomain_timeLeft);
       xScale_viewers.domain(xDomain_viewers);
+      yScale_viewers.domain(yDomain_viewers);
       xScale_subFollows.domain(xDomain_subFollows);
+      yScale_subFollows.domain(yDomain_subFollows);
       // reset treemap
       redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
     } 
@@ -962,10 +965,26 @@ function createViz(error, ...args) {
       var newStart = [brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft)[0]; 
       var newEnd = [brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft)[1];
 
+      // timeLeft
+      var i0_timeLeft = bisectHour(timeLeftJson_zip, xScale_timeLeft.invert(brushBounds[0]), 1),
+          i1_timeLeft = bisectHour(timeLeftJson_zip, xScale_timeLeft.invert(brushBounds[1]), 1),
+          yMax_timeLeft = d3.max(timeLeftJson_zip.slice(i0_timeLeft, i1_timeLeft+1).map(d => d.timeLeft))
+      // viewers
+      var i0_viewers = bisectHour(viewers_zip, xScale_viewers.invert(brushBounds[0]), 1),
+          i1_viewers = bisectHour(viewers_zip, xScale_viewers.invert(brushBounds[1]), 1),
+          yMax_viewers = d3.max(viewers_zip.slice(i0_viewers, i1_viewers+1).map(d => d.numViewers))
+      // subfollows
+      var i0_subfollows = bisectHour(followers_zip, xScale_subFollows.invert(brushBounds[0]), 1),
+          i1_subfollows = bisectHour(followers_zip, xScale_subFollows.invert(brushBounds[1]), 1),
+          yMax_subfollows = d3.max(followers_zip.slice(i0_subfollows, i1_subfollows+1).map(d => d.gainedFollowers))
+
       // update domain for line graphs
       xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
+      yScale_timeLeft.domain([0, yMax_timeLeft]);
       xScale_viewers.domain([brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers));
+      yScale_viewers.domain([0, yMax_viewers]);
       xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
+      yScale_subFollows.domain([0, yMax_subfollows]);
       svg_line_timeLeft.select(".brush_timeLeft").call(brush_timeLeft.move, null);
 
       // update treemap range
