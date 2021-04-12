@@ -4,7 +4,7 @@
 
 #### Project Description
 - Kind of a meme project :) More details to come when I do the actual writeup..    
-- At the rate the subathon is going, I will finish/submit this website the exact day that Ludwig hits the 31-day cap!!!
+- At the rate the subathon is going, I will finish/submit this website the exact day that Ludwig hits the 30-day cap (Tuesday night)!!!
 
 #### Project Deliverables
 - Final Submission [[Writeup]()]
@@ -48,6 +48,7 @@ Dataset Credits To:
 cd utils/
 node scrapeSubathonSheet.js
 node scrapeHighlightsSheet.js
+node scrapeTwitchTracker.js
 ```
 ### To Run Locally:
 

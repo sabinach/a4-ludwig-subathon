@@ -120,15 +120,15 @@ function createViz(error, ...args) {
   const datetime_viewers = viewersJson.data.labels;
   const gamePlayed_viewers = viewersJson.data.datasets;
 
-  //console.log("datetime_viewers: ", datetime_viewers)
-  //console.log("gamePlayed_viewers: ", gamePlayed_viewers)
+  console.log("datetime_viewers: ", datetime_viewers)
+  console.log("gamePlayed_viewers: ", gamePlayed_viewers)
 
   // handle error: mismatch xy length
   gamePlayed_viewers.forEach(gamePlayed => {
     if(datetime_viewers.length!==gamePlayed.data.length) throw error;
   })
 
-  // here's an extremely inefficient for-loop... will optimize later
+  // here's an extremely inefficient for-loop... will optimize later (maybe)
   var viewers_zip = []
   datetime_viewers.forEach((datetime, i) => {
     const parsedDatetime = parseDatetime(datetime);
@@ -458,12 +458,23 @@ function createViz(error, ...args) {
     .x(d => xScale_timeLeft(d.timeStreamed))
     .y(d => yScale_timeLeft(d.timeLeft))
 
+  /*
   // Define area (timeLeft)
   var drawArea_timeLeft = d3.area()
     .defined(d => !isNaN(d.timeLeft))
     .x(d => xScale_timeLeft(d.timeStreamed))
     .y0(yScale_timeLeft(0))
     .y1(d => yScale_timeLeft(d.timeLeft))
+  */
+
+  /*
+  var drawArea_timeLeft = d3.area()
+    .defined(d => !isNaN(d.timeLeft))
+    .x(d => xScale_timeLeft(d.timeStreamed))
+    .y0(yScale_timeLeft(0))
+    .y1(d => yScale_timeLeft(d.timeLeft))
+  */
+
 
   // Define line (viewers)
   var drawLine_viewers = d3.line()
@@ -781,76 +792,82 @@ function createViz(error, ...args) {
     .attr("opacity", 1)
 
 
+  /* ------------------------------------- */
+  // Activity Coloring
 
+  var activityList_unique = []
+  activityList_unique = gamePlayed_viewers.map((d) => d.label.replace(/\s+/g, ''))
 
+  var activityList_keys = []
+  var activityList_data = []
+  var prevActivity = viewers_zip[0].game
+  var prevActivityList = []
 
-  /*
-  const testData = {
-    labels: ["Clear", "Few clouds", "Scattered clouds", "Broken clouds", "Overcast", "Indefinite ceiling (vertical visibility)"],
-    colors: ["deepskyblue", "lightskyblue", "lightblue", "#aaaaaa", "#666666", "#666666"]
+  // viewers_zip (d.timeStreamed, d.datetime, d.game, d.numViewers)
+  for (var i =0; i < viewers_zip.length; i++){
+    const d = viewers_zip[i]
+    if(d.game!==null || d.numViewers!==null){
+      if (d.game !== prevActivity){
+        activityList_keys.push(d.game.replace(/\s+/g, '') + " " + d.timeStreamed) // ie. JustChatting-1
+        activityList_data.push({
+          data: prevActivityList,
+          game: d.game.replace(/\s+/g, ''),
+          timeStreamed: d.timeStreamed
+        })
+        // reset items
+        prevActivity = d.game
+        prevActivityList = []
+      }
+      else{
+        const timeLeft = timeLeftJson_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
+        const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
+        prevActivityList.push({
+          timeStreamed: d.timeStreamed,
+          datetime: d.datetime,
+          game: d.game,
+          timeLeft: timeLeft ? timeLeft.timeLeft : null,
+          numViewers: d.numViewers,
+          numFollowers: followers.numFollowers,
+          gainedFollowers: followers.gainedFollowers
+        })
+      }
+    }
   }
-  const color = d3.scaleOrdinal(
-            data.conditions === undefined ? data.map(d => d.condition) : data.conditions, 
-            data.colors === undefined ? d3.schemeCategory10 : data.colors
-          ).unknown("black")
-  const colorId = DOM.uid("color");
 
-  svg_line_timeLeft.append("linearGradient")
-      .attr("id", colorId.id)
-      .attr("gradientUnits", "userSpaceOnUse")
-      .attr("x1", 0)
-      .attr("x2", width)
-    .selectAll("stop")
-    .data(data)
-    .join("stop")
-      .attr("offset", d => x(d.date) / width)
-      .attr("stop-color", d => color(d.condition));
-  */
+  console.log("activityList_unique: ", activityList_unique)
+  console.log("activityList_keys: ", activityList_keys)
+  console.log("activityList_data: ", activityList_data)
 
+  // color palette
+  var color = d3.scaleOrdinal()
+    .domain(activityList_unique)
+    .range(d3.schemeSet2);
 
-
-  /*
-  // Add gradient (timeLeft)
-  svg_line_timeLeft.append("linearGradient")
-      .attr("id", "temperature-gradient")
-      .attr("gradientUnits", "userSpaceOnUse")
-      .attr("x1", 0).attr("y1", yScale_timeLeft(50))
-      .attr("x2", 0).attr("y2", yScale_timeLeft(60))
-    .selectAll("stop")
-      .data([
-        {offset: "0%", color: "black"},
-        {offset: "50%", color: "black"},
-        {offset: "50%", color: "red"},
-        {offset: "100%", color: "red"}
-      ])
-    .enter().append("stop")
-      .attr("offset", function(d) { return d.offset; })
-      .attr("stop-color", function(d) { return d.color; });
-
-  // Add area (timeLeft)
-  svg_line_timeLeft.append("path")
-    .datum(timeLeftJson_zip)
-    .attr("class", "area_timeLeft")
-    .attr("d", drawArea_timeLeft)
-    .attr("opacity", 0)
-  */
-
-
-  // Add area (timeLeft)
-  svg_line_timeLeft.append("path")
-    .datum(timeLeftJson_zip)
-    .attr("class", "area_timeLeft")
-    .attr("stroke", "steelblue")
-    .attr("stroke-width", 1.5)
-    .attr("fill", "#cce5df")
-    .attr("d", drawArea_timeLeft)
-    .attr("opacity", 0)
+  activityList_data.forEach(activity => {
+    // Add area (timeLeft)
+    svg_line_timeLeft.append("path")
+      .datum(activity.data)
+      .attr("class", d => "area_timeLeft " + activity.game.replace(/\s+/g, '') + " " + activity.timeStreamed)
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 1)
+      .attr("fill", color(activity.game.replace(/\s+/g, '')))
+      .attr("d", d3.area()
+        .x(d => xScale_timeLeft(d.timeStreamed))
+        .y0(yScale_timeLeft(0))
+        .y1(d => yScale_timeLeft(d.timeLeft))
+      )
+      .attr("opacity", 0)
+  })
 
 
 
 
 
 
+
+
+
+  /* ------------------------------------- */
 
   // Add brush + hover (timeLeft)
   svg_line_timeLeft.append("g")
