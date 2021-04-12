@@ -202,32 +202,35 @@ function createViz(error, ...args) {
     console.log("gamePlayed_count (before): ", gamePlayed_count)
 
     // make sure no elements is less than 1% of total
-    gamePlayed_count = gamePlayed_count.filter(d => (d.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) > 0.5 || d.game==="Origin")
+    const gamePlayed_count_filtered = gamePlayed_count
+                                        .filter(d => (d.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) > 0.5 || d.game==="Origin")
+                                        .filter(d => d.game!==null)
 
-    console.log("gamePlayed_count (filtered): ", gamePlayed_count)
+    const filteredGames = gamePlayed_count_filtered.map(filteredItem => filteredItem.game)
+    const otherCount = gamePlayed_count
+                        .filter(item => !filteredGames.includes(item.game) && item.game!==null)
+                        .reduce((accum, item) => accum + parseInt(item.count), 0)
+    gamePlayed_count_filtered.push({"game": "Other", "count": otherCount, "parent": "Origin"})
 
-    return gamePlayed_count
+    console.log("gamePlayed_count_filtered (after): ", gamePlayed_count_filtered)
+
+    return gamePlayed_count_filtered
   }
 
-  var gamePlayed_count = generateGamePlayedCount(viewers_zip, subathonStartDate, subathonEndDate, "datetime")
+  //var gamePlayed_count = generateGamePlayedCount(viewers_zip, subathonStartDate, subathonEndDate, "datetime")
 
   /** -------- **/
   // treemap hierarchy
-
-  // stratify the data: reformatting for d3.js
-  var root = d3.stratify()
-    .id(function(d) { return d.game; })   // Name of the entity (column name is name in csv)
-    .parentId(function(d) { return d.parent; })   // Name of the parent (column name is parent in csv)
-    (gamePlayed_count);
-
 
   // delete and redraw the treemap
   function redrawTreemap(start, end, type){
 
     // get new gamePlayed count
-    gamePlayed_count = generateGamePlayedCount(viewers_zip, start, end, type)
+    const gamePlayed_count = generateGamePlayedCount(viewers_zip, start, end, type)
+    console.log("gamePlayed_count (treemap): ", gamePlayed_count)
 
-    root = d3.stratify()
+    // stratify the data: reformatting for d3.js
+    var root = d3.stratify()
       .id(function(d) { return d.game; })   // Name of the entity (column name is name in csv)
       .parentId(function(d) { return d.parent; })   // Name of the parent (column name is parent in csv)
       (gamePlayed_count);
