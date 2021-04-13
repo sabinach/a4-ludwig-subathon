@@ -923,6 +923,7 @@ function createViz(error, ...args) {
     if (currentMode==="byActivity"){
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", lowOpacity)
+      svg_line_viewers.selectAll(".area_viewers").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", lowOpacity)
       svg_treemap.selectAll(".rect").style("opacity", lowOpacity)
@@ -930,6 +931,7 @@ function createViz(error, ...args) {
       svg_treemap.selectAll(".percent").style("opacity", lowOpacity)
       // expect the one that is hovered
       svg_line_timeLeft.selectAll("." + d).style("opacity", highOpacity)
+      svg_line_viewers.selectAll("." + d).style("opacity", highOpacity)
       svg.selectAll(".legendColor-" + d).style("opacity", highOpacity)
       svg.selectAll(".legendText-" + d).style("opacity", highOpacity)
       svg_treemap.selectAll(".treemapRect-" + d).style("opacity", highOpacity)
@@ -943,6 +945,7 @@ function createViz(error, ...args) {
     if (currentMode==="byActivity"){
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", lowOpacity)
+      svg_line_viewers.selectAll(".area_viewers").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", lowOpacity)
       svg_treemap.selectAll(".rect").style("opacity", lowOpacity)
@@ -951,6 +954,7 @@ function createViz(error, ...args) {
       // expect the one that is hovered
       if(d.id){
         svg_line_timeLeft.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
+        svg_line_viewers.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
         svg.selectAll(".legendColor-" + cleanString(d.id)).style("opacity", highOpacity)
         svg.selectAll(".legendText-" + cleanString(d.id)).style("opacity", highOpacity)
         svg_treemap.selectAll(".treemapRect-" + cleanString(d.id)).style("opacity", highOpacity)
@@ -964,6 +968,7 @@ function createViz(error, ...args) {
   const mouseleave_allActivity = function(d){
     if (currentMode==="byActivity"){
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", highOpacity)
+      svg_line_viewers.selectAll(".area_viewers").style("opacity", highOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", highOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", highOpacity)
       svg_treemap.selectAll(".rect").style("opacity", highOpacity)
@@ -1359,6 +1364,9 @@ function createViz(error, ...args) {
     if(mode!=="byHighlights"){
       svg_line_timeLeft.selectAll(".line_timeLeft")
         .style("opacity", 0)
+      svg_line_viewers.selectAll(".line_viewers")
+        .style("opacity", 0)
+
       svg_line_timeLeft.selectAll(".dot-highlight")
         .style("opacity", 0)
       svg_line_timeLeft.selectAll("#tooltip_highlights")
@@ -1380,11 +1388,6 @@ function createViz(error, ...args) {
     if(mode!=="byTime"){
     }
 
-    if(mode!=="byNone"){
-      svg_line_timeLeft.selectAll(".line_timeLeft")
-        .style("opacity", 0)
-    }
-
   }
 
   d3.selectAll(("input[name='mode']")).on("change", function(){
@@ -1395,6 +1398,8 @@ function createViz(error, ...args) {
     if(currentMode === "byHighlights"){
       // clear previous graphs
       svg_line_timeLeft.selectAll(".line_timeLeft")
+        .style("opacity", 1)
+      svg_line_viewers.selectAll(".line_viewers")
         .style("opacity", 1)
 
       svg_line_timeLeft.selectAll(".dot-highlight")
@@ -1426,6 +1431,8 @@ function createViz(error, ...args) {
 
     else if(currentMode === "byNone"){
       svg_line_timeLeft.selectAll(".line_timeLeft")
+        .style("opacity", 1)
+      svg_line_viewers.selectAll(".line_viewers")
         .style("opacity", 1)
     }
 
