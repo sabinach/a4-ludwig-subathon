@@ -371,8 +371,8 @@ function createViz(error, ...args) {
 
     // clear all
 
-    d3.select("svg").selectAll(".activity_legend_colors > *").remove()
-    d3.select("svg").selectAll(".activity_legend_text > *").remove()
+    //svg.selectAll(".activity_legend_colors").html(null);
+    //svg.selectAll(".activity_legend_text").html(null);
 
     // legend
 
