@@ -249,6 +249,30 @@ function createViz(error, ...args) {
     return gamePlayed_count
   }
 
+  // Create sleepawake output json based on start/end dates
+  function generateSleepAwakeCount(ludwigModcastJson_zip_withinBounds, endHour){
+    var sleepAwake_count = [
+      {"sleepAwake":"Origin","count": 0,"parent":""}
+    ]
+
+    ludwigModcastJson_zip_withinBounds.forEach((d, i) => {
+      const foundIndex = sleepAwake_count.findIndex(countObj => countObj.sleepAwake === d.sleepAwake)
+      var addCount;
+      if(i!==ludwigModcastJson_zip_withinBounds.length-1){
+        addCount = ludwigModcastJson_zip_withinBounds[i+1].timeStreamed - d.timeStreamed
+      }else{ //last item
+        addCount = endHour - d.timeStreamed
+      }
+      if (foundIndex>=0){
+        sleepAwake_count[foundIndex].count += addCount
+      }else{
+        sleepAwake_count.push({"sleepAwake":d.sleepAwake,"count":addCount,"parent":"Origin"});
+      }
+    })
+
+    return sleepAwake_count
+  }
+
   /** -------- **/
   // treemap hierarchy
 
@@ -276,6 +300,14 @@ function createViz(error, ...args) {
     const ludwigModcastJson_zip_withinBounds = ludwigModcastJson_zip.filter((item) => 
       (type==="datetime" && item.datetime >= start && item.datetime <= end) || 
         (type==="hour" && item.timeStreamed >= start && item.timeStreamed <= end))
+    console.log("ludwigModcastJson_zip_withinBounds: ", ludwigModcastJson_zip_withinBounds)
+
+    // get new sleepAwake count
+    const sleepAwake_count = generateSleepAwakeCount(ludwigModcastJson_zip_withinBounds, type==="hour" ? end : datetimeToHours(end))
+    console.log("sleepAwake_count: ", sleepAwake_count)
+
+    // redraw treemap here
+    redrawTreemapSleepAwake(sleepAwake_count)
     redrawLegendSleepAwake(ludwigModcastJson_zip_withinBounds)
   }
 
@@ -376,6 +408,124 @@ function createViz(error, ...args) {
       .attr("dx", 5)  // +right
       .attr("dy", 23) // +lower
       .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
+      .style("font-size", "8px")
+      .style("fill", "black")
+      .style("opacity", 1)
+
+    /** -------- **/
+    /*
+    // and to add the text labels
+    svg_treemap
+      .selectAll("image")
+      .data(root.leaves())
+      .enter()
+      .append("image")
+        .attr("x", function(d){ return d.x0+5})   // +right
+        .attr("y", function(d){ return d.y0+26})  // +lower
+        .attr("width", d => 25)
+        .attr("xlink:href", d => gameImagesJson[d.data.game]);
+    */
+  }
+
+  // delete and redraw the treemap
+  function redrawTreemapSleepAwake(sleepAwake_count){
+
+    // stratify the data: reformatting for d3.js
+    var root = d3.stratify()
+      .id(function(d) { return d.sleepAwake; })   // Name of the entity (column name is name in csv)
+      .parentId(function(d) { return d.parent; })   // Name of the parent (column name is parent in csv)
+      (sleepAwake_count);
+    
+    root
+      .sum(function(d) { return +d.count })   // Compute the numeric value for each entity
+      .sort(function(a, b) { return b.height - a.height || b.value - a.value; });
+
+    // Then d3.treemap computes the position of each element of the hierarchy
+    d3.treemap()
+      .size([width_treemap, height_treemap])
+      .padding(0.1)
+      (root)
+
+    console.log("root.leaves(): ", root.leaves())
+
+    // clear previous treemap
+    svg_treemap.selectAll(".rect").remove();
+    svg_treemap.selectAll(".title").remove();
+    svg_treemap.selectAll(".percent").remove();
+
+    /** -------- **/
+    // rect
+
+    // create rectangle object
+    const rects = svg_treemap.selectAll(".rect").data(root.leaves())
+
+    //remove rectangle
+    rects.exit().remove();
+    rects
+      .attr("transform", d => `translate(${d.x0},${d.y0})`)
+      .attr("width", d => d.x1 - d.x0)
+      .attr("height", d => d.y1 - d.y0)
+
+    // add rectangle
+    rects.enter().append("rect")
+      .attr("class", d => "rect" + (d.id ? " treemapRect-" + d.id : ""))
+      .attr("transform", d => `translate(${d.x0},${d.y0})`)
+      .attr("width", d => d.x1 - d.x0)
+      .attr("height", d => d.y1 - d.y0)
+      .style("stroke", "black")
+      .style("fill", d => d.id ? colorSleepAwake[d.id] : "#9cbdd9")
+      .style("opacity", 1)
+      .on("mouseover", mouseover_treemap_allSleepAwake)
+      .on("mouseleave", mouseleave_allSleepAwake)
+
+    /** -------- **/
+    // title
+
+    // create title object
+    const title = svg_treemap.selectAll(".title").data(root.leaves())
+
+    //remove title
+    title
+      .exit().remove()
+
+    // transform title
+    title
+      .html(d => `<tspan style='font-weight: 500'>${d.data.sleepAwake}</tspan>`)
+      .attr("transform", d => `translate(${d.x0},${d.y0})`)
+
+    // add title
+    title.enter().append("text")
+      .attr("class", d => "title" + (d.id ? " treemapTitle-" + d.id : ""))
+      .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
+      .attr("dx", 5)  // +right
+      .attr("dy", 13) // +lower
+      .html(d => `<tspan style='font-weight: 500'>${d.data.sleepAwake}</tspan>`)
+      .style("font-size", "8px")
+      .style("fill", "black")
+      .style("opacity", 1)
+
+    /** -------- **/
+    // percent
+
+    // create percent object
+    const percent = svg_treemap.selectAll(".percent").data(root.leaves())
+
+    //remove percent
+    percent
+      .exit().remove()
+
+    // transform percent
+    percent
+      .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
+      .attr("transform", d => `translate(${d.x0},${d.y0})`)
+
+    // add percent
+    percent.enter().append("text")
+      .attr("class", d => "percent" + (d.id ? " treemapPercent-" + cleanString(d.id) : ""))
+      .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
+      .attr("dx", 5)  // +right
+      .attr("dy", 23) // +lower
+      .html(d => `<tspan style='font-weight: 500'>${(d.data.count/sleepAwake_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
       .style("opacity", 1)
@@ -1215,6 +1365,26 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll("." + d).style("opacity", highOpacity)
       svg.selectAll(".legendColor-" + d).style("opacity", highOpacity)
       svg.selectAll(".legendText-" + d).style("opacity", highOpacity)
+    }
+  }
+
+  // What to do when one group is hovered
+  const mouseover_treemap_allSleepAwake = function(d){
+    if (currentMode==="byLudwigModcast"){
+      // reduce opacity of all groups
+      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", lowOpacity)
+      svg_line_viewers.selectAll(".area_viewers_sleepAwake").style("opacity", lowOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows_sleepAwake").style("opacity", lowOpacity)
+      svg.selectAll(".sleepAwake_legend_colors").style("opacity", lowOpacity)
+      svg.selectAll(".sleepAwake_legend_text").style("opacity", lowOpacity)
+      // expect the one that is hovered
+      if(d.id){
+        svg_line_timeLeft.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
+        svg_line_viewers.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
+        svg_line_subFollows.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
+        svg.selectAll(".legendColor-" + cleanString(d.id)).style("opacity", highOpacity)
+        svg.selectAll(".legendText-" + cleanString(d.id)).style("opacity", highOpacity)
+      }
     }
   }
 
