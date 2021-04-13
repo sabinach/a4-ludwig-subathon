@@ -922,7 +922,7 @@ function createViz(error, ...args) {
         activityList_keys.push(d.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '') + " " + d.timeStreamed) // ie. JustChatting-1
         activityList_data.push({
           data: prevActivityList,
-          game: d.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''),
+          game: viewers_zip[i-1].game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''),
           timeStreamed: d.timeStreamed
         })
         // reset items
@@ -974,7 +974,7 @@ function createViz(error, ...args) {
 
   // And when it is not hovered anymore
   const mouseleave_highlightActivity = function(d){
-    if (svg.selectAll(".activity_legend_text").style("opacity") === "1"){
+    if (svg.selectAll(".activity_legend_colors").style("opacity") === "1"){
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 1)
     }
   }
