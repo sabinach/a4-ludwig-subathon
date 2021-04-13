@@ -364,22 +364,19 @@ function createViz(error, ...args) {
 
     // size
 
-    var legendDotSize = 20
+    const legendDotSize = 20
 
-    // color
-
-    //const svg_legendColor = svg.append('g')
-
+    // legend 
 
     const legendColor = svg.selectAll(".activity_legend_colors").data(activityList_unique)
 
     legendColor
       .exit()
-      .remove();
+      .remove()
 
     legendColor
       .enter()
-      .append("rect")
+        .append("rect")
         .attr("class", "activity_legend_colors")
         .attr("x", 400)
         .attr("y", function(d,i){ return 10 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
@@ -392,13 +389,13 @@ function createViz(error, ...args) {
 
     // text
 
+    console.log("---")
+
     const legendText = svg.selectAll(".activity_legend_text").data(activityList_unique)
 
     legendText
       .exit()
-      .remove();
-
-    console.log("---")
+      .remove()
 
     // Add one dot in the legend for each name.
     legendText
@@ -408,7 +405,7 @@ function createViz(error, ...args) {
         .attr("x", 400 + legendDotSize*1.2)
         .attr("y", function(d,i){ return 10 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return color(d)})
-        .text(function(d){ console.log(d); return d})
+        .text(function(d){ console.log(d); return d}) // todo printing here
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
         .style("opacity", 0)
