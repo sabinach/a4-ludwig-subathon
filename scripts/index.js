@@ -568,8 +568,8 @@ function createViz(error, ...args) {
     .x(d => xScale_timeLeft(d.timeStreamed))
     .y(d => yScale_timeLeft(d.timeLeft))
 
-  // Define area (timeLeft)
-  var drawarea_timeLeft_activity = d3.area()
+  // Define activity area (timeLeft)
+  var drawarea_timeLeft = d3.area()
     .x(d => xScale_timeLeft(d.timeStreamed))
     .y0(yScale_timeLeft(0))
     .y1(d => yScale_timeLeft(d.timeLeft))
@@ -581,7 +581,7 @@ function createViz(error, ...args) {
     .y(d => yScale_viewers(d.numViewers))
 
   // Define area (viewers)
-  var drawarea_viewers_activity = d3.area()
+  var drawarea_viewers = d3.area()
     .x(d => xScale_viewers(d.timeStreamed))
     .y0(yScale_viewers(0))
     .y1(d => yScale_viewers(d.numViewers))
@@ -593,7 +593,7 @@ function createViz(error, ...args) {
     .y(d => yScale_subFollows(d.gainedFollowers))
 
   // Define area (subFollows)
-  var drawarea_subFollows_activity = d3.area()
+  var drawarea_subFollows = d3.area()
     .x(d => xScale_subFollows(d.timeStreamed))
     .y0(yScale_subFollows(0))
     .y1(d => yScale_subFollows(d.gainedFollowers))
@@ -1146,7 +1146,7 @@ function createViz(error, ...args) {
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
-      .attr("d", drawarea_timeLeft_activity)
+      .attr("d", drawarea_timeLeft)
       .attr("opacity", currentMode==="byActivity" ? 1 : 0)
   })
 
@@ -1211,7 +1211,7 @@ function createViz(error, ...args) {
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
-      .attr("d", drawarea_viewers_activity)
+      .attr("d", drawarea_viewers)
       .attr("opacity", currentMode==="byActivity" ? 1 : 0)
   })
 
@@ -1261,7 +1261,7 @@ function createViz(error, ...args) {
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
-      .attr("d", drawarea_subFollows_activity)
+      .attr("d", drawarea_subFollows)
       .attr("opacity", currentMode==="byActivity" ? 1 : 0)
   })
 
@@ -1398,7 +1398,7 @@ function createViz(error, ...args) {
     svg.select(".axis--x--timeLeft").transition(t).call(xAxis_timeLeft);
     svg.select(".axis--y--timeLeft").transition(t).call(yAxis_timeLeft);
     svg_line_timeLeft.selectAll(".line_timeLeft").transition(t).attr("d", drawLine_timeLeft);
-    svg_line_timeLeft.selectAll(".area_timeLeft_activity").transition(t).attr("d", drawarea_timeLeft_activity);
+    svg_line_timeLeft.selectAll(".area_timeLeft_activity").transition(t).attr("d", drawarea_timeLeft);
     svg_line_timeLeft.selectAll("circle").transition(t)
       .attr("cx", d => xScale_timeLeft(d.timeStreamed))
       .attr("cy", d => yScale_timeLeft(d.timeLeft));
@@ -1412,7 +1412,7 @@ function createViz(error, ...args) {
     svg.select(".axis--x--viewers").transition(t).call(xAxis_viewers);
     svg.select(".axis--y--viewers").transition(t).call(yAxis_viewers);
     svg_line_viewers.selectAll(".line_viewers").transition(t).attr("d", drawLine_viewers);
-    svg_line_viewers.selectAll(".area_viewers_activity").transition(t).attr("d", drawarea_viewers_activity);
+    svg_line_viewers.selectAll(".area_viewers_activity").transition(t).attr("d", drawarea_viewers);
   }
 
   function zoom_subFollows() {
@@ -1420,7 +1420,7 @@ function createViz(error, ...args) {
     svg.select(".axis--x--subFollows").transition(t).call(xAxis_subFollows);
     svg.select(".axis--y--subFollows").transition(t).call(yAxis_subFollows);
     svg_line_subFollows.selectAll(".line_subFollows").transition(t).attr("d", drawLine_subFollows);
-    svg_line_subFollows.selectAll(".area_subFollows_activity").transition(t).attr("d", drawarea_subFollows_activity);
+    svg_line_subFollows.selectAll(".area_subFollows_activity").transition(t).attr("d", drawarea_subFollows);
   }
 
   /* --- Information Tooltip DEFINITIONS --- */
