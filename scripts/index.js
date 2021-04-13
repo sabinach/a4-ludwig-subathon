@@ -176,26 +176,18 @@ function createViz(error, ...args) {
   // TREEMAP
 
   // Create game output json based on start/end dates
-  function generateGamePlayedCount(viewers_zip, start, end, type){
+  function generateGamePlayedCount(viewers_zip_withinBounds){
     var gamePlayed_count = [
       {"game":"Origin","count": 0,"parent":""}
     ]
 
     // filter by date and sum the # of games occurred within count
-    viewers_zip.forEach((viewers) => {
-      var withinBounds;
-      if (type==="datetime"){
-        withinBounds = viewers.datetime >= start && viewers.datetime <= end;
-      }else if(type==="hour"){
-        withinBounds = viewers.timeStreamed >= start && viewers.timeStreamed <= end;
-      }
-      if (withinBounds){
-        var foundIndex = gamePlayed_count.findIndex(gamePlayed => gamePlayed.game === viewers.game);
-        if (foundIndex>=0){
-          gamePlayed_count[foundIndex].count += 1
-        }else{
-          gamePlayed_count.push({"game":viewers.game,"count":1,"parent":"Origin"});
-        }
+    viewers_zip_withinBounds.forEach((viewers) => {
+      var foundIndex = gamePlayed_count.findIndex(gamePlayed => gamePlayed.game === viewers.game);
+      if (foundIndex>=0){
+        gamePlayed_count[foundIndex].count += 1
+      }else{
+        gamePlayed_count.push({"game":viewers.game,"count":1,"parent":"Origin"});
       }
     })
 
@@ -222,12 +214,23 @@ function createViz(error, ...args) {
   /** -------- **/
   // treemap hierarchy
 
-  // delete and redraw the treemap
-  function redrawTreemap(start, end, type){
+  function redraw(start, end, type){
+    // filter by date and sum the # of games occurred within count
+    const viewers_zip_withinBounds = viewers_zip.filter((viewers) => 
+      (type==="datetime" && viewers.datetime >= start && viewers.datetime <= end) || 
+        (type==="hour" && viewers.timeStreamed >= start && viewers.timeStreamed <= end))
+    console.log("viewers_zip_withinBounds: ", viewers_zip_withinBounds)
 
     // get new gamePlayed count
-    const gamePlayed_count = generateGamePlayedCount(viewers_zip, start, end, type)
-    console.log("gamePlayed_count (treemap): ", gamePlayed_count)
+    const gamePlayed_count = generateGamePlayedCount(viewers_zip_withinBounds)
+    console.log("gamePlayed_count: ", gamePlayed_count)
+
+    redrawTreemap(gamePlayed_count)
+    redrawLegendActivity(viewers_zip_withinBounds, gamePlayed_count)
+  }
+
+  // delete and redraw the treemap
+  function redrawTreemap(gamePlayed_count){
 
     // stratify the data: reformatting for d3.js
     var root = d3.stratify()
@@ -344,7 +347,75 @@ function createViz(error, ...args) {
     */
   }
 
-  redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
+  /* ------------------------------------- */
+  // Activity Legend (timeLeft)
+
+  function redrawLegendActivity(viewers_zip_withinBounds, gamePlayed_count){
+    // unique values
+    const activityList_unique = []
+    viewers_zip_withinBounds
+      .forEach((viewer) => {
+        if(viewer.game!==null && !activityList_unique.includes(viewer.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''))){
+          activityList_unique.push(viewer.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''))
+        }
+      })
+
+    console.log("activityList_unique: ", activityList_unique)
+
+    // size
+
+    var legendDotSize = 20
+
+    // color
+
+    //const svg_legendColor = svg.append('g')
+
+
+    const legendColor = svg.selectAll(".activity_legend_colors").data(activityList_unique)
+
+    legendColor
+      .exit()
+      .remove();
+
+    legendColor
+      .enter()
+      .append("rect")
+        .attr("class", "activity_legend_colors")
+        .attr("x", 400)
+        .attr("y", function(d,i){ return 10 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("width", legendDotSize)
+        .attr("height", legendDotSize)
+        .style("fill", function(d){ return color(d)})
+        .style("opacity", 0)
+        .on("mouseover", mouseover_highlightActivity)
+        .on("mouseleave", mouseleave_highlightActivity)
+
+    // text
+
+    const legendText = svg.selectAll(".activity_legend_text").data(activityList_unique)
+
+    legendText
+      .exit()
+      .remove();
+
+    console.log("---")
+
+    // Add one dot in the legend for each name.
+    legendText
+      .enter()
+      .append("text")
+        .attr("class", "activity_legend_text")
+        .attr("x", 400 + legendDotSize*1.2)
+        .attr("y", function(d,i){ return 10 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .style("fill", function(d){ return color(d)})
+        .text(function(d){ console.log(d); return d})
+        .attr("text-anchor", "left")
+        .style("alignment-baseline", "middle")
+        .style("opacity", 0)
+        .on("mouseover", mouseover_highlightActivity)
+        .on("mouseleave", mouseleave_highlightActivity)
+
+  }
 
   /* --------------------------------------------- */
   // FOLLOWERS
@@ -800,21 +871,26 @@ function createViz(error, ...args) {
     .attr("d", drawLine_timeLeft)
     .attr("opacity", 1)
 
-
   /* ------------------------------------- */
-  // Activity Coloring (timeLeft)
+  // Area graph - Activity (timeLeft)
 
-  var activityList_unique = []
-  activityList_unique = gamePlayed_viewers.map((d) => d.label.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''))
+  const activityList_unique_original = []
+  viewers_zip
+    .forEach((viewer) => {
+      if(viewer.game!==null && !activityList_unique_original.includes(viewer.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''))){
+        activityList_unique_original.push(viewer.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''))
+      }
+    })
+
+  console.log("activityList_unique_original: ", activityList_unique_original)
 
   var activityList_keys = []
   var activityList_data = []
   var prevActivity = viewers_zip[0].game
   var prevActivityList = []
 
-  // viewers_zip (d.timeStreamed, d.datetime, d.game, d.numViewers)
-  for (var i =0; i < viewers_zip.length; i++){
-    const d = viewers_zip[i]
+  // viewers_zip_withinBounds (d.timeStreamed, d.datetime, d.game, d.numViewers)
+  viewers_zip.forEach((d, i) => {
     if(d.game!==null || d.numViewers!==null){
       const timeLeft = timeLeftJson_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
         const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
@@ -847,16 +923,16 @@ function createViz(error, ...args) {
         }]
       }
     }
-  }
+  })
 
-  console.log("activityList_unique: ", activityList_unique)
   console.log("activityList_keys: ", activityList_keys)
   console.log("activityList_data: ", activityList_data)
 
   // color palette
   var color = d3.scaleOrdinal()
-    .domain(activityList_unique)
+    .domain(activityList_unique_original)
     .range(d3.schemeSet2); //https://github.com/d3/d3-scale-chromatic
+  console.log("color: ", color)
 
   activityList_data.forEach(activity => {
     // Add area (timeLeft)
@@ -870,13 +946,8 @@ function createViz(error, ...args) {
       .attr("opacity", 0)
   })
 
-
-
-  /* ------------------------------------- */
-  // Activity Legend (timeLeft)
-
   // What to do when one group is hovered
-  var mouseover_highlightActivity = function(d){
+  const mouseover_highlightActivity = function(d){
     if (svg.selectAll(".activity_legend_colors").style("opacity") === "1"){
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 0.1)
@@ -886,45 +957,11 @@ function createViz(error, ...args) {
   }
 
   // And when it is not hovered anymore
-  var mouseleave_highlightActivity = function(d){
-    if (svg.selectAll(".activity_legend_colors").style("opacity") === "1"){
+  const mouseleave_highlightActivity = function(d){
+    if (svg.selectAll(".activity_legend_text").style("opacity") === "1"){
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 1)
     }
   }
-
-  var legendDotSize = 5
-  svg.selectAll("activity_legend_colors")
-    .data(activityList_unique)
-    .enter()
-    .append("rect")
-      .attr("class", "activity_legend_colors")
-      .attr("x", 400)
-      .attr("y", function(d,i){ return 10 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
-      .attr("width", legendDotSize)
-      .attr("height", legendDotSize)
-      .style("fill", function(d){ return color(d)})
-      .style("opacity", 0)
-      .on("mouseover", mouseover_highlightActivity)
-      .on("mouseleave", mouseleave_highlightActivity)
-
-  // Add one dot in the legend for each name.
-  svg.selectAll("activity_legend_text")
-    .data(activityList_unique)
-    .enter()
-    .append("text")
-      .attr("class", "activity_legend_text")
-      .attr("x", 400 + legendDotSize*1.2)
-      .attr("y", function(d,i){ return 10 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
-      .style("fill", function(d){ return color(d)})
-      .text(function(d){ return d})
-      .attr("text-anchor", "left")
-      .style("alignment-baseline", "middle")
-      .style("opacity", 0)
-      .on("mouseover", mouseover_highlightActivity)
-      .on("mouseleave", mouseleave_highlightActivity)
-
-
-
 
   /* ------------------------------------- */
 
@@ -1022,8 +1059,8 @@ function createViz(error, ...args) {
       if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
       // scale axes
       scaleDomain("original")
-      // reset treemap
-      redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
+      // reset treemap/legends
+      redraw(subathonStartDate, subathonEndDate, "datetime")
     } 
     else {
       // do not move this -- must be before xScale domain shift!
@@ -1036,8 +1073,8 @@ function createViz(error, ...args) {
       // clear brush grey area
       svg_line_timeLeft.select(".brush_timeLeft").call(brush_timeLeft.move, null);
 
-      // update treemap range
-      redrawTreemap(newStart, newEnd, "hour")
+      // update treemap/legends
+      redraw(newStart, newEnd, "hour")
     }
     zoom_timeLeft();
     zoom_viewers();
@@ -1050,8 +1087,8 @@ function createViz(error, ...args) {
       if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
       // scale axes
       scaleDomain("original")
-      // reset treemap
-      redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
+      // reset treemap/legends
+      redraw(subathonStartDate, subathonEndDate, "datetime")
     } else {
       // do not move this -- must be before xScale domain shift!
       var newStart = [brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers)[0]; 
@@ -1063,8 +1100,8 @@ function createViz(error, ...args) {
       // clear brush grey area
       svg_line_viewers.select(".brush_viewers").call(brush_viewers.move, null);
 
-      // update treemap range
-      redrawTreemap(newStart, newEnd, "hour")
+      // update treemap/legends
+      redraw(newStart, newEnd, "hour")
     }
     zoom_timeLeft();
     zoom_viewers();
@@ -1077,8 +1114,8 @@ function createViz(error, ...args) {
       if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
       // scale axes
       scaleDomain("original")
-      // reset treemap
-      redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
+      // reset treemap/legends
+      redraw(subathonStartDate, subathonEndDate, "datetime")
     } else {
       // do not move this -- must be before xScale domain shift!
       var newStart = [brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows)[0]; 
@@ -1090,8 +1127,8 @@ function createViz(error, ...args) {
       // clear brush grey area
       svg_line_subFollows.select(".brush_subFollows").call(brush_subFollows.move, null);
 
-      // update treemap range
-      redrawTreemap(newStart, newEnd, "hour")
+      // update treemap/legends
+      redraw(newStart, newEnd, "hour")
     }
     zoom_timeLeft();
     zoom_viewers();
@@ -1293,7 +1330,7 @@ function createViz(error, ...args) {
     else if(this.value === "byActivity"){
       // clear previous graphs
       svg_line_timeLeft.selectAll(".line_timeLeft")
-        .style("opacity", 1)
+        .style("opacity", 0)
       svg_line_timeLeft.selectAll(".area_timeLeft")
         .style("opacity", 1)
 
@@ -1326,10 +1363,14 @@ function createViz(error, ...args) {
     zoom_timeLeft();
     zoom_viewers();
     zoom_subFollows();
-    // reset treemap
-    redrawTreemap(subathonStartDate, subathonEndDate, "datetime")
+    // reset treemap/legends
+    redraw(subathonStartDate, subathonEndDate, "datetime")
   }
 
+  /* --------------------------------------------- */
+  // INITIALIZE TREEMAP + LEGENDS
+
+  redraw(subathonStartDate, subathonEndDate, "datetime")
 };
 
 
