@@ -353,23 +353,6 @@ function createViz(error, ...args) {
   /* ------------------------------------- */
   // Activity Legend (timeLeft)
 
-
-
-
-  /*
-  // Add legend color
-  svg.append("g")
-    .attr("class", "activity_legend_colors")
-    //.attr("transform", "translate(0," + height_timeLeft + ")")
-    //.call(xAxis_timeLeft);
-
-  // Add legend text
-  svg.append("g")
-    .attr("class", "activity_legend_text")
-  */
-
-
-
   function redrawLegendActivity(viewers_zip_withinBounds, gamePlayed_count){
     // unique values
     const activityList_unique = []
@@ -382,10 +365,11 @@ function createViz(error, ...args) {
 
     console.log("activityList_unique: ", activityList_unique)
 
-    // legend
-
+    // clear previous legend
     svg.selectAll(".activity_legend_colors").remove();
     svg.selectAll(".activity_legend_text").remove();
+
+    // legend settings
 
     const legendDotSize = 10
     const svg_legend = svg.append("g")
@@ -407,9 +391,9 @@ function createViz(error, ...args) {
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorDict[d]})
-        .style("opacity", 1)
-        .on("mouseover", mouseover_highlightActivity)
-        .on("mouseleave", mouseleave_highlightActivity)
+        .style("opacity", currentMode==="byActivity" ? 1 : 0)
+        .on("mouseover", mouseover_allActivity)
+        .on("mouseleave", mouseleave_allActivity)
 
     // text
 
@@ -429,9 +413,9 @@ function createViz(error, ...args) {
         .text(function(d){ return d}) // todo printing here
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
-        .style("opacity", 1)
-        .on("mouseover", mouseover_highlightActivity)
-        .on("mouseleave", mouseleave_highlightActivity)
+        .style("opacity", currentMode==="byActivity" ? 1 : 0)
+        .on("mouseover", mouseover_allActivity)
+        .on("mouseleave", mouseleave_allActivity)
 
   }
 
@@ -947,7 +931,8 @@ function createViz(error, ...args) {
   console.log("activityList_data: ", activityList_data)
 
   // color palette
-  var colorSchemes = d3.schemeSet2.concat(d3.schemeTableau10)
+  //var colorSchemes = d3.schemeSet2.concat(d3.schemeTableau10)
+  const colorSchemes = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#800000', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
   const colorDict = {}
   activityList_unique_original.forEach((activity, i) => {
     colorDict[activity] = colorSchemes[i]
@@ -966,8 +951,8 @@ function createViz(error, ...args) {
   })
 
   // What to do when one group is hovered
-  const mouseover_highlightActivity = function(d){
-    if (svg.selectAll(".activity_legend_colors").style("opacity") === "1"){
+  const mouseover_allActivity = function(d){
+    if (currentMode==="byActivity"){
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 0.1)
       // expect the one that is hovered
@@ -976,8 +961,8 @@ function createViz(error, ...args) {
   }
 
   // And when it is not hovered anymore
-  const mouseleave_highlightActivity = function(d){
-    if (svg.selectAll(".activity_legend_colors").style("opacity") === "1"){
+  const mouseleave_allActivity = function(d){
+    if (currentMode==="byActivity"){
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 1)
     }
   }
@@ -1306,6 +1291,8 @@ function createViz(error, ...args) {
   /* --------------------------------------------- */
   // RADIO TOGGLE
 
+  var currentMode = "byHighlights"
+
   function clearModeExcept(mode){
     // remove the following modes
     if(mode!=="byHighlights"){
@@ -1331,9 +1318,11 @@ function createViz(error, ...args) {
   }
 
   d3.selectAll(("input[name='mode']")).on("change", function(){
-    clearModeExcept(this.value);
+    currentMode = this.value
 
-    if(this.value === "byHighlights"){
+    clearModeExcept(currentMode);
+
+    if(currentMode === "byHighlights"){
       // clear previous graphs
       svg_line_timeLeft.selectAll(".line_timeLeft")
         .style("opacity", 1)
@@ -1346,7 +1335,7 @@ function createViz(error, ...args) {
         .style("opacity", 1)
     }
 
-    else if(this.value === "byActivity"){
+    else if(currentMode === "byActivity"){
       // clear previous graphs
       svg_line_timeLeft.selectAll(".line_timeLeft")
         .style("opacity", 0)
@@ -1359,11 +1348,11 @@ function createViz(error, ...args) {
         .style("opacity", 1)
     }
 
-    else if(this.value === "byLudwigModcast"){
+    else if(currentMode === "byLudwigModcast"){
       
     }
 
-    else if(this.value === "byTime"){
+    else if(currentMode === "byTime"){
       
     }
   });
