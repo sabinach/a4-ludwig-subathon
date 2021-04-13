@@ -307,7 +307,7 @@ function createViz(error, ...args) {
     console.log("sleepAwake_count: ", sleepAwake_count)
 
     // redraw treemap here
-    //redrawTreemapSleepAwake(sleepAwake_count)
+    redrawTreemapSleepAwake(sleepAwake_count)
     redrawLegendSleepAwake(ludwigModcastJson_zip_withinBounds)
   }
 
