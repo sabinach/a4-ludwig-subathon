@@ -331,15 +331,21 @@ function createViz(error, ...args) {
       (root)
 
     // clear previous treemap
-    svg_treemap.selectAll(".rect").remove();
-    svg_treemap.selectAll(".title").remove();
-    svg_treemap.selectAll(".percent").remove();
+    svg_treemap.selectAll(".rect-activity").remove();
+    svg_treemap.selectAll(".title-activity").remove();
+    svg_treemap.selectAll(".percent-activity").remove();
+
+    // hide other treemaps
+    svg_treemap.selectAll(".rect-sleepAwake").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
+    svg_treemap.selectAll(".title-sleepAwake").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
+    svg_treemap.selectAll(".percent-sleepAwake").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
+
 
     /** -------- **/
     // rect
 
     // create rectangle object
-    const rects = svg_treemap.selectAll(".rect").data(root.leaves())
+    const rects = svg_treemap.selectAll(".rect-activity").data(root.leaves())
 
     //remove rectangle
     rects.exit().remove();
@@ -350,13 +356,13 @@ function createViz(error, ...args) {
 
     // add rectangle
     rects.enter().append("rect")
-      .attr("class", d => "rect" + (d.id ? " treemapRect-" + cleanString(d.id) : ""))
+      .attr("class", d => "rect-activity" + (d.id ? " treemapRect-" + cleanString(d.id) : ""))
       .attr("transform", d => `translate(${d.x0},${d.y0})`)
       .attr("width", d => d.x1 - d.x0)
       .attr("height", d => d.y1 - d.y0)
       .style("stroke", "black")
       .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
-      .style("opacity", 1)
+      .style("opacity", currentMode==="byActivity" ? 1 : 0)
       .on("mouseover", mouseover_treemap_allActivity)
       .on("mouseleave", mouseleave_allActivity)
 
@@ -364,7 +370,7 @@ function createViz(error, ...args) {
     // title
 
     // create title object
-    const title = svg_treemap.selectAll(".title").data(root.leaves())
+    const title = svg_treemap.selectAll(".title-activity").data(root.leaves())
 
     //remove title
     title
@@ -377,20 +383,20 @@ function createViz(error, ...args) {
 
     // add title
     title.enter().append("text")
-      .attr("class", d => "title" + (d.id ? " treemapTitle-" + cleanString(d.id) : ""))
+      .attr("class", d => "title-activity" + (d.id ? " treemapTitle-" + cleanString(d.id) : ""))
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 13) // +lower
       .html(d => `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
-      .style("opacity", 1)
+      .style("opacity", currentMode==="byActivity" ? 1 : 0)
 
     /** -------- **/
     // percent
 
     // create percent object
-    const percent = svg_treemap.selectAll(".percent").data(root.leaves())
+    const percent = svg_treemap.selectAll(".percent-activity").data(root.leaves())
 
     //remove percent
     percent
@@ -403,14 +409,14 @@ function createViz(error, ...args) {
 
     // add percent
     percent.enter().append("text")
-      .attr("class", d => "percent" + (d.id ? " treemapPercent-" + cleanString(d.id) : ""))
+      .attr("class", d => "percent-activity" + (d.id ? " treemapPercent-" + cleanString(d.id) : ""))
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 23) // +lower
       .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
-      .style("opacity", 1)
+      .style("opacity", currentMode==="byActivity" ? 1 : 0)
 
     /** -------- **/
     /*
@@ -446,18 +452,21 @@ function createViz(error, ...args) {
       .padding(0.1)
       (root)
 
-    console.log("root.leaves(): ", root.leaves())
-
     // clear previous treemap
-    svg_treemap.selectAll(".rect").remove();
-    svg_treemap.selectAll(".title").remove();
-    svg_treemap.selectAll(".percent").remove();
+    svg_treemap.selectAll(".rect-sleepAwake").remove();
+    svg_treemap.selectAll(".title-sleepAwake").remove();
+    svg_treemap.selectAll(".percent-sleepAwake").remove();
+
+    // hide other treemaps
+    svg_treemap.selectAll(".rect-activity").style("opacity", currentMode==="byActivity" ? 1 : 0);
+    svg_treemap.selectAll(".title-activity").style("opacity", currentMode==="byActivity" ? 1 : 0);
+    svg_treemap.selectAll(".percent-activity").style("opacity", currentMode==="byActivity" ? 1 : 0);
 
     /** -------- **/
     // rect
 
     // create rectangle object
-    const rects = svg_treemap.selectAll(".rect").data(root.leaves())
+    const rects = svg_treemap.selectAll(".rect-sleepAwake").data(root.leaves())
 
     //remove rectangle
     rects.exit().remove();
@@ -468,13 +477,13 @@ function createViz(error, ...args) {
 
     // add rectangle
     rects.enter().append("rect")
-      .attr("class", d => "rect" + (d.id ? " treemapRect-" + d.id : ""))
+      .attr("class", d => "rect-sleepAwake" + (d.id ? " treemapRect-" + d.id : ""))
       .attr("transform", d => `translate(${d.x0},${d.y0})`)
       .attr("width", d => d.x1 - d.x0)
       .attr("height", d => d.y1 - d.y0)
       .style("stroke", "black")
       .style("fill", d => d.id ? colorSleepAwake[d.id] : "#9cbdd9")
-      .style("opacity", 1)
+      .style("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
       .on("mouseover", mouseover_treemap_allSleepAwake)
       .on("mouseleave", mouseleave_allSleepAwake)
 
@@ -482,7 +491,7 @@ function createViz(error, ...args) {
     // title
 
     // create title object
-    const title = svg_treemap.selectAll(".title").data(root.leaves())
+    const title = svg_treemap.selectAll(".title-sleepAwake").data(root.leaves())
 
     //remove title
     title
@@ -495,20 +504,20 @@ function createViz(error, ...args) {
 
     // add title
     title.enter().append("text")
-      .attr("class", d => "title" + (d.id ? " treemapTitle-" + d.id : ""))
+      .attr("class", d => "title-sleepAwake" + (d.id ? " treemapTitle-" + d.id : ""))
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 13) // +lower
       .html(d => `<tspan style='font-weight: 500'>${d.data.sleepAwake}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
-      .style("opacity", 1)
+      .style("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
 
     /** -------- **/
     // percent
 
     // create percent object
-    const percent = svg_treemap.selectAll(".percent").data(root.leaves())
+    const percent = svg_treemap.selectAll(".percent-sleepAwake").data(root.leaves())
 
     //remove percent
     percent
@@ -521,14 +530,14 @@ function createViz(error, ...args) {
 
     // add percent
     percent.enter().append("text")
-      .attr("class", d => "percent" + (d.id ? " treemapPercent-" + cleanString(d.id) : ""))
+      .attr("class", d => "percent-sleepAwake" + (d.id ? " treemapPercent-" + cleanString(d.id) : ""))
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 23) // +lower
       .html(d => `<tspan style='font-weight: 500'>${(d.data.count/sleepAwake_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
-      .style("opacity", 1)
+      .style("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
 
     /** -------- **/
     /*
@@ -1212,9 +1221,9 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", lowOpacity)
-      svg_treemap.selectAll(".rect").style("opacity", lowOpacity)
-      svg_treemap.selectAll(".title").style("opacity", lowOpacity)
-      svg_treemap.selectAll(".percent").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".rect-activity").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".title-activity").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".percent-activity").style("opacity", lowOpacity)
       // expect the one that is hovered
       svg_line_timeLeft.selectAll("." + d).style("opacity", highOpacity)
       svg_line_viewers.selectAll("." + d).style("opacity", highOpacity)
@@ -1230,15 +1239,16 @@ function createViz(error, ...args) {
   // What to do when one group is hovered
   const mouseover_treemap_allActivity = function(d){
     if (currentMode==="byActivity"){
+      console.log(d.id)
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft_activity").style("opacity", lowOpacity)
       svg_line_viewers.selectAll(".area_viewers_activity").style("opacity", lowOpacity)
       svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", lowOpacity)
-      svg_treemap.selectAll(".rect").style("opacity", lowOpacity)
-      svg_treemap.selectAll(".title").style("opacity", lowOpacity)
-      svg_treemap.selectAll(".percent").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".rect-activity").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".title-activity").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".percent-activity").style("opacity", lowOpacity)
       // expect the one that is hovered
       if(d.id){
         svg_line_timeLeft.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
@@ -1261,9 +1271,9 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", highOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", highOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", highOpacity)
-      svg_treemap.selectAll(".rect").style("opacity", highOpacity)
-      svg_treemap.selectAll(".title").style("opacity", highOpacity)
-      svg_treemap.selectAll(".percent").style("opacity", highOpacity)
+      svg_treemap.selectAll(".rect-activity").style("opacity", highOpacity)
+      svg_treemap.selectAll(".title-activity").style("opacity", highOpacity)
+      svg_treemap.selectAll(".percent-activity").style("opacity", highOpacity)
     }
   }
 
@@ -1359,24 +1369,34 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".area_subFollows_sleepAwake").style("opacity", lowOpacity)
       svg.selectAll(".sleepAwake_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".sleepAwake_legend_text").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".rect-sleepAwake").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".title-sleepAwake").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".percent-sleepAwake").style("opacity", lowOpacity)
       // expect the one that is hovered
       svg_line_timeLeft.selectAll("." + d).style("opacity", highOpacity)
       svg_line_viewers.selectAll("." + d).style("opacity", highOpacity)
       svg_line_subFollows.selectAll("." + d).style("opacity", highOpacity)
       svg.selectAll(".legendColor-" + d).style("opacity", highOpacity)
       svg.selectAll(".legendText-" + d).style("opacity", highOpacity)
+      svg_treemap.selectAll(".treemapRect-" + d).style("opacity", highOpacity)
+      svg_treemap.selectAll(".treemapTitle-" + d).style("opacity", highOpacity)
+      svg_treemap.selectAll(".treemapPercent-" + d).style("opacity", highOpacity)
     }
   }
 
   // What to do when one group is hovered
   const mouseover_treemap_allSleepAwake = function(d){
     if (currentMode==="byLudwigModcast"){
+      console.log(d.id)
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", lowOpacity)
       svg_line_viewers.selectAll(".area_viewers_sleepAwake").style("opacity", lowOpacity)
       svg_line_subFollows.selectAll(".area_subFollows_sleepAwake").style("opacity", lowOpacity)
       svg.selectAll(".sleepAwake_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".sleepAwake_legend_text").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".rect-sleepAwake").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".title-sleepAwake").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".percent-sleepAwake").style("opacity", lowOpacity)
       // expect the one that is hovered
       if(d.id){
         svg_line_timeLeft.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
@@ -1384,6 +1404,9 @@ function createViz(error, ...args) {
         svg_line_subFollows.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
         svg.selectAll(".legendColor-" + cleanString(d.id)).style("opacity", highOpacity)
         svg.selectAll(".legendText-" + cleanString(d.id)).style("opacity", highOpacity)
+        svg_treemap.selectAll(".treemapRect-" + cleanString(d.id)).style("opacity", highOpacity)
+        svg_treemap.selectAll(".treemapTitle-" + cleanString(d.id)).style("opacity", highOpacity)
+        svg_treemap.selectAll(".treemapPercent-" + cleanString(d.id)).style("opacity", highOpacity)
       }
     }
   }
@@ -1396,9 +1419,11 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".area_subFollows_sleepAwake").style("opacity", highOpacity)
       svg.selectAll(".sleepAwake_legend_colors").style("opacity", highOpacity)
       svg.selectAll(".sleepAwake_legend_text").style("opacity", highOpacity)
+      svg_treemap.selectAll(".rect-sleepAwake").style("opacity", highOpacity)
+      svg_treemap.selectAll(".title-sleepAwake").style("opacity", highOpacity)
+      svg_treemap.selectAll(".percent-sleepAwake").style("opacity", highOpacity)
     }
   }
-
 
 
   /* --- Brush + Line Clip DEFINITIONS --- */
@@ -1863,6 +1888,13 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       svg.selectAll(".activity_legend_text")
         .style("opacity", 0)
+
+      svg_treemap.selectAll(".rect-activity")
+        .style("opacity", 0)
+      svg_treemap.selectAll(".title-activity")
+        .style("opacity", 0)
+      svg_treemap.selectAll(".percent-activity")
+        .style("opacity", 0)
     }
 
     if(mode!=="byLudwigModcast"){
@@ -1876,6 +1908,13 @@ function createViz(error, ...args) {
       svg.selectAll(".sleepAwake_legend_colors")
         .style("opacity", 0)
       svg.selectAll(".sleepAwake_legend_text")
+        .style("opacity", 0)
+
+      svg_treemap.selectAll(".rect-sleepAwake")
+        .style("opacity", 0)
+      svg_treemap.selectAll(".title-sleepAwake")
+        .style("opacity", 0)
+      svg_treemap.selectAll(".percent-sleepAwake")
         .style("opacity", 0)
     }
 
@@ -1920,6 +1959,13 @@ function createViz(error, ...args) {
       svg.selectAll(".activity_legend_text")
         .style("opacity", 1)
 
+      svg_treemap.selectAll(".rect-activity")
+        .style("opacity", 1)
+      svg_treemap.selectAll(".title-activity")
+        .style("opacity", 1)
+      svg_treemap.selectAll(".percent-activity")
+        .style("opacity", 1)
+
     }
 
     else if(currentMode === "byLudwigModcast"){
@@ -1933,6 +1979,13 @@ function createViz(error, ...args) {
       svg.selectAll(".sleepAwake_legend_colors")
         .style("opacity", 1)
       svg.selectAll(".sleepAwake_legend_text")
+        .style("opacity", 1)
+
+      svg_treemap.selectAll(".rect-sleepAwake")
+        .style("opacity", 1)
+      svg_treemap.selectAll(".title-sleepAwake")
+        .style("opacity", 1)
+      svg_treemap.selectAll(".percent-sleepAwake")
         .style("opacity", 1)
     }
 
