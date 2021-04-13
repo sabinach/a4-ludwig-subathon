@@ -18,14 +18,18 @@ const scrapeSpreadsheet = () => {
             let evaluated = await page.evaluate(() => {
 				
 				const timeStreamedDomId = "td.s208"; 	// hardcoded dom element id -- TODO: incorrect values scraped
+                const timeStreamedDomId_2 = "td.s233"   // hardcoded dom element id (highlighted values on the spreadsheet have different domid)
+
 				const timeLeftDomId = "td.s209";		// hardcoded dom element id
 				const subsGainedDomId = "td.s212";		// hardcoded dom element id
 
                 const timeStreamedDom = document.querySelectorAll(timeStreamedDomId);
+                const timeStreamedDom_2 = document.querySelectorAll(timeStreamedDomId_2);
                 const timeLeftDom = document.querySelectorAll(timeLeftDomId);
 				const subsGainedDom = document.querySelectorAll(subsGainedDomId);
 				
-                const timeStreamedList = [];  									
+                const timeStreamedList = []; 
+                const timeStreamedList_2 = []; 									
                 const timeLeftList = [];
 				const subsGainedList = [];
 
@@ -33,6 +37,13 @@ const scrapeSpreadsheet = () => {
                     const timeStreamed = parseFloat(domItem.innerText);
                     timeStreamed!=='' && !isNaN(timeStreamed)
                         ? timeStreamedList.push(timeStreamed)
+                        : null;
+                });
+
+                timeStreamedDom_2.forEach((domItem) => {
+                    const timeStreamed = parseFloat(domItem.innerText);
+                    timeStreamed!=='' && !isNaN(timeStreamed)
+                        ? timeStreamedList_2.push(timeStreamed)
                         : null;
                 });
 				
@@ -52,6 +63,7 @@ const scrapeSpreadsheet = () => {
 
                 const data = {
                     timeStreamed: timeStreamedList,
+                    timeStreamed_2: timeStreamedList_2,
                     timeLeft: timeLeftList,
 					subsGained: subsGainedList
                 };

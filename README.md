@@ -23,7 +23,7 @@ Subathon Dates:
 
 Current Data Extracted from Subathon Tracker (manually updated):
 - START: 0 hr
-- END: 563.5 hr
+- END: 694.5 hr (missing 681-693.5hr due to deleted VOD)
 
 Current Data Extracted from SullyGnome (manually updated):
 - START: March 13, 2021, 19:00 EST

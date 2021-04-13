@@ -121,11 +121,14 @@ function createViz(error, ...args) {
   // TIME LEFT / SUBS GAINED
 
   // reformat xy data (timeLeftJson)
-  const timeStreamed_hours = Array.from(Array(timeLeftJson.timeLeft.length), (_,x) => x*0.5);
+  const timeStreamed_hours = [...timeLeftJson.timeStreamed, ...timeLeftJson.timeStreamed_2].sort((a,b) => a-b)
   const timeLeft_hours = timeLeftJson.timeLeft.map(d => parseTimeLeft(d));
 
   console.log("timeStreamed_hours: ", timeStreamed_hours)
   console.log("timeLeft_hours: ", timeLeft_hours)
+
+  // handle error: mismatch xy length
+  if (timeStreamed_hours.length !== timeLeft_hours.length) throw error;
 
   const timeLeftJson_zip = timeStreamed_hours.map((timeStreamed, index) => {
     return {
@@ -921,8 +924,8 @@ function createViz(error, ...args) {
   })
   console.log("colorDict: ", colorDict)
 
-  const lowOpacity = 0.2
-  const highOpacity = 0.9
+  const lowOpacity = 0.1
+  const highOpacity = 1
 
   // What to do when one group is hovered
   const mouseover_legend_allActivity = function(d){
