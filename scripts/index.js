@@ -58,7 +58,7 @@ var svg = d3.select("#line-viz")
 /* ---------------------- */
 
 // set the dimensions and margins of the graph
-var margin_treemap = {top: 15, right: 8, bottom: 10, left: 5},
+var margin_treemap = {top: 5, right: 8, bottom: 10, left: 5},
   width_treemap = 425 - margin_treemap.left - margin_treemap.right,
   height_treemap = 300 - margin_treemap.top - margin_treemap.bottom;
 
@@ -196,6 +196,7 @@ function createViz(error, ...args) {
       }
     })
 
+    gamePlayed_count = gamePlayed_count.filter(d => d.game!==null)
     console.log("gamePlayed_count (before): ", gamePlayed_count)
 
     /*
@@ -276,14 +277,14 @@ function createViz(error, ...args) {
 
     // add rectangle
     rects.enter().append("rect")
-        .attr("class", "rect")
-        .attr("transform", d => `translate(${d.x0},${d.y0})`)
-        .attr("width", d => d.x1 - d.x0)
-        .attr("height", d => d.y1 - d.y0)
-        .style("stroke", "black")
-        .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
-        .on("mouseover", mouseover_treemap_allActivity)
-        .on("mouseleave", mouseleave_treemap_allActivity)
+      .attr("class", d => "rect" + (d.id ? " treemapRect-" + cleanString(d.id) : ""))
+      .attr("transform", d => `translate(${d.x0},${d.y0})`)
+      .attr("width", d => d.x1 - d.x0)
+      .attr("height", d => d.y1 - d.y0)
+      .style("stroke", "black")
+      .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
+      .on("mouseover", mouseover_treemap_allActivity)
+      .on("mouseleave", mouseleave_treemap_allActivity)
 
     /** -------- **/
     // title
@@ -302,13 +303,13 @@ function createViz(error, ...args) {
 
     // add title
     title.enter().append("text")
-        .attr("class", "title")
-        .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
-        .attr("dx", 5)  // +right
-        .attr("dy", 13) // +lower
-        .html(d => `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
-        .style("font-size", "8px")
-        .style("fill", "black")
+      .attr("class", d => "title" + (d.id ? " treemapTitle-" + cleanString(d.id) : ""))
+      .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
+      .attr("dx", 5)  // +right
+      .attr("dy", 13) // +lower
+      .html(d => `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
+      .style("font-size", "8px")
+      .style("fill", "black")
 
     /** -------- **/
     // percent
@@ -327,13 +328,13 @@ function createViz(error, ...args) {
 
     // add percent
     percent.enter().append("text")
-        .attr("class", "percent")
-        .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
-        .attr("dx", 5)  // +right
-        .attr("dy", 23) // +lower
-        .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
-        .style("font-size", "8px")
-        .style("fill", "black")
+      .attr("class", d => "percent" + (d.id ? " treemapPercent-" + cleanString(d.id) : ""))
+      .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
+      .attr("dx", 5)  // +right
+      .attr("dy", 23) // +lower
+      .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
+      .style("font-size", "8px")
+      .style("fill", "black")
 
     /** -------- **/
     /*
@@ -385,7 +386,7 @@ function createViz(error, ...args) {
     legendColor
       .enter()
       .append("rect")
-        .attr("class", "activity_legend_colors")
+        .attr("class", d => "activity_legend_colors legendColor-" + d)
         .attr("x", 425)
         .attr("y", function(d,i){ return -30 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
@@ -406,11 +407,11 @@ function createViz(error, ...args) {
     legendText
       .enter()
       .append("text")
-        .attr("class", "activity_legend_text")
+        .attr("class", d => "activity_legend_text legendText-" + d)
         .attr("x", 425 + legendDotSize*1.2)
         .attr("y", function(d,i){ return -30 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorDict[d]})
-        .text(function(d){ return d}) // todo printing here
+        .text(function(d){ return d})
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
         .style("opacity", currentMode==="byActivity" ? 1 : 0)
@@ -953,20 +954,40 @@ function createViz(error, ...args) {
       .attr("opacity", 0)
   })
 
+
+  const lowOpacity = 0.2
+  const highOpacity = 0.9
+
   // What to do when one group is hovered
   const mouseover_legend_allActivity = function(d){
     if (currentMode==="byActivity"){
+      console.log(d)
       // reduce opacity of all groups
-      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 0.1)
+      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", lowOpacity)
+      svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
+      svg.selectAll(".activity_legend_text").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".rect").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".title").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".percent").style("opacity", lowOpacity)
       // expect the one that is hovered
-      svg_line_timeLeft.selectAll("." + d).style("opacity", 1)
+      svg_line_timeLeft.selectAll("." + d).style("opacity", highOpacity)
+      svg.selectAll(".legendColor-" + d).style("opacity", highOpacity)
+      svg.selectAll(".legendText-" + d).style("opacity", highOpacity)
+      svg_treemap.selectAll(".treemapRect-" + d).style("opacity", highOpacity)
+      svg_treemap.selectAll(".treemapTitle-" + d).style("opacity", highOpacity)
+      svg_treemap.selectAll(".treemapPercent-" + d).style("opacity", highOpacity)
     }
   }
 
   // And when it is not hovered anymore
   const mouseleave_legend_allActivity = function(d){
     if (currentMode==="byActivity"){
-      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 1)
+      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", highOpacity)
+      svg.selectAll(".activity_legend_colors").style("opacity", highOpacity)
+      svg.selectAll(".activity_legend_text").style("opacity", highOpacity)
+      svg_treemap.selectAll(".rect").style("opacity", highOpacity)
+      svg_treemap.selectAll(".title").style("opacity", highOpacity)
+      svg_treemap.selectAll(".percent").style("opacity", highOpacity)
     }
   }
 
@@ -974,16 +995,33 @@ function createViz(error, ...args) {
   const mouseover_treemap_allActivity = function(d){
     if (currentMode==="byActivity"){
       // reduce opacity of all groups
-      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 0.1)
+      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", lowOpacity)
+      svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
+      svg.selectAll(".activity_legend_text").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".rect").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".title").style("opacity", lowOpacity)
+      svg_treemap.selectAll(".percent").style("opacity", lowOpacity)
       // expect the one that is hovered
-      svg_line_timeLeft.selectAll("." + cleanString(d.id)).style("opacity", 1)
+      if(d.id){
+        svg_line_timeLeft.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
+        svg.selectAll(".legendColor-" + cleanString(d.id)).style("opacity", highOpacity)
+        svg.selectAll(".legendText-" + cleanString(d.id)).style("opacity", highOpacity)
+        svg_treemap.selectAll(".treemapRect-" + cleanString(d.id)).style("opacity", highOpacity)
+      svg_treemap.selectAll(".treemapTitle-" + cleanString(d.id)).style("opacity", highOpacity)
+      svg_treemap.selectAll(".treemapPercent-" + cleanString(d.id)).style("opacity", highOpacity)
+      }
     }
   }
 
   // And when it is not hovered anymore
   const mouseleave_treemap_allActivity = function(d){
     if (currentMode==="byActivity"){
-      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 1)
+      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", highOpacity)
+      svg.selectAll(".activity_legend_colors").style("opacity", highOpacity)
+      svg.selectAll(".activity_legend_text").style("opacity", highOpacity)
+      svg_treemap.selectAll(".rect").style("opacity", highOpacity)
+      svg_treemap.selectAll(".title").style("opacity", highOpacity)
+      svg_treemap.selectAll(".percent").style("opacity", highOpacity)
     }
   }
 
@@ -1221,8 +1259,6 @@ function createViz(error, ...args) {
   }
 
   /* --- Information Tooltip DEFINITIONS --- */
-
-  //style="width:300px; height:100px; padding: 10px; border: 1px solid black"
 
   // Create tooltip
   var tooltip_info = d3.select("#info-viz")
