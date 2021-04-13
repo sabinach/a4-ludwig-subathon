@@ -350,6 +350,8 @@ function createViz(error, ...args) {
   /* ------------------------------------- */
   // Activity Legend (timeLeft)
 
+
+
   function redrawLegendActivity(viewers_zip_withinBounds, gamePlayed_count){
     // unique values
     const activityList_unique = []
@@ -364,38 +366,42 @@ function createViz(error, ...args) {
 
     // size
 
-    const legendDotSize = 20
+    const legendDotSize = 10
 
-    // legend 
 
-    const legendColor = svg.selectAll(".activity_legend_colors").data(activityList_unique)
+    // clear all
 
-    legendColor
-      .exit()
-      .remove()
+    d3.select("svg").selectAll(".activity_legend_colors > *").remove()
+    d3.select("svg").selectAll(".activity_legend_text > *").remove()
+
+    // legend
+
+    const svg_legend = svg.append("g")
+
+    // color 
+
+    console.log("---color---")
+
+    const legendColor = svg_legend.selectAll(".activity_legend_colors").data(activityList_unique)
 
     legendColor
       .enter()
-        .append("rect")
+      .append("rect")
         .attr("class", "activity_legend_colors")
         .attr("x", 400)
         .attr("y", function(d,i){ return 10 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
-        .style("fill", function(d){ return color(d)})
-        .style("opacity", 0)
+        .style("fill", function(d){ console.log(d); return colorDict[d]})
+        .style("opacity", 1)
         .on("mouseover", mouseover_highlightActivity)
         .on("mouseleave", mouseleave_highlightActivity)
 
     // text
 
-    console.log("---")
+    console.log("---text---")
 
-    const legendText = svg.selectAll(".activity_legend_text").data(activityList_unique)
-
-    legendText
-      .exit()
-      .remove()
+    const legendText = svg_legend.selectAll(".activity_legend_text").data(activityList_unique)
 
     // Add one dot in the legend for each name.
     legendText
@@ -404,13 +410,15 @@ function createViz(error, ...args) {
         .attr("class", "activity_legend_text")
         .attr("x", 400 + legendDotSize*1.2)
         .attr("y", function(d,i){ return 10 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
-        .style("fill", function(d){ return color(d)})
-        .text(function(d){ console.log(d); return d}) // todo printing here
+        .style("fill", function(d){ console.log(d); return colorDict[d]})
+        .text(function(d){ return d}) // todo printing here
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
-        .style("opacity", 0)
+        .style("opacity", 1)
         .on("mouseover", mouseover_highlightActivity)
         .on("mouseleave", mouseleave_highlightActivity)
+
+    console.log("------")
 
   }
 
@@ -926,10 +934,11 @@ function createViz(error, ...args) {
   console.log("activityList_data: ", activityList_data)
 
   // color palette
-  var color = d3.scaleOrdinal()
-    .domain(activityList_unique_original)
-    .range(d3.schemeSet2); //https://github.com/d3/d3-scale-chromatic
-  console.log("color: ", color)
+  var colorSchemes = d3.schemeSet2.concat(d3.schemeTableau10)
+  const colorDict = {}
+  activityList_unique_original.forEach((activity, i) => {
+    colorDict[activity] = colorSchemes[i]
+  })
 
   activityList_data.forEach(activity => {
     // Add area (timeLeft)
@@ -938,7 +947,7 @@ function createViz(error, ...args) {
       .attr("class", d => "area_timeLeft " + activity.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '') + " " + activity.timeStreamed)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
-      .attr("fill", color(activity.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')))
+      .attr("fill", colorDict[activity.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')])
       .attr("d", drawArea_timeLeft)
       .attr("opacity", 0)
   })
