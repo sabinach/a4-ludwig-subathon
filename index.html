@@ -15,23 +15,24 @@
 		<!-- Viz / Infographics -->
 		<div class="row">
 			<!-- Left Side -->
+			<div class="column"> <!-- style="background-color: grey" -->
+				<div id="info-viz"></div>
+				<div id="highlights-viz"></div>
+				<div id="treemap-viz"></div>
+			</div>
+			<!-- Right Side -->
 			<div class="column"> <!-- style="background-color: #A9A9A9" -->
-				<form style="display:inline-block;"> <!-- style="text-align: right; padding-right: 50px" -->
+				<button id="reset-button" style="margin-left:590px">Reset Graphs</button>
+				<form style="margin-left:250px"> <!-- style="text-align: right; padding-right: 50px" -->
 					<label><input type="radio" name="mode" value="byHighlights" checked> By Highlights</label>
 					<label><input type="radio" name="mode" value="byActivity"> By Activity</label>
 					<label><input type="radio" name="mode" value="byLudwigModcast"> By Ludwig/Modcast</label>
 					<label><input type="radio" name="mode" value="byTime"> By Time</label>
 					<label><input type="radio" name="mode" value="byNone"> None</label>
 				</form>
-				<button id="reset-button" style="display:inline-block;float:left;margin-right:50px">Reset Graphs</button>
 				<div id="line-viz" style="padding-top:15px"></div>
 			</div>
-			<!-- Right Side -->
-			<div class="column"> <!-- style="background-color: grey" -->
-				<div id="info-viz"></div>
-				<div id="highlights-viz"></div>
-				<div id="treemap-viz"></div>
-			</div>
+			
 		</div>
 
 		<!-- Info -->
