@@ -954,6 +954,7 @@ function createViz(error, ...args) {
     if (currentMode==="byActivity"){
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft_activity").style("opacity", lowOpacity)
+      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", lowOpacity)
       svg_line_viewers.selectAll(".area_viewers_activity").style("opacity", lowOpacity)
       svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
@@ -978,6 +979,7 @@ function createViz(error, ...args) {
     if (currentMode==="byActivity"){
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft_activity").style("opacity", lowOpacity)
+      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", lowOpacity)
       svg_line_viewers.selectAll(".area_viewers_activity").style("opacity", lowOpacity)
       svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
@@ -1003,6 +1005,7 @@ function createViz(error, ...args) {
   const mouseleave_allActivity = function(d){
     if (currentMode==="byActivity"){
       svg_line_timeLeft.selectAll(".area_timeLeft_activity").style("opacity", highOpacity)
+      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", highOpacity)
       svg_line_viewers.selectAll(".area_viewers_activity").style("opacity", highOpacity)
       svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", highOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", highOpacity)
@@ -1150,19 +1153,17 @@ function createViz(error, ...args) {
       .attr("opacity", currentMode==="byActivity" ? 1 : 0)
   })
 
-  /*
   // Add sleepAwake area (timeLeft)
   sleepAwakeList_data.forEach(item => {
     svg_line_timeLeft.append("path")
       .datum(item.data)
-      .attr("class", d => "area_timeLeft_activity " + item.sleepAwake + " " + item.sleepAwake + "-" + item.timeStreamed)
+      .attr("class", d => "area_timeLeft_sleepAwake " + item.sleepAwake + " " + item.sleepAwake + "-" + item.timeStreamed)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorSleepAwake[item.sleepAwake])
-      .attr("d", drawarea_timeLeft_activity)
+      .attr("d", drawarea_timeLeft)
       .attr("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
   })
-  */
 
   // Add brush + hover (timeLeft)
   svg_line_timeLeft.append("g")
@@ -1399,6 +1400,7 @@ function createViz(error, ...args) {
     svg.select(".axis--y--timeLeft").transition(t).call(yAxis_timeLeft);
     svg_line_timeLeft.selectAll(".line_timeLeft").transition(t).attr("d", drawLine_timeLeft);
     svg_line_timeLeft.selectAll(".area_timeLeft_activity").transition(t).attr("d", drawarea_timeLeft);
+    svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").transition(t).attr("d", drawarea_timeLeft);
     svg_line_timeLeft.selectAll("circle").transition(t)
       .attr("cx", d => xScale_timeLeft(d.timeStreamed))
       .attr("cy", d => yScale_timeLeft(d.timeLeft));
@@ -1542,6 +1544,8 @@ function createViz(error, ...args) {
     }
 
     if(mode!=="byLudwigModcast"){
+      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake")
+        .style("opacity", 0)
     }
 
     if(mode!=="byTime"){
@@ -1588,6 +1592,8 @@ function createViz(error, ...args) {
     }
 
     else if(currentMode === "byLudwigModcast"){
+      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake")
+        .style("opacity", 1)
     }
 
     else if(currentMode === "byTime"){
