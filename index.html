@@ -8,31 +8,29 @@
 		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 	</head>
 	<body>
-
 		<!-- Title -->
-		<h2 style="text-align:center">Highlights from Ludwig's 30-Day Subathon</h2>
+		<h2 style="width:1300px;text-align:center">Highlights from Ludwig's 30-Day Subathon</h2>
 
 		<!-- Viz / Infographics -->
-		<div class="row">
+		<div class="row" style="text-align:center">
 			<!-- Left Side -->
-			<div class="column"> <!-- style="background-color: grey" -->
+			<div class="column" id="leftColumn"> <!-- style="background-color: grey" -->
 				<div id="info-viz"></div>
 				<div id="highlights-viz"></div>
 				<div id="treemap-viz"></div>
 			</div>
 			<!-- Right Side -->
-			<div class="column"> <!-- style="background-color: #A9A9A9" -->
+			<div class="column" id="rightColumn"> <!-- style="background-color: #A9A9A9" -->
 				<button id="reset-button" style="margin-left:590px">Reset Graphs</button>
 				<form style="margin-left:250px"> <!-- style="text-align: right; padding-right: 50px" -->
-					<label><input type="radio" name="mode" value="byHighlights" checked> By Highlights</label>
-					<label><input type="radio" name="mode" value="byActivity"> By Activity</label>
+					<label><input type="radio" name="mode" value="byHighlights"> By Highlights</label>
+					<label><input type="radio" name="mode" value="byActivity" checked> By Activity</label>
 					<label><input type="radio" name="mode" value="byLudwigModcast"> By Ludwig/Modcast</label>
 					<label><input type="radio" name="mode" value="byTime"> By Time</label>
 					<label><input type="radio" name="mode" value="byNone"> None</label>
 				</form>
 				<div id="line-viz" style="padding-top:15px"></div>
 			</div>
-			
 		</div>
 
 		<!-- Info -->

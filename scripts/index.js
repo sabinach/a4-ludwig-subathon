@@ -5,6 +5,10 @@ var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
 console.log("parentDomain: ", parentDomain);
 
 /* ---------------------- */
+
+var currentMode = "byActivity"
+
+/* ---------------------- */
 // helper utils (todo - currently not used)
 
 d3.selection.prototype.moveToFront = function() {
@@ -613,7 +617,7 @@ function createViz(error, ...args) {
   svg.append("text")
     .attr("transform", "translate(15, 20) rotate(-90)")
     .style("text-anchor", "middle")
-    .text("# Hours Left");  
+    .text("# Hours Left");   
 
   /* ---------- */
 
@@ -1025,7 +1029,7 @@ function createViz(error, ...args) {
     .attr("stroke-width", 1.5)
     .attr("fill", "none")
     .attr("d", drawLine_timeLeft)
-    .attr("opacity", 1)
+    .attr("opacity", currentMode==="byHighlights" || currentMode==="byNone" ? 1 : 0)
 
   activityList_data.forEach(activity => {
     // Add area (timeLeft)
@@ -1036,7 +1040,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
       .attr("d", drawArea_timeLeft)
-      .attr("opacity", 0)
+      .attr("opacity", currentMode==="byActivity" ? 1 : 0)
   })
 
   // Add brush + hover (timeLeft)
@@ -1086,7 +1090,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
       .attr("d", drawArea_viewers)
-      .attr("opacity", 0)
+      .attr("opacity", currentMode==="byActivity" ? 1 : 0)
   })
 
   // Add brush (viewers)
@@ -1135,7 +1139,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
       .attr("d", drawArea_subFollows)
-      .attr("opacity", 0)
+      .attr("opacity", currentMode==="byActivity" ? 1 : 0)
   })
 
   // Add brush (subFollows)
@@ -1343,7 +1347,7 @@ function createViz(error, ...args) {
     .attr("r", (d, i) => 6)
     .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
-    .style("opacity", 1) // initialize ON
+    .style("opacity", currentMode==="byHighlights" ? 1 : 0) // initialize depending on currentMode
     .on("mouseover", mouseover_highlights) //TODO
 
   /* --- Highlights Tooltip FUNCTIONS --- */
@@ -1383,8 +1387,6 @@ function createViz(error, ...args) {
 
   /* --------------------------------------------- */
   // RADIO TOGGLE
-
-  var currentMode = "byHighlights"
 
   function clearModeExcept(mode){
     // remove the following modes
