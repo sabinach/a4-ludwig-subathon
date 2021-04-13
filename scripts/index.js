@@ -285,7 +285,7 @@ function createViz(error, ...args) {
       .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
       .style("opacity", 1)
       .on("mouseover", mouseover_treemap_allActivity)
-      .on("mouseleave", mouseleave_treemap_allActivity)
+      .on("mouseleave", mouseleave_allActivity)
 
     /** -------- **/
     // title
@@ -397,7 +397,7 @@ function createViz(error, ...args) {
         .style("fill", function(d){ return colorDict[d]})
         .style("opacity", currentMode==="byActivity" ? 1 : 0)
         .on("mouseover", mouseover_legend_allActivity)
-        .on("mouseleave", mouseleave_legend_allActivity)
+        .on("mouseleave", mouseleave_allActivity)
 
     // text
 
@@ -419,7 +419,7 @@ function createViz(error, ...args) {
         .style("alignment-baseline", "middle")
         .style("opacity", currentMode==="byActivity" ? 1 : 0)
         .on("mouseover", mouseover_legend_allActivity)
-        .on("mouseleave", mouseleave_legend_allActivity)
+        .on("mouseleave", mouseleave_allActivity)
 
   }
 
@@ -981,18 +981,6 @@ function createViz(error, ...args) {
     }
   }
 
-  // And when it is not hovered anymore
-  const mouseleave_legend_allActivity = function(d){
-    if (currentMode==="byActivity"){
-      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", highOpacity)
-      svg.selectAll(".activity_legend_colors").style("opacity", highOpacity)
-      svg.selectAll(".activity_legend_text").style("opacity", highOpacity)
-      svg_treemap.selectAll(".rect").style("opacity", highOpacity)
-      svg_treemap.selectAll(".title").style("opacity", highOpacity)
-      svg_treemap.selectAll(".percent").style("opacity", highOpacity)
-    }
-  }
-
   // What to do when one group is hovered
   const mouseover_treemap_allActivity = function(d){
     if (currentMode==="byActivity"){
@@ -1016,7 +1004,7 @@ function createViz(error, ...args) {
   }
 
   // And when it is not hovered anymore
-  const mouseleave_treemap_allActivity = function(d){
+  const mouseleave_allActivity = function(d){
     if (currentMode==="byActivity"){
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", highOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", highOpacity)
@@ -1026,6 +1014,8 @@ function createViz(error, ...args) {
       svg_treemap.selectAll(".percent").style("opacity", highOpacity)
     }
   }
+
+
 
   /* ------------------------------------- */
 
