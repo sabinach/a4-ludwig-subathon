@@ -1266,7 +1266,6 @@ function createViz(error, ...args) {
 
   // Show tooltip (show the first highlight event)
   tooltip_highlights
-    .style("opacity", 1)
     .html("<b>" + highlights_zip[2].title + "</b><br>" + formatDatetime(highlights_zip[2].datetime) + " EST" + " (<a href='" + highlights_zip[2].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[2].type, highlights_zip[2].embed, parentDomain) + "<br>") 
 
   // Add nodes (event highlights)
@@ -1325,49 +1324,65 @@ function createViz(error, ...args) {
   function clearModeExcept(mode){
     // remove the following modes
     if(mode!=="byHighlights"){
+      svg_line_timeLeft.selectAll(".line_timeLeft")
+        .style("opacity", 0)
       svg_line_timeLeft.selectAll(".dot-highlight")
         .style("opacity", 0)
       svg_line_timeLeft.selectAll("#tooltip_highlights")
         .style("opacity", 0)
+      tooltip_highlights
+        .style("opacity", 0)
+      redraw(subathonStartDate, subathonEndDate, "datetime") // only redraw if not byHighlights
     }
 
     if(mode!=="byActivity"){
+      svg_line_timeLeft.selectAll(".area_timeLeft")
+        .style("opacity", 0)
       svg.selectAll(".activity_legend_colors")
         .style("opacity", 0)
       svg.selectAll(".activity_legend_text")
         .style("opacity", 0)
+
+      svg_treemap
+        .style("opacity", 0)
     }
 
     if(mode!=="byLudwigModcast"){
+      svg_treemap
+        .style("opacity", 0)
     }
 
     if(mode!=="byTime"){
+      svg_treemap
+        .style("opacity", 0)
+    }
+
+    if(mode!=="byNone"){
+      svg_line_timeLeft.selectAll(".line_timeLeft")
+        .style("opacity", 0)
     }
 
   }
 
   d3.selectAll(("input[name='mode']")).on("change", function(){
-    currentMode = this.value
 
+    currentMode = this.value
     clearModeExcept(currentMode);
 
     if(currentMode === "byHighlights"){
       // clear previous graphs
       svg_line_timeLeft.selectAll(".line_timeLeft")
         .style("opacity", 1)
-      svg_line_timeLeft.selectAll(".area_timeLeft")
-        .style("opacity", 0)
 
       svg_line_timeLeft.selectAll(".dot-highlight")
         .style("opacity", 1)
       svg_line_timeLeft.selectAll(".tooltip_highlights")
         .style("opacity", 1)
+      tooltip_highlights
+        .style("opacity", 1)
     }
 
     else if(currentMode === "byActivity"){
-      // clear previous graphs
-      svg_line_timeLeft.selectAll(".line_timeLeft")
-        .style("opacity", 0)
       svg_line_timeLeft.selectAll(".area_timeLeft")
         .style("opacity", 1)
 
@@ -1375,14 +1390,24 @@ function createViz(error, ...args) {
         .style("opacity", 1)
       svg.selectAll(".activity_legend_text")
         .style("opacity", 1)
+
+      svg_treemap
+        .style("opacity", 1)
     }
 
     else if(currentMode === "byLudwigModcast"){
-      
+      svg_treemap
+        .style("opacity", 1)
     }
 
     else if(currentMode === "byTime"){
-      
+      svg_treemap
+        .style("opacity", 1)
+    }
+
+    else if(currentMode === "byNone"){
+      svg_line_timeLeft.selectAll(".line_timeLeft")
+        .style("opacity", 1)
     }
   });
 
@@ -1404,10 +1429,6 @@ function createViz(error, ...args) {
     redraw(subathonStartDate, subathonEndDate, "datetime")
   }
 
-  /* --------------------------------------------- */
-  // INITIALIZE TREEMAP + LEGENDS
-
-  redraw(subathonStartDate, subathonEndDate, "datetime")
 };
 
 
