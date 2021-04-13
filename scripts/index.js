@@ -283,6 +283,7 @@ function createViz(error, ...args) {
       .attr("height", d => d.y1 - d.y0)
       .style("stroke", "black")
       .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
+      .style("opacity", currentMode!=="byHighlights" && currentMode!=="byNone" ? 1 : 0)
       .on("mouseover", mouseover_treemap_allActivity)
       .on("mouseleave", mouseleave_treemap_allActivity)
 
@@ -310,6 +311,7 @@ function createViz(error, ...args) {
       .html(d => `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
+      .style("opacity", currentMode!=="byHighlights" && currentMode!=="byNone" ? 1 : 0)
 
     /** -------- **/
     // percent
@@ -335,6 +337,7 @@ function createViz(error, ...args) {
       .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
+      .style("opacity", currentMode!=="byHighlights" && currentMode!=="byNone" ? 1 : 0)
 
     /** -------- **/
     /*
@@ -961,7 +964,6 @@ function createViz(error, ...args) {
   // What to do when one group is hovered
   const mouseover_legend_allActivity = function(d){
     if (currentMode==="byActivity"){
-      console.log(d)
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
@@ -1359,7 +1361,6 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       tooltip_highlights
         .style("opacity", 0)
-      redraw(subathonStartDate, subathonEndDate, "datetime") // only redraw if not byHighlights
     }
 
     if(mode!=="byActivity"){
@@ -1420,16 +1421,20 @@ function createViz(error, ...args) {
 
       svg_treemap
         .style("opacity", 1)
+
+      redraw(subathonStartDate, subathonEndDate, "datetime")
     }
 
     else if(currentMode === "byLudwigModcast"){
       svg_treemap
         .style("opacity", 1)
+      redraw(subathonStartDate, subathonEndDate, "datetime")
     }
 
     else if(currentMode === "byTime"){
       svg_treemap
         .style("opacity", 1)
+      redraw(subathonStartDate, subathonEndDate, "datetime")
     }
 
     else if(currentMode === "byNone"){
