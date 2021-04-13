@@ -31,17 +31,16 @@ Current Data Extracted from SullyGnome (manually updated):
 
 Dataset Credits To:
 - [baddog86, smartax1111, itzdanbarz, and ogsheeper](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#)
-	* timeLeft.json
+	* timeLeft.json (scraped from spreadsheet)
+	* ludwigModcast.json (hardcoded based on spreadsheet -- TODO: go back to check vods on missing data)
 - [SullyGnome](https://sullygnome.com/channel/ludwig)
-	* [viewers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelViewers/30/0/12171601/ludwig/%20/%20/0/0/%20/) 
-	* [followers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelFollowers/7/0/12171601/ludwig/%20/%20/0/0/%20/)
-	* gameImages.json 
-		- I just manually checked the image urls loaded in the website and stored the ones I needed)
+	* [viewers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelViewers/30/0/12171601/ludwig/%20/%20/0/0/%20/) (directly download)
+	* [followers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelFollowers/7/0/12171601/ludwig/%20/%20/0/0/%20/) (directly downloaded)
+	* gameImages.json (manually checked loaded image urls)
 - [Twitch Highlight Clips](https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#)
-	* highlights.json 
-		- Consolidated from: Sabina watching hours of VODs + Crowdsourced from Twitch, Youtube, and Reddit
+	* highlights.json (manually consolidated)
 
-### To Preprocess Data (from baddog86 + highlights):
+### To Preprocess Data:
 ```
 cd utils/
 node scrapeSubathonSheet.js
