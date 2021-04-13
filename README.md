@@ -26,8 +26,8 @@ Current Data Extracted from Subathon Tracker (manually updated):
 - END: 563.5 hr
 
 Current Data Extracted from SullyGnome (manually updated):
-- START: March 09, 2021, 0:00 EST
-- END: April 08, 2021, 23:00 EST
+- START: March 13, 2021, 19:00 EST
+- END: April 13, 2021, 02:00 EST
 
 Dataset Credits To:
 - [baddog86, smartax1111, itzdanbarz, and ogsheeper](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#)

@@ -78,7 +78,7 @@ var svg_treemap = d3.select("#treemap-viz")
 var parseDatetime = d3.timeParse("%Y-%m-%d %H:%M");
 
 // The data recorded began at 2pm PST on March 15th, the time Ludwig intended to start the subathon.
-var subathonStartDate = parseDatetime("2021-03-15 17:00"); // converted to EST
+var subathonStartDate = parseDatetime("2021-03-15 17:00"); // converted to EST (5pm EST start)
 var subathonEndDate = new Date;
 
 // calculate hours from subathon start 
