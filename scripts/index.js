@@ -569,7 +569,7 @@ function createViz(error, ...args) {
     .y(d => yScale_timeLeft(d.timeLeft))
 
   // Define area (timeLeft)
-  var drawArea_timeLeft = d3.area()
+  var drawarea_timeLeft_activity = d3.area()
     .x(d => xScale_timeLeft(d.timeStreamed))
     .y0(yScale_timeLeft(0))
     .y1(d => yScale_timeLeft(d.timeLeft))
@@ -581,7 +581,7 @@ function createViz(error, ...args) {
     .y(d => yScale_viewers(d.numViewers))
 
   // Define area (viewers)
-  var drawArea_viewers = d3.area()
+  var drawarea_viewers_activity = d3.area()
     .x(d => xScale_viewers(d.timeStreamed))
     .y0(yScale_viewers(0))
     .y1(d => yScale_viewers(d.numViewers))
@@ -593,7 +593,7 @@ function createViz(error, ...args) {
     .y(d => yScale_subFollows(d.gainedFollowers))
 
   // Define area (subFollows)
-  var drawArea_subFollows = d3.area()
+  var drawarea_subFollows_activity = d3.area()
     .x(d => xScale_subFollows(d.timeStreamed))
     .y0(yScale_subFollows(0))
     .y1(d => yScale_subFollows(d.gainedFollowers))
@@ -953,9 +953,9 @@ function createViz(error, ...args) {
   const mouseover_legend_allActivity = function(d){
     if (currentMode==="byActivity"){
       // reduce opacity of all groups
-      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", lowOpacity)
-      svg_line_viewers.selectAll(".area_viewers").style("opacity", lowOpacity)
-      svg_line_subFollows.selectAll(".area_subFollows").style("opacity", lowOpacity)
+      svg_line_timeLeft.selectAll(".area_timeLeft_activity").style("opacity", lowOpacity)
+      svg_line_viewers.selectAll(".area_viewers_activity").style("opacity", lowOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", lowOpacity)
       svg_treemap.selectAll(".rect").style("opacity", lowOpacity)
@@ -977,9 +977,9 @@ function createViz(error, ...args) {
   const mouseover_treemap_allActivity = function(d){
     if (currentMode==="byActivity"){
       // reduce opacity of all groups
-      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", lowOpacity)
-      svg_line_viewers.selectAll(".area_viewers").style("opacity", lowOpacity)
-      svg_line_subFollows.selectAll(".area_subFollows").style("opacity", lowOpacity)
+      svg_line_timeLeft.selectAll(".area_timeLeft_activity").style("opacity", lowOpacity)
+      svg_line_viewers.selectAll(".area_viewers_activity").style("opacity", lowOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", lowOpacity)
       svg_treemap.selectAll(".rect").style("opacity", lowOpacity)
@@ -1002,9 +1002,9 @@ function createViz(error, ...args) {
   // And when it is not hovered anymore
   const mouseleave_allActivity = function(d){
     if (currentMode==="byActivity"){
-      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", highOpacity)
-      svg_line_viewers.selectAll(".area_viewers").style("opacity", highOpacity)
-      svg_line_subFollows.selectAll(".area_subFollows").style("opacity", highOpacity)
+      svg_line_timeLeft.selectAll(".area_timeLeft_activity").style("opacity", highOpacity)
+      svg_line_viewers.selectAll(".area_viewers_activity").style("opacity", highOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", highOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", highOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", highOpacity)
       svg_treemap.selectAll(".rect").style("opacity", highOpacity)
@@ -1091,8 +1091,6 @@ function createViz(error, ...args) {
 
   })
 
-  console.log("timeLeftJson_zip.length-1: ", timeLeftJson_zip.length-1)
-
   console.log("sleepAwakeList_keys: ", sleepAwakeList_keys)
   console.log("sleepAwakeList_data: ", sleepAwakeList_data)
 
@@ -1140,17 +1138,31 @@ function createViz(error, ...args) {
     .attr("d", drawLine_timeLeft)
     .attr("opacity", currentMode==="byHighlights" || currentMode==="byNone" ? 1 : 0)
 
+  // Add activity area (timeLeft)
   activityList_data.forEach(activity => {
-    // Add area (timeLeft)
     svg_line_timeLeft.append("path")
       .datum(activity.data)
-      .attr("class", d => "area_timeLeft " + cleanString(activity.game) + " " + cleanString(activity.game) + "-" + activity.timeStreamed)
+      .attr("class", d => "area_timeLeft_activity " + cleanString(activity.game) + " " + cleanString(activity.game) + "-" + activity.timeStreamed)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
-      .attr("d", drawArea_timeLeft)
+      .attr("d", drawarea_timeLeft_activity)
       .attr("opacity", currentMode==="byActivity" ? 1 : 0)
   })
+
+  /*
+  // Add sleepAwake area (timeLeft)
+  sleepAwakeList_data.forEach(item => {
+    svg_line_timeLeft.append("path")
+      .datum(item.data)
+      .attr("class", d => "area_timeLeft_activity " + item.sleepAwake + " " + item.sleepAwake + "-" + item.timeStreamed)
+      //.attr("stroke", "steelblue")
+      .attr("stroke-width", 1)
+      .attr("fill", colorSleepAwake[item.sleepAwake])
+      .attr("d", drawarea_timeLeft_activity)
+      .attr("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+  })
+  */
 
   // Add brush + hover (timeLeft)
   svg_line_timeLeft.append("g")
@@ -1195,11 +1207,11 @@ function createViz(error, ...args) {
   activityList_data.forEach(activity => {
     svg_line_viewers.append("path")
       .datum(activity.data)
-      .attr("class", d => "area_viewers " + cleanString(activity.game) + " " + cleanString(activity.game) + "-" + activity.numViewers)
+      .attr("class", d => "area_viewers_activity " + cleanString(activity.game) + " " + cleanString(activity.game) + "-" + activity.numViewers)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
-      .attr("d", drawArea_viewers)
+      .attr("d", drawarea_viewers_activity)
       .attr("opacity", currentMode==="byActivity" ? 1 : 0)
   })
 
@@ -1241,15 +1253,15 @@ function createViz(error, ...args) {
     .attr("d", drawLine_subFollows)
     .attr("opacity", currentMode==="byHighlights" || currentMode==="byNone" ? 1 : 0)
 
-  // Add area (subFollows)
+  // Add activity area (subFollows)
   activityList_data.forEach(activity => {
     svg_line_subFollows.append("path")
       .datum(activity.data)
-      .attr("class", d => "area_subFollows " + cleanString(activity.game) + " " + cleanString(activity.game) + "-" + activity.timeStreamed)
+      .attr("class", d => "area_subFollows_activity " + cleanString(activity.game) + " " + cleanString(activity.game) + "-" + activity.timeStreamed)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
-      .attr("d", drawArea_subFollows)
+      .attr("d", drawarea_subFollows_activity)
       .attr("opacity", currentMode==="byActivity" ? 1 : 0)
   })
 
@@ -1386,7 +1398,7 @@ function createViz(error, ...args) {
     svg.select(".axis--x--timeLeft").transition(t).call(xAxis_timeLeft);
     svg.select(".axis--y--timeLeft").transition(t).call(yAxis_timeLeft);
     svg_line_timeLeft.selectAll(".line_timeLeft").transition(t).attr("d", drawLine_timeLeft);
-    svg_line_timeLeft.selectAll(".area_timeLeft").transition(t).attr("d", drawArea_timeLeft);
+    svg_line_timeLeft.selectAll(".area_timeLeft_activity").transition(t).attr("d", drawarea_timeLeft_activity);
     svg_line_timeLeft.selectAll("circle").transition(t)
       .attr("cx", d => xScale_timeLeft(d.timeStreamed))
       .attr("cy", d => yScale_timeLeft(d.timeLeft));
@@ -1400,7 +1412,7 @@ function createViz(error, ...args) {
     svg.select(".axis--x--viewers").transition(t).call(xAxis_viewers);
     svg.select(".axis--y--viewers").transition(t).call(yAxis_viewers);
     svg_line_viewers.selectAll(".line_viewers").transition(t).attr("d", drawLine_viewers);
-    svg_line_viewers.selectAll(".area_viewers").transition(t).attr("d", drawArea_viewers);
+    svg_line_viewers.selectAll(".area_viewers_activity").transition(t).attr("d", drawarea_viewers_activity);
   }
 
   function zoom_subFollows() {
@@ -1408,7 +1420,7 @@ function createViz(error, ...args) {
     svg.select(".axis--x--subFollows").transition(t).call(xAxis_subFollows);
     svg.select(".axis--y--subFollows").transition(t).call(yAxis_subFollows);
     svg_line_subFollows.selectAll(".line_subFollows").transition(t).attr("d", drawLine_subFollows);
-    svg_line_subFollows.selectAll(".area_subFollows").transition(t).attr("d", drawArea_subFollows);
+    svg_line_subFollows.selectAll(".area_subFollows_activity").transition(t).attr("d", drawarea_subFollows_activity);
   }
 
   /* --- Information Tooltip DEFINITIONS --- */
@@ -1516,11 +1528,11 @@ function createViz(error, ...args) {
     }
 
     if(mode!=="byActivity"){
-      svg_line_timeLeft.selectAll(".area_timeLeft")
+      svg_line_timeLeft.selectAll(".area_timeLeft_activity")
         .style("opacity", 0)
-      svg_line_viewers.selectAll(".area_viewers")
+      svg_line_viewers.selectAll(".area_viewers_activity")
         .style("opacity", 0)
-      svg_line_subFollows.selectAll(".area_subFollows")
+      svg_line_subFollows.selectAll(".area_subFollows_activity")
         .style("opacity", 0)
 
       svg.selectAll(".activity_legend_colors")
@@ -1561,11 +1573,11 @@ function createViz(error, ...args) {
     }
 
     else if(currentMode === "byActivity"){
-      svg_line_timeLeft.selectAll(".area_timeLeft")
+      svg_line_timeLeft.selectAll(".area_timeLeft_activity")
         .style("opacity", 1)
-      svg_line_viewers.selectAll(".area_viewers")
+      svg_line_viewers.selectAll(".area_viewers_activity")
         .style("opacity", 1)
-      svg_line_subFollows.selectAll(".area_subFollows")
+      svg_line_subFollows.selectAll(".area_subFollows_activity")
         .style("opacity", 1)
 
       svg.selectAll(".activity_legend_colors")
