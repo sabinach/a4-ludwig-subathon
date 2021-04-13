@@ -482,7 +482,6 @@ function createViz(error, ...args) {
       })
     console.log("sleepAwakeList_unique: ", sleepAwakeList_unique)
 
-
     // clear previous legend
     svg.selectAll(".sleepAwake_legend_colors").remove();
     svg.selectAll(".sleepAwake_legend_text").remove();
@@ -1206,6 +1205,8 @@ function createViz(error, ...args) {
     if (currentMode==="byLudwigModcast"){
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", lowOpacity)
+      svg_line_viewers.selectAll(".area_viewers_sleepAwake").style("opacity", lowOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows_sleepAwake").style("opacity", lowOpacity)
       svg.selectAll(".sleepAwake_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".sleepAwake_legend_text").style("opacity", lowOpacity)
       // expect the one that is hovered
@@ -1221,6 +1222,8 @@ function createViz(error, ...args) {
   const mouseleave_allSleepAwake = function(d){
     if (currentMode==="byLudwigModcast"){
       svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", highOpacity)
+      svg_line_viewers.selectAll(".area_viewers_sleepAwake").style("opacity", highOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows_sleepAwake").style("opacity", highOpacity)
       svg.selectAll(".sleepAwake_legend_colors").style("opacity", highOpacity)
       svg.selectAll(".sleepAwake_legend_text").style("opacity", highOpacity)
     }
@@ -1339,6 +1342,18 @@ function createViz(error, ...args) {
       .attr("opacity", currentMode==="byActivity" ? 1 : 0)
   })
 
+  // Add sleepAwake area (viewers)
+  sleepAwakeList_data.forEach(item => {
+    svg_line_viewers.append("path")
+      .datum(item.data)
+      .attr("class", d => "area_viewers_sleepAwake " + item.sleepAwake + " " + item.sleepAwake + "-" + item.timeStreamed)
+      //.attr("stroke", "steelblue")
+      .attr("stroke-width", 1)
+      .attr("fill", colorSleepAwake[item.sleepAwake])
+      .attr("d", drawarea_viewers)
+      .attr("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+  })
+
   // Add brush (viewers)
   svg_line_viewers.append("g")
     .attr("class", "brush_viewers")
@@ -1387,6 +1402,18 @@ function createViz(error, ...args) {
       .attr("fill", colorDict[cleanString(activity.game)])
       .attr("d", drawarea_subFollows)
       .attr("opacity", currentMode==="byActivity" ? 1 : 0)
+  })
+
+  // Add sleepAwake area (subFollows)
+  sleepAwakeList_data.forEach(item => {
+    svg_line_subFollows.append("path")
+      .datum(item.data)
+      .attr("class", d => "area_subFollows_sleepAwake " + item.sleepAwake + " " + item.sleepAwake + "-" + item.timeStreamed)
+      //.attr("stroke", "steelblue")
+      .attr("stroke-width", 1)
+      .attr("fill", colorSleepAwake[item.sleepAwake])
+      .attr("d", drawarea_subFollows)
+      .attr("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
   })
 
   // Add brush (subFollows)
@@ -1538,6 +1565,7 @@ function createViz(error, ...args) {
     svg.select(".axis--y--viewers").transition(t).call(yAxis_viewers);
     svg_line_viewers.selectAll(".line_viewers").transition(t).attr("d", drawLine_viewers);
     svg_line_viewers.selectAll(".area_viewers_activity").transition(t).attr("d", drawarea_viewers);
+    svg_line_viewers.selectAll(".area_viewers_sleepAwake").transition(t).attr("d", drawarea_viewers);
   }
 
   function zoom_subFollows() {
@@ -1546,6 +1574,7 @@ function createViz(error, ...args) {
     svg.select(".axis--y--subFollows").transition(t).call(yAxis_subFollows);
     svg_line_subFollows.selectAll(".line_subFollows").transition(t).attr("d", drawLine_subFollows);
     svg_line_subFollows.selectAll(".area_subFollows_activity").transition(t).attr("d", drawarea_subFollows);
+    svg_line_subFollows.selectAll(".area_subFollows_sleepAwake").transition(t).attr("d", drawarea_subFollows);
   }
 
   /* --- Information Tooltip DEFINITIONS --- */
@@ -1669,6 +1698,10 @@ function createViz(error, ...args) {
     if(mode!=="byLudwigModcast"){
       svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake")
         .style("opacity", 0)
+      svg_line_viewers.selectAll(".area_viewers_sleepAwake")
+        .style("opacity", 0)
+      svg_line_subFollows.selectAll(".area_subFollows_sleepAwake")
+        .style("opacity", 0)
 
       svg.selectAll(".sleepAwake_legend_colors")
         .style("opacity", 0)
@@ -1721,6 +1754,10 @@ function createViz(error, ...args) {
 
     else if(currentMode === "byLudwigModcast"){
       svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake")
+        .style("opacity", 1)
+      svg_line_viewers.selectAll(".area_viewers_sleepAwake")
+        .style("opacity", 1)
+      svg_line_subFollows.selectAll(".area_subFollows_sleepAwake")
         .style("opacity", 1)
 
       svg.selectAll(".sleepAwake_legend_colors")
