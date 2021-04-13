@@ -307,7 +307,7 @@ function createViz(error, ...args) {
     console.log("sleepAwake_count: ", sleepAwake_count)
 
     // redraw treemap here
-    redrawTreemapSleepAwake(sleepAwake_count)
+    //redrawTreemapSleepAwake(sleepAwake_count)
     redrawLegendSleepAwake(ludwigModcastJson_zip_withinBounds)
   }
 
@@ -340,12 +340,16 @@ function createViz(error, ...args) {
     svg_treemap.selectAll(".title-sleepAwake").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
     svg_treemap.selectAll(".percent-sleepAwake").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
 
+    /** -------- **/
+    // treemap settings
+
+    const svg_treemap_local = svg_treemap.append("g")
 
     /** -------- **/
     // rect
 
     // create rectangle object
-    const rects = svg_treemap.selectAll(".rect-activity").data(root.leaves())
+    const rects = svg_treemap_local.selectAll(".rect-activity").data(root.leaves())
 
     //remove rectangle
     rects.exit().remove();
@@ -370,7 +374,7 @@ function createViz(error, ...args) {
     // title
 
     // create title object
-    const title = svg_treemap.selectAll(".title-activity").data(root.leaves())
+    const title = svg_treemap_local.selectAll(".title-activity").data(root.leaves())
 
     //remove title
     title
@@ -396,7 +400,7 @@ function createViz(error, ...args) {
     // percent
 
     // create percent object
-    const percent = svg_treemap.selectAll(".percent-activity").data(root.leaves())
+    const percent = svg_treemap_local.selectAll(".percent-activity").data(root.leaves())
 
     //remove percent
     percent
@@ -463,10 +467,15 @@ function createViz(error, ...args) {
     svg_treemap.selectAll(".percent-activity").style("opacity", currentMode==="byActivity" ? 1 : 0);
 
     /** -------- **/
+    // treemap settings
+
+    const svg_treemap_local = svg_treemap.append("g")
+
+    /** -------- **/
     // rect
 
     // create rectangle object
-    const rects = svg_treemap.selectAll(".rect-sleepAwake").data(root.leaves())
+    const rects = svg_treemap_local.selectAll(".rect-sleepAwake").data(root.leaves())
 
     //remove rectangle
     rects.exit().remove();
@@ -491,7 +500,7 @@ function createViz(error, ...args) {
     // title
 
     // create title object
-    const title = svg_treemap.selectAll(".title-sleepAwake").data(root.leaves())
+    const title = svg_treemap_local.selectAll(".title-sleepAwake").data(root.leaves())
 
     //remove title
     title
@@ -517,7 +526,7 @@ function createViz(error, ...args) {
     // percent
 
     // create percent object
-    const percent = svg_treemap.selectAll(".percent-sleepAwake").data(root.leaves())
+    const percent = svg_treemap_local.selectAll(".percent-sleepAwake").data(root.leaves())
 
     //remove percent
     percent
