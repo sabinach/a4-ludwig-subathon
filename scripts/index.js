@@ -193,6 +193,7 @@ function createViz(error, ...args) {
 
     console.log("gamePlayed_count (before): ", gamePlayed_count)
 
+    /*
     // make sure no elements is less than 1% of total
     const gamePlayed_count_filtered = gamePlayed_count
                                         .filter(d => (d.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) > 0.5 || d.game==="Origin")
@@ -207,6 +208,8 @@ function createViz(error, ...args) {
     console.log("gamePlayed_count_filtered (after): ", gamePlayed_count_filtered)
 
     return gamePlayed_count_filtered
+    */
+    return gamePlayed_count
   }
 
   //var gamePlayed_count = generateGamePlayedCount(viewers_zip, subathonStartDate, subathonEndDate, "datetime")
@@ -399,8 +402,8 @@ function createViz(error, ...args) {
       .enter()
       .append("rect")
         .attr("class", "activity_legend_colors")
-        .attr("x", 400)
-        .attr("y", function(d,i){ return 10 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("x", 425)
+        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorDict[d]})
@@ -420,8 +423,8 @@ function createViz(error, ...args) {
       .enter()
       .append("text")
         .attr("class", "activity_legend_text")
-        .attr("x", 400 + legendDotSize*1.2)
-        .attr("y", function(d,i){ return 10 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("x", 425 + legendDotSize*1.2)
+        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorDict[d]})
         .text(function(d){ return d}) // todo printing here
         .attr("text-anchor", "left")
