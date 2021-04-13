@@ -90,6 +90,9 @@ var parseDatetime = d3.timeParse("%Y-%m-%d %H:%M");
 var subathonStartDate = parseDatetime("2021-03-15 17:00"); // converted to EST (5pm EST start)
 var subathonEndDate = new Date;
 
+// calculate datetime from timeStreamed hours
+var hoursToDatetime = hours => d3.timeMinute.offset(subathonStartDate, hours*60)
+
 // calculate hours from subathon start 
 var datetimeToHours = d3Datetime => d3.timeMinute.count(subathonStartDate, d3Datetime)/60
 
@@ -126,7 +129,6 @@ function createViz(error, ...args) {
   const ludwigModcastJson = args[5];
 
   console.log("gameImagesJson: ", gameImagesJson)
-  console.log("ludwigModcastJson: ", ludwigModcastJson)
 
   /* --------------------------------------------- */
   // TIME LEFT / SUBS GAINED
@@ -150,6 +152,21 @@ function createViz(error, ...args) {
   });
 
   console.log("timeLeftJson_zip: ", timeLeftJson_zip)
+
+  /* --------------------------------------------- */
+  // LUDWIG/MODCAST
+
+  const ludwigModcastJson_zip = ludwigModcastJson.timeStreamed.map((timeStreamed, i) => {
+    return {
+      timeStreamed:timeStreamed,
+      datetime:hoursToDatetime(timeStreamed),
+      sleepAwake:ludwigModcastJson.sleepAwake[i]
+    }
+  });
+
+  console.log("ludwigModcastJson: ", ludwigModcastJson)
+  console.log("ludwigModcastJson_zip: ", ludwigModcastJson)
+
 
   /* --------------------------------------------- */
   // VIEWERS
@@ -236,7 +253,7 @@ function createViz(error, ...args) {
   // treemap hierarchy
 
   function redraw(start, end, type){
-    // filter by date and sum the # of games occurred within count
+    // filter by date 
     const viewers_zip_withinBounds = viewers_zip.filter((viewers) => 
       (type==="datetime" && viewers.datetime >= start && viewers.datetime <= end) || 
         (type==="hour" && viewers.timeStreamed >= start && viewers.timeStreamed <= end))
@@ -248,6 +265,12 @@ function createViz(error, ...args) {
 
     redrawTreemap(gamePlayed_count)
     redrawLegendActivity(viewers_zip_withinBounds, gamePlayed_count)
+
+    // filter by date
+    const ludwigModcastJson_zip_withinBounds = ludwigModcastJson_zip.filter((item) => 
+      (type==="datetime" && item.datetime >= start && item.datetime <= end) || 
+        (type==="hour" && item.timeStreamed >= start && item.timeStreamed <= end))
+    redrawLegendSleepAwake(ludwigModcastJson_zip_withinBounds)
   }
 
   // delete and redraw the treemap
@@ -367,7 +390,7 @@ function createViz(error, ...args) {
   }
 
   /* ------------------------------------- */
-  // Activity Legend (timeLeft)
+  // Activity Legend
 
   function redrawLegendActivity(viewers_zip_withinBounds, gamePlayed_count){
     // unique values
@@ -378,12 +401,13 @@ function createViz(error, ...args) {
           activityList_unique.push(cleanString(viewer.game))
         }
       })
-
     console.log("activityList_unique: ", activityList_unique)
 
     // clear previous legend
     svg.selectAll(".activity_legend_colors").remove();
     svg.selectAll(".activity_legend_text").remove();
+    svg.selectAll(".sleepAwake_legend_colors").remove();
+    svg.selectAll(".sleepAwake_legend_text").remove();
 
     // legend settings
 
@@ -433,6 +457,77 @@ function createViz(error, ...args) {
         .on("mouseover", mouseover_legend_allActivity)
         .on("mouseleave", mouseleave_allActivity)
 
+  }
+
+  /* ------------------------------------- */
+  // SleepAwake Legend
+
+  function redrawLegendSleepAwake(ludwigModcastJson_zip_withinBounds){
+
+    // unique values
+    const sleepAwakeList_unique = []
+    ludwigModcastJson_zip_withinBounds
+      .forEach((item) => {
+        if(!sleepAwakeList_unique.includes(item.sleepAwake)){
+          sleepAwakeList_unique.push(item.sleepAwake)
+        }
+      })
+    console.log("sleepAwakeList_unique: ", sleepAwakeList_unique)
+
+
+    // clear previous legend
+    svg.selectAll(".activity_legend_colors").remove();
+    svg.selectAll(".activity_legend_text").remove();
+    svg.selectAll(".sleepAwake_legend_colors").remove();
+    svg.selectAll(".sleepAwake_legend_text").remove();
+
+    // legend settings
+
+    const legendDotSize = 10
+    const svg_legend = svg.append("g")
+
+    // color 
+
+    const legendColor = svg_legend.selectAll(".sleepAwake_legend_colors").data(sleepAwakeList_unique)
+
+    legendColor
+      .exit()
+      .remove()
+
+    legendColor
+      .enter()
+      .append("rect")
+        .attr("class", d => "sleepAwake_legend_colors legendColor-" + d)
+        .attr("x", 660)
+        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("width", legendDotSize)
+        .attr("height", legendDotSize)
+        .style("fill", function(d){ return colorSleepAwake[d]})
+        .style("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+        .on("mouseover", mouseover_legend_allSleepAwake)
+        .on("mouseleave", mouseleave_allSleepAwake)
+
+    // text
+
+    const legendText = svg_legend.selectAll(".sleepAwake_legend_text").data(sleepAwakeList_unique)
+
+    legendText
+      .exit()
+      .remove()
+
+    legendText
+      .enter()
+      .append("text")
+        .attr("class", d => "sleepAwake_legend_text legendText-" + d)
+        .attr("x", 660 + legendDotSize*1.2)
+        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .style("fill", function(d){ return colorSleepAwake[d]})
+        .text(function(d){ return d})
+        .attr("text-anchor", "left")
+        .style("alignment-baseline", "middle")
+        .style("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+        .on("mouseover", mouseover_legend_allSleepAwake)
+        .on("mouseleave", mouseleave_allSleepAwake)
   }
 
   /* --------------------------------------------- */
@@ -954,7 +1049,6 @@ function createViz(error, ...args) {
     if (currentMode==="byActivity"){
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft_activity").style("opacity", lowOpacity)
-      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", lowOpacity)
       svg_line_viewers.selectAll(".area_viewers_activity").style("opacity", lowOpacity)
       svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
@@ -979,7 +1073,6 @@ function createViz(error, ...args) {
     if (currentMode==="byActivity"){
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft_activity").style("opacity", lowOpacity)
-      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", lowOpacity)
       svg_line_viewers.selectAll(".area_viewers_activity").style("opacity", lowOpacity)
       svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
@@ -1005,7 +1098,6 @@ function createViz(error, ...args) {
   const mouseleave_allActivity = function(d){
     if (currentMode==="byActivity"){
       svg_line_timeLeft.selectAll(".area_timeLeft_activity").style("opacity", highOpacity)
-      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", highOpacity)
       svg_line_viewers.selectAll(".area_viewers_activity").style("opacity", highOpacity)
       svg_line_subFollows.selectAll(".area_subFollows_activity").style("opacity", highOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", highOpacity)
@@ -1097,11 +1189,32 @@ function createViz(error, ...args) {
   console.log("sleepAwakeList_keys: ", sleepAwakeList_keys)
   console.log("sleepAwakeList_data: ", sleepAwakeList_data)
 
+  /* ----- */
 
+  // What to do when one group is hovered
+  const mouseover_legend_allSleepAwake = function(d){
+    if (currentMode==="byLudwigModcast"){
+      // reduce opacity of all groups
+      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", lowOpacity)
+      svg.selectAll(".sleepAwake_legend_colors").style("opacity", lowOpacity)
+      svg.selectAll(".sleepAwake_legend_text").style("opacity", lowOpacity)
+      // expect the one that is hovered
+      svg_line_timeLeft.selectAll("." + d).style("opacity", highOpacity)
+      svg_line_viewers.selectAll("." + d).style("opacity", highOpacity)
+      svg_line_subFollows.selectAll("." + d).style("opacity", highOpacity)
+      svg.selectAll(".legendColor-" + d).style("opacity", highOpacity)
+      svg.selectAll(".legendText-" + d).style("opacity", highOpacity)
+    }
+  }
 
-
-
-
+  // And when it is not hovered anymore
+  const mouseleave_allSleepAwake = function(d){
+    if (currentMode==="byLudwigModcast"){
+      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", highOpacity)
+      svg.selectAll(".sleepAwake_legend_colors").style("opacity", highOpacity)
+      svg.selectAll(".sleepAwake_legend_text").style("opacity", highOpacity)
+    }
+  }
 
 
 
@@ -1546,6 +1659,11 @@ function createViz(error, ...args) {
     if(mode!=="byLudwigModcast"){
       svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake")
         .style("opacity", 0)
+
+      svg.selectAll(".sleepAwake_legend_colors")
+        .style("opacity", 0)
+      svg.selectAll(".sleepAwake_legend_text")
+        .style("opacity", 0)
     }
 
     if(mode!=="byTime"){
@@ -1593,6 +1711,11 @@ function createViz(error, ...args) {
 
     else if(currentMode === "byLudwigModcast"){
       svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake")
+        .style("opacity", 1)
+
+      svg.selectAll(".sleepAwake_legend_colors")
+        .style("opacity", 1)
+      svg.selectAll(".sleepAwake_legend_text")
         .style("opacity", 1)
     }
 
