@@ -1,4 +1,4 @@
 {
-	"timeStreamed": [0, 12.5, 19, 36, 42.5, 61.5, 68, 84.5, 92, 109.5, 116.5, 134, 140.5, 157.5, 165, 179, 189, 205, 210, 238, 253, 262.5, 277.5, 285, 381.5, 398, 405.5, 421.5, 429.5, 445.5, 453.5, 470.5, 517.5, 590.5, 614],
-	"sleepAwake": ["awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "awake", "sleep", "awake", "sleep", "awake", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "sleep", "sleep", "sleep"]
+	"timeStreamed": [0, 12.5, 19, 36, 42.5, 61.5, 68, 84.5, 92, 109.5, 116.5, 134, 140.5, 157.5, 165, 179, 189, 205, 210, 238, 253, 262.5, 277.5, 285, 381.5, 398, 405.5, 421.5, 429.5, 445.5, 453.5, 470.5, 517.5, 590.5, 614, 650],
+	"sleepAwake": ["awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "awake", "sleep", "awake", "sleep", "awake", "awake", "sleep", "awake", "sleep", "awake", "sleep", "awake", "sleep", "sleep", "sleep", "sleep", "away"]
 }

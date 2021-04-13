@@ -6,7 +6,12 @@ console.log("parentDomain: ", parentDomain);
 
 /* ---------------------- */
 
+// starting mode
 var currentMode = "byActivity"
+
+// hover opacity (for area graphs)
+const lowOpacity = 0.1
+const highOpacity = 1
 
 /* ---------------------- */
 // helper utils (todo - currently not used)
@@ -118,8 +123,10 @@ function createViz(error, ...args) {
   const followersJson = args[2];
   const highlightsJson = args[3];
   const gameImagesJson = args[4];
+  const ludwigModcastJson = args[5];
 
   console.log("gameImagesJson: ", gameImagesJson)
+  console.log("ludwigModcastJson: ", ludwigModcastJson)
 
   /* --------------------------------------------- */
   // TIME LEFT / SUBS GAINED
@@ -224,8 +231,6 @@ function createViz(error, ...args) {
     */
     return gamePlayed_count
   }
-
-  //var gamePlayed_count = generateGamePlayedCount(viewers_zip, subathonStartDate, subathonEndDate, "datetime")
 
   /** -------- **/
   // treemap hierarchy
@@ -873,6 +878,21 @@ function createViz(error, ...args) {
 
   console.log("activityList_unique_original: ", activityList_unique_original)
 
+  /* ----- */
+
+  // color palette
+  //var colorSchemes = d3.schemeSet2.concat(d3.schemeTableau10) 
+
+  // https://sashamaps.net/docs/resources/20-colors/
+  const colorSchemes = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#800000', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
+  const colorDict = {}
+  activityList_unique_original.forEach((activity, i) => {
+    colorDict[activity] = colorSchemes[i]
+  })
+  console.log("colorDict: ", colorDict)
+
+  /* ----- */
+
   var activityList_keys = []
   var activityList_data = []
   var prevActivity = viewers_zip[0].game
@@ -893,7 +913,7 @@ function createViz(error, ...args) {
           gainedFollowers: followers.gainedFollowers
         })
       if (d.game !== prevActivity){
-        activityList_keys.push(cleanString(d.game) + " " + d.timeStreamed) // ie. JustChatting-1
+        activityList_keys.push(cleanString(d.game) + "-" + d.timeStreamed) // ie. JustChatting-1
         activityList_data.push({
           data: prevActivityList,
           game: cleanString(viewers_zip[i-1].game),
@@ -917,19 +937,7 @@ function createViz(error, ...args) {
   console.log("activityList_keys: ", activityList_keys)
   console.log("activityList_data: ", activityList_data)
 
-  // color palette
-  //var colorSchemes = d3.schemeSet2.concat(d3.schemeTableau10) 
-
-  // https://sashamaps.net/docs/resources/20-colors/
-  const colorSchemes = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#800000', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
-  const colorDict = {}
-  activityList_unique_original.forEach((activity, i) => {
-    colorDict[activity] = colorSchemes[i]
-  })
-  console.log("colorDict: ", colorDict)
-
-  const lowOpacity = 0.1
-  const highOpacity = 1
+  /* ----- */
 
   // What to do when one group is hovered
   const mouseover_legend_allActivity = function(d){
@@ -995,6 +1003,83 @@ function createViz(error, ...args) {
     }
   }
 
+  /* ------------------------------------- */
+  // Area graph - SleepAwake (timeLeft, viewers, subFollows)
+
+
+  // https://fire-miracle.tumblr.com/post/185073640198/day-and-night-submitted-by-smolnlonelybean
+  const colorSleepAwake = {
+    "awake": "#aff0ff",
+    "sleep": "#101263",
+    "away": "#ffbaaa"
+  }
+  console.log("colorSleepAwake: ", colorSleepAwake)
+
+  /* ----- */
+
+  const sleepAwakeList_unique_original = ["sleep", "awake", "away"] // hardcoded
+  console.log("sleepAwakeList_unique_original: ", sleepAwakeList_unique_original)
+
+  /* ----- */
+
+  var sleepAwakeList_keys = []
+  var sleepAwakeList_data = []
+  var prevSleepAwake = ludwigModcastJson[0].awake
+  var prevSleepAwakeList = []
+
+  timeLeftJson_zip.forEach((d, i) => {
+    // TODO
+  })
+
+  /*
+  // viewers_zip_withinBounds (d.timeStreamed, d.datetime, d.game, d.numViewers)
+  viewers_zip.forEach((d, i) => {
+    if(d.game!==null || d.numViewers!==null){
+      const timeLeft = timeLeftJson_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
+        const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
+        prevActivityList.push({
+          timeStreamed: d.timeStreamed,
+          datetime: d.datetime,
+          game: d.game,
+          timeLeft: timeLeft ? timeLeft.timeLeft : null,
+          numViewers: d.numViewers,
+          numFollowers: followers.numFollowers,
+          gainedFollowers: followers.gainedFollowers
+        })
+      if (d.game !== prevActivity){
+        activityList_keys.push(cleanString(d.game) + " " + d.timeStreamed) // ie. JustChatting-1
+        activityList_data.push({
+          data: prevActivityList,
+          game: cleanString(viewers_zip[i-1].game),
+          timeStreamed: d.timeStreamed
+        })
+        // reset items
+        prevActivity = d.game
+        prevActivityList = [{
+          timeStreamed: d.timeStreamed,
+          datetime: d.datetime,
+          game: d.game,
+          timeLeft: timeLeft ? timeLeft.timeLeft : null,
+          numViewers: d.numViewers,
+          numFollowers: followers.numFollowers,
+          gainedFollowers: followers.gainedFollowers
+        }]
+      }
+    }
+  })
+  */
+
+  console.log("sleepAwakeList_keys: ", sleepAwakeList_keys)
+  console.log("sleepAwakeList_data: ", sleepAwakeList_data)
+
+
+
+
+
+
+
+
+
   /* --- Brush + Line Clip DEFINITIONS --- */
 
   // Define animation time
@@ -1035,7 +1120,7 @@ function createViz(error, ...args) {
     // Add area (timeLeft)
     svg_line_timeLeft.append("path")
       .datum(activity.data)
-      .attr("class", d => "area_timeLeft " + cleanString(activity.game) + " " + activity.timeStreamed)
+      .attr("class", d => "area_timeLeft " + cleanString(activity.game) + "-" + activity.timeStreamed)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
@@ -1079,13 +1164,14 @@ function createViz(error, ...args) {
     .attr("fill", "none")
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
-    .attr("d", drawLine_viewers);
+    .attr("d", drawLine_viewers)
+    .attr("opacity", currentMode==="byHighlights" || currentMode==="byNone" ? 1 : 0)
 
   // Add activity area (viewers)
   activityList_data.forEach(activity => {
     svg_line_viewers.append("path")
       .datum(activity.data)
-      .attr("class", d => "area_viewers " + cleanString(activity.game) + " " + activity.numViewers)
+      .attr("class", d => "area_viewers " + cleanString(activity.game) + "-" + activity.numViewers)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
@@ -1128,13 +1214,14 @@ function createViz(error, ...args) {
     .attr("fill", "none")
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
-    .attr("d", drawLine_subFollows);
+    .attr("d", drawLine_subFollows)
+    .attr("opacity", currentMode==="byHighlights" || currentMode==="byNone" ? 1 : 0)
 
   // Add area (subFollows)
   activityList_data.forEach(activity => {
     svg_line_subFollows.append("path")
       .datum(activity.data)
-      .attr("class", d => "area_subFollows " + cleanString(activity.game) + " " + activity.timeStreamed)
+      .attr("class", d => "area_subFollows " + cleanString(activity.game) + "-" + activity.timeStreamed)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
@@ -1515,4 +1602,5 @@ d3.queue()
   .defer(d3.json, "data/followers.json")
   .defer(d3.json, "data/highlights.json")
   .defer(d3.json, "data/gameImages.json")
+  .defer(d3.json, "data/ludwigModcast.json")
   .await(createViz)
