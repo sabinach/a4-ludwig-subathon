@@ -58,7 +58,7 @@ var svg = d3.select("#line-viz")
 /* ---------------------- */
 
 // set the dimensions and margins of the graph
-var margin_treemap = {top: 5, right: 8, bottom: 10, left: 5},
+var margin_treemap = {top: 10, right: 8, bottom: 10, left: 5},
   width_treemap = 425 - margin_treemap.left - margin_treemap.right,
   height_treemap = 300 - margin_treemap.top - margin_treemap.bottom;
 
@@ -283,7 +283,7 @@ function createViz(error, ...args) {
       .attr("height", d => d.y1 - d.y0)
       .style("stroke", "black")
       .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
-      .style("opacity", currentMode!=="byHighlights" && currentMode!=="byNone" ? 1 : 0)
+      .style("opacity", 1)
       .on("mouseover", mouseover_treemap_allActivity)
       .on("mouseleave", mouseleave_treemap_allActivity)
 
@@ -311,7 +311,7 @@ function createViz(error, ...args) {
       .html(d => `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
-      .style("opacity", currentMode!=="byHighlights" && currentMode!=="byNone" ? 1 : 0)
+      .style("opacity", 1)
 
     /** -------- **/
     // percent
@@ -337,7 +337,7 @@ function createViz(error, ...args) {
       .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
-      .style("opacity", currentMode!=="byHighlights" && currentMode!=="byNone" ? 1 : 0)
+      .style("opacity", 1)
 
     /** -------- **/
     /*
@@ -1359,8 +1359,6 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       svg_line_timeLeft.selectAll("#tooltip_highlights")
         .style("opacity", 0)
-      tooltip_highlights
-        .style("opacity", 0)
     }
 
     if(mode!=="byActivity"){
@@ -1370,19 +1368,12 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       svg.selectAll(".activity_legend_text")
         .style("opacity", 0)
-
-      svg_treemap
-        .style("opacity", 0)
     }
 
     if(mode!=="byLudwigModcast"){
-      svg_treemap
-        .style("opacity", 0)
     }
 
     if(mode!=="byTime"){
-      svg_treemap
-        .style("opacity", 0)
     }
 
     if(mode!=="byNone"){
@@ -1419,28 +1410,19 @@ function createViz(error, ...args) {
       svg.selectAll(".activity_legend_text")
         .style("opacity", 1)
 
-      svg_treemap
-        .style("opacity", 1)
-
-      redraw(subathonStartDate, subathonEndDate, "datetime")
     }
 
     else if(currentMode === "byLudwigModcast"){
-      svg_treemap
-        .style("opacity", 1)
-      redraw(subathonStartDate, subathonEndDate, "datetime")
     }
 
     else if(currentMode === "byTime"){
-      svg_treemap
-        .style("opacity", 1)
-      redraw(subathonStartDate, subathonEndDate, "datetime")
     }
 
     else if(currentMode === "byNone"){
       svg_line_timeLeft.selectAll(".line_timeLeft")
         .style("opacity", 1)
     }
+
   });
 
   /* --------------------------------------------- */
@@ -1461,6 +1443,8 @@ function createViz(error, ...args) {
     redraw(subathonStartDate, subathonEndDate, "datetime")
   }
 
+  // initialize legend and treemap
+  redraw(subathonStartDate, subathonEndDate, "datetime")
 };
 
 
