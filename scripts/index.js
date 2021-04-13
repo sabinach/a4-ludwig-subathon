@@ -568,6 +568,12 @@ function createViz(error, ...args) {
     .x(d => xScale_viewers(d.timeStreamed))
     .y(d => yScale_viewers(d.numViewers))
 
+  // Define area (viewers)
+  var drawArea_viewers = d3.area()
+    .x(d => xScale_viewers(d.timeStreamed))
+    .y0(yScale_viewers(0))
+    .y1(d => yScale_viewers(d.numViewers))
+
   // Define line (subFollows)
   var drawLine_subFollows = d3.line()
     .defined(d => !isNaN(d.gainedFollowers))
@@ -841,44 +847,8 @@ function createViz(error, ...args) {
 
   }
 
-  /* --- Brush + Line Clip DEFINITIONS --- */
-
-  // Define animation time
-  var idleTimeout,
-      idleDelay = 350;
-
-  /* ---------- */
-
-  // Define line svg (timeLeft): where both the line and the brush take place
-  var svg_line_timeLeft = svg.append('g')
-    .attr("clip-path", "url(#clip_timeLeft)");
-
-  // Define brush (timeleft)
-  var brush_timeLeft = d3.brushX()
-    .extent( [ [0,0], [width, height_timeLeft] ] )
-    .on("end", brushended_timeLeft)
-
-  // Define clipPath (timeLeft): everything out of this area won't be drawn.
-  var clip_timeLeft = svg.append("defs").append("svg:clipPath")
-    .attr("id", "clip_timeLeft")
-    .append("svg:rect")
-    .attr("width", width)
-    .attr("height", height_timeLeft)
-    .attr("x", 0)
-    .attr("y", 0);
-
-  // Add line (timeLeft)
-  svg_line_timeLeft.append("path")
-    .datum(timeLeftJson_zip)
-    .attr("class", "line_timeLeft")
-    .attr("stroke", "steelblue")
-    .attr("stroke-width", 1.5)
-    .attr("fill", "none")
-    .attr("d", drawLine_timeLeft)
-    .attr("opacity", 1)
-
   /* ------------------------------------- */
-  // Area graph - Activity (timeLeft)
+  // Area graph - Activity (timeLeft, viewers, subfollows)
 
   const activityList_unique_original = []
   viewers_zip
@@ -945,19 +915,6 @@ function createViz(error, ...args) {
   })
   console.log("colorDict: ", colorDict)
 
-  activityList_data.forEach(activity => {
-    // Add area (timeLeft)
-    svg_line_timeLeft.append("path")
-      .datum(activity.data)
-      .attr("class", d => "area_timeLeft " + cleanString(activity.game) + " " + activity.timeStreamed)
-      //.attr("stroke", "steelblue")
-      .attr("stroke-width", 1)
-      .attr("fill", colorDict[cleanString(activity.game)])
-      .attr("d", drawArea_timeLeft)
-      .attr("opacity", 0)
-  })
-
-
   const lowOpacity = 0.2
   const highOpacity = 0.9
 
@@ -1015,9 +972,53 @@ function createViz(error, ...args) {
     }
   }
 
+  /* --- Brush + Line Clip DEFINITIONS --- */
 
+  // Define animation time
+  var idleTimeout,
+      idleDelay = 350;
 
-  /* ------------------------------------- */
+  /* ---------- */
+
+  // Define line svg (timeLeft): where both the line and the brush take place
+  var svg_line_timeLeft = svg.append('g')
+    .attr("clip-path", "url(#clip_timeLeft)");
+
+  // Define brush (timeleft)
+  var brush_timeLeft = d3.brushX()
+    .extent( [ [0,0], [width, height_timeLeft] ] )
+    .on("end", brushended_timeLeft)
+
+  // Define clipPath (timeLeft): everything out of this area won't be drawn.
+  var clip_timeLeft = svg.append("defs").append("svg:clipPath")
+    .attr("id", "clip_timeLeft")
+    .append("svg:rect")
+    .attr("width", width)
+    .attr("height", height_timeLeft)
+    .attr("x", 0)
+    .attr("y", 0);
+
+  // Add line (timeLeft)
+  svg_line_timeLeft.append("path")
+    .datum(timeLeftJson_zip)
+    .attr("class", "line_timeLeft")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 1.5)
+    .attr("fill", "none")
+    .attr("d", drawLine_timeLeft)
+    .attr("opacity", 1)
+
+  activityList_data.forEach(activity => {
+    // Add area (timeLeft)
+    svg_line_timeLeft.append("path")
+      .datum(activity.data)
+      .attr("class", d => "area_timeLeft " + cleanString(activity.game) + " " + activity.timeStreamed)
+      //.attr("stroke", "steelblue")
+      .attr("stroke-width", 1)
+      .attr("fill", colorDict[cleanString(activity.game)])
+      .attr("d", drawArea_timeLeft)
+      .attr("opacity", 0)
+  })
 
   // Add brush + hover (timeLeft)
   svg_line_timeLeft.append("g")
@@ -1056,6 +1057,18 @@ function createViz(error, ...args) {
     .attr("stroke", "steelblue")
     .attr("stroke-width", 1.5)
     .attr("d", drawLine_viewers);
+
+  // Add activity area (viewers)
+  activityList_data.forEach(activity => {
+    svg_line_viewers.append("path")
+      .datum(activity.data)
+      .attr("class", d => "area_viewers " + cleanString(activity.game) + " " + activity.numViewers)
+      //.attr("stroke", "steelblue")
+      .attr("stroke-width", 1)
+      .attr("fill", colorDict[cleanString(activity.game)])
+      .attr("d", drawArea_viewers)
+      .attr("opacity", 0)
+  })
 
   // Add brush (viewers)
   svg_line_viewers.append("g")
@@ -1241,6 +1254,7 @@ function createViz(error, ...args) {
     svg.select(".axis--x--viewers").transition(t).call(xAxis_viewers);
     svg.select(".axis--y--viewers").transition(t).call(yAxis_viewers);
     svg_line_viewers.selectAll(".line_viewers").transition(t).attr("d", drawLine_viewers);
+    svg_line_viewers.selectAll(".area_viewers").transition(t).attr("d", drawArea_viewers);
   }
 
   function zoom_subFollows() {
@@ -1393,6 +1407,8 @@ function createViz(error, ...args) {
 
     else if(currentMode === "byActivity"){
       svg_line_timeLeft.selectAll(".area_timeLeft")
+        .style("opacity", 1)
+      svg_line_viewers.selectAll(".area_viewers")
         .style("opacity", 1)
 
       svg.selectAll(".activity_legend_colors")
