@@ -30,17 +30,17 @@ const cleanString = (str) => removePunc(removeSpace(str))
 /* ---------------------- */
 
 // set canvas dimensions
-var svg_width = 650;
+var svg_width = 850;
 var svg_height = 750;
 
 // set the dimensions and margins
-var margin_timeLeft = { top: 40, right: 60, bottom: 450, left: 45 };
+var margin_timeLeft = { top: 40, right: 160, bottom: 450, left: 45 };
 var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 
-var margin_viewers = { top: 360, right: 60, bottom: 250, left: 45 };
+var margin_viewers = { top: 360, right: 160, bottom: 250, left: 45 };
 var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
 
-var margin_subFollows = { top: 563, right: 60, bottom: 50, left: 45 };
+var margin_subFollows = { top: 563, right: 160, bottom: 50, left: 45 };
 var height_subFollows = svg_height - margin_subFollows.top - margin_subFollows.bottom;
 
 var margin_text = 20; //global
@@ -393,7 +393,7 @@ function createViz(error, ...args) {
       .enter()
       .append("rect")
         .attr("class", d => "activity_legend_colors legendColor-" + d)
-        .attr("x", 425)
+        .attr("x", 660)
         .attr("y", function(d,i){ return -30 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
@@ -414,7 +414,7 @@ function createViz(error, ...args) {
       .enter()
       .append("text")
         .attr("class", d => "activity_legend_text legendText-" + d)
-        .attr("x", 425 + legendDotSize*1.2)
+        .attr("x", 660 + legendDotSize*1.2)
         .attr("y", function(d,i){ return -30 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorDict[d]})
         .text(function(d){ return d})
