@@ -253,6 +253,9 @@ function createViz(error, ...args) {
   // treemap hierarchy
 
   function redraw(start, end, type){
+    /* ------ */
+    // Activity
+
     // filter by date 
     const viewers_zip_withinBounds = viewers_zip.filter((viewers) => 
       (type==="datetime" && viewers.datetime >= start && viewers.datetime <= end) || 
@@ -263,8 +266,11 @@ function createViz(error, ...args) {
     const gamePlayed_count = generateGamePlayedCount(viewers_zip_withinBounds)
     console.log("gamePlayed_count: ", gamePlayed_count)
 
-    redrawTreemap(gamePlayed_count)
+    redrawTreemapActivity(gamePlayed_count)
     redrawLegendActivity(viewers_zip_withinBounds, gamePlayed_count)
+
+    /* ------ */
+    // SleepAwake
 
     // filter by date
     const ludwigModcastJson_zip_withinBounds = ludwigModcastJson_zip.filter((item) => 
@@ -274,7 +280,7 @@ function createViz(error, ...args) {
   }
 
   // delete and redraw the treemap
-  function redrawTreemap(gamePlayed_count){
+  function redrawTreemapActivity(gamePlayed_count){
 
     // stratify the data: reformatting for d3.js
     var root = d3.stratify()
@@ -406,8 +412,10 @@ function createViz(error, ...args) {
     // clear previous legend
     svg.selectAll(".activity_legend_colors").remove();
     svg.selectAll(".activity_legend_text").remove();
-    svg.selectAll(".sleepAwake_legend_colors").remove();
-    svg.selectAll(".sleepAwake_legend_text").remove();
+
+    // hide other legends
+    svg.selectAll(".sleepAwake_legend_colors").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
+    svg.selectAll(".sleepAwake_legend_text").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
 
     // legend settings
 
@@ -476,10 +484,12 @@ function createViz(error, ...args) {
 
 
     // clear previous legend
-    svg.selectAll(".activity_legend_colors").remove();
-    svg.selectAll(".activity_legend_text").remove();
     svg.selectAll(".sleepAwake_legend_colors").remove();
     svg.selectAll(".sleepAwake_legend_text").remove();
+
+    // hide other legends
+    svg.selectAll(".activity_legend_colors").style("opacity", currentMode==="byActivity" ? 1 : 0);
+    svg.selectAll(".activity_legend_text").style("opacity", currentMode==="byActivity" ? 1 : 0);
 
     // legend settings
 
