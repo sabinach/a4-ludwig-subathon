@@ -283,8 +283,11 @@ function createViz(error, ...args) {
         .style("stroke", "black")
         .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
         .style("opacity", 1e-6)
+        .on("mouseover", mouseover_treemap_allActivity)
+        .on("mouseleave", mouseleave_treemap_allActivity)
       .transition().duration(duration)
         .style("opacity", 1)
+
 
     /** -------- **/
     // title
@@ -399,8 +402,8 @@ function createViz(error, ...args) {
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorDict[d]})
         .style("opacity", currentMode==="byActivity" ? 1 : 0)
-        .on("mouseover", mouseover_allActivity)
-        .on("mouseleave", mouseleave_allActivity)
+        .on("mouseover", mouseover_legend_allActivity)
+        .on("mouseleave", mouseleave_legend_allActivity)
 
     // text
 
@@ -421,8 +424,8 @@ function createViz(error, ...args) {
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
         .style("opacity", currentMode==="byActivity" ? 1 : 0)
-        .on("mouseover", mouseover_allActivity)
-        .on("mouseleave", mouseleave_allActivity)
+        .on("mouseover", mouseover_legend_allActivity)
+        .on("mouseleave", mouseleave_legend_allActivity)
 
   }
 
@@ -960,7 +963,7 @@ function createViz(error, ...args) {
   })
 
   // What to do when one group is hovered
-  const mouseover_allActivity = function(d){
+  const mouseover_legend_allActivity = function(d){
     if (currentMode==="byActivity"){
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 0.1)
@@ -970,7 +973,24 @@ function createViz(error, ...args) {
   }
 
   // And when it is not hovered anymore
-  const mouseleave_allActivity = function(d){
+  const mouseleave_legend_allActivity = function(d){
+    if (currentMode==="byActivity"){
+      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 1)
+    }
+  }
+
+  // What to do when one group is hovered
+  const mouseover_treemap_allActivity = function(d){
+    if (currentMode==="byActivity"){
+      // reduce opacity of all groups
+      svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 0.1)
+      // expect the one that is hovered
+      svg_line_timeLeft.selectAll("." + cleanString(d.id)).style("opacity", 1)
+    }
+  }
+
+  // And when it is not hovered anymore
+  const mouseleave_treemap_allActivity = function(d){
     if (currentMode==="byActivity"){
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", 1)
     }
