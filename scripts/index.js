@@ -22,6 +22,11 @@ d3.selection.prototype.moveToBack = function() {
     });
 };
 
+const removeSpace = (str) => str.replace(/\s+/g, '')
+const removePunc = (str) => str.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+const cleanString = (str) => removePunc(removeSpace(str))
+
+
 /* ---------------------- */
 
 // set canvas dimensions
@@ -260,6 +265,8 @@ function createViz(error, ...args) {
     // create rectangle object
     const rects = svg_treemap.selectAll(".rect").data(root.leaves())
 
+    console.log("root.leaves(): ", root.leaves())
+
     //remove rectangle
     rects.exit().remove();
     rects
@@ -274,7 +281,7 @@ function createViz(error, ...args) {
         .attr("width", d => d.x1 - d.x0)
         .attr("height", d => d.y1 - d.y0)
         .style("stroke", "black")
-        .style("fill", "#9cbdd9")
+        .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
         .style("opacity", 1e-6)
       .transition().duration(duration)
         .style("opacity", 1)
@@ -358,8 +365,8 @@ function createViz(error, ...args) {
     const activityList_unique = []
     viewers_zip_withinBounds
       .forEach((viewer) => {
-        if(viewer.game!==null && !activityList_unique.includes(viewer.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''))){
-          activityList_unique.push(viewer.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''))
+        if(viewer.game!==null && !activityList_unique.includes(cleanString(viewer.game))){
+          activityList_unique.push(cleanString(viewer.game))
         }
       })
 
@@ -879,8 +886,8 @@ function createViz(error, ...args) {
   const activityList_unique_original = []
   viewers_zip
     .forEach((viewer) => {
-      if(viewer.game!==null && !activityList_unique_original.includes(viewer.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''))){
-        activityList_unique_original.push(viewer.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''))
+      if(viewer.game!==null && !activityList_unique_original.includes(cleanString(viewer.game))){
+        activityList_unique_original.push(cleanString(viewer.game))
       }
     })
 
@@ -906,10 +913,10 @@ function createViz(error, ...args) {
           gainedFollowers: followers.gainedFollowers
         })
       if (d.game !== prevActivity){
-        activityList_keys.push(d.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '') + " " + d.timeStreamed) // ie. JustChatting-1
+        activityList_keys.push(cleanString(d.game) + " " + d.timeStreamed) // ie. JustChatting-1
         activityList_data.push({
           data: prevActivityList,
-          game: viewers_zip[i-1].game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ''),
+          game: cleanString(viewers_zip[i-1].game),
           timeStreamed: d.timeStreamed
         })
         // reset items
@@ -931,7 +938,9 @@ function createViz(error, ...args) {
   console.log("activityList_data: ", activityList_data)
 
   // color palette
-  //var colorSchemes = d3.schemeSet2.concat(d3.schemeTableau10)
+  //var colorSchemes = d3.schemeSet2.concat(d3.schemeTableau10) 
+
+  // https://sashamaps.net/docs/resources/20-colors/
   const colorSchemes = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#800000', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
   const colorDict = {}
   activityList_unique_original.forEach((activity, i) => {
@@ -942,10 +951,10 @@ function createViz(error, ...args) {
     // Add area (timeLeft)
     svg_line_timeLeft.append("path")
       .datum(activity.data)
-      .attr("class", d => "area_timeLeft " + activity.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '') + " " + activity.timeStreamed)
+      .attr("class", d => "area_timeLeft " + cleanString(activity.game) + " " + activity.timeStreamed)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
-      .attr("fill", colorDict[activity.game.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')])
+      .attr("fill", colorDict[cleanString(activity.game)])
       .attr("d", drawArea_timeLeft)
       .attr("opacity", 0)
   })
