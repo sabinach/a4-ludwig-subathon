@@ -931,6 +931,16 @@ function createViz(error, ...args) {
           gainedFollowers: followers.gainedFollowers
         }]
       }
+      if(i===viewers_zip.length-1){
+        const lastItem = activityList_data[activityList_data.length-1]
+        const lastTimeStreamed = lastItem.data[lastItem.data.length-1].timeStreamed
+        activityList_keys.push(cleanString(prevActivity) + "-" + lastTimeStreamed) 
+        activityList_data.push({
+          data: prevActivityList,
+          game: cleanString(prevActivity),
+          timeStreamed: lastTimeStreamed
+        })
+      }
     }
   })
 
@@ -1042,16 +1052,16 @@ function createViz(error, ...args) {
     })
 
     if(ludwigModcastJson.timeStreamed.includes(d.timeStreamed)){
-      const i = ludwigModcastJson.timeStreamed.indexOf(d.timeStreamed)
-      const currentSleepAwake = ludwigModcastJson.sleepAwake[i]
+      const j = ludwigModcastJson.timeStreamed.indexOf(d.timeStreamed)
+      const currentSleepAwake = ludwigModcastJson.sleepAwake[j]
 
       if(prevSleepAwake!==currentSleepAwake){
 
-        sleepAwakeList_keys.push(ludwigModcastJson.sleepAwake[i-1] + "-" + ludwigModcastJson.timeStreamed[i-1]) // ie. awake-0
+        sleepAwakeList_keys.push(ludwigModcastJson.sleepAwake[j-1] + "-" + ludwigModcastJson.timeStreamed[j-1]) // ie. awake-0
         sleepAwakeList_data.push({
           data: prevSleepAwakeList,
-          sleepAwake: ludwigModcastJson.sleepAwake[i-1],
-          timeStreamed: ludwigModcastJson.timeStreamed[i-1]
+          sleepAwake: ludwigModcastJson.sleepAwake[j-1],
+          timeStreamed: ludwigModcastJson.timeStreamed[j-1]
         })
 
         // reset items
@@ -1067,7 +1077,21 @@ function createViz(error, ...args) {
         }]
       }
     }
+
+    if(i===timeLeftJson_zip.length-1){
+      const lastItem = sleepAwakeList_data[sleepAwakeList_data.length-1]
+      const lastTimeStreamed = lastItem.data[lastItem.data.length-1].timeStreamed
+      sleepAwakeList_keys.push(prevSleepAwake + "-" + lastTimeStreamed) 
+      sleepAwakeList_data.push({
+        data: prevSleepAwakeList,
+        sleepAwake: prevSleepAwake,
+        timeStreamed: lastTimeStreamed
+      })
+    }
+
   })
+
+  console.log("timeLeftJson_zip.length-1: ", timeLeftJson_zip.length-1)
 
   console.log("sleepAwakeList_keys: ", sleepAwakeList_keys)
   console.log("sleepAwakeList_data: ", sleepAwakeList_data)
