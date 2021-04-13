@@ -256,16 +256,16 @@ function createViz(error, ...args) {
       .padding(0.1)
       (root)
 
-    // animation transition time
-    const duration = 100;
+    // clear previous treemap
+    svg_treemap.selectAll(".rect").remove();
+    svg_treemap.selectAll(".title").remove();
+    svg_treemap.selectAll(".percent").remove();
 
     /** -------- **/
-    // rectangle
+    // rect
 
     // create rectangle object
     const rects = svg_treemap.selectAll(".rect").data(root.leaves())
-
-    console.log("root.leaves(): ", root.leaves())
 
     //remove rectangle
     rects.exit().remove();
@@ -282,12 +282,8 @@ function createViz(error, ...args) {
         .attr("height", d => d.y1 - d.y0)
         .style("stroke", "black")
         .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
-        .style("opacity", 1e-6)
         .on("mouseover", mouseover_treemap_allActivity)
         .on("mouseleave", mouseleave_treemap_allActivity)
-      .transition().duration(duration)
-        .style("opacity", 1)
-
 
     /** -------- **/
     // title
@@ -313,9 +309,6 @@ function createViz(error, ...args) {
         .html(d => `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
         .style("font-size", "8px")
         .style("fill", "black")
-        .style("opacity", 1e-6)
-      .transition().duration(duration)
-        .style("opacity", 1)
 
     /** -------- **/
     // percent
@@ -341,9 +334,6 @@ function createViz(error, ...args) {
         .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
         .style("font-size", "8px")
         .style("fill", "black")
-        .style("opacity", 1e-6)
-      .transition().duration(duration)
-        .style("opacity", 1)
 
     /** -------- **/
     /*
@@ -949,6 +939,7 @@ function createViz(error, ...args) {
   activityList_unique_original.forEach((activity, i) => {
     colorDict[activity] = colorSchemes[i]
   })
+  console.log("colorDict: ", colorDict)
 
   activityList_data.forEach(activity => {
     // Add area (timeLeft)
