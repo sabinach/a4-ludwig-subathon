@@ -580,6 +580,12 @@ function createViz(error, ...args) {
     .x(d => xScale_subFollows(d.timeStreamed))
     .y(d => yScale_subFollows(d.gainedFollowers))
 
+  // Define area (subFollows)
+  var drawArea_subFollows = d3.area()
+    .x(d => xScale_subFollows(d.timeStreamed))
+    .y0(yScale_subFollows(0))
+    .y1(d => yScale_subFollows(d.gainedFollowers))
+
   /* ---------- */
 
   // Add x-axis (timeLeft)
@@ -808,7 +814,7 @@ function createViz(error, ...args) {
       focus_vertLine_viewers.style("opacity", 0)
     }
 
-    // subfollows
+    // subFollows
     var x0_subFollows = xScale_subFollows.invert(d3.mouse(this)[0]),
         i_subFollows = bisectHour(followers_zip, x0_subFollows, 1),
         selectedData_subFollows = followers_zip[i_subFollows]
@@ -848,7 +854,7 @@ function createViz(error, ...args) {
   }
 
   /* ------------------------------------- */
-  // Area graph - Activity (timeLeft, viewers, subfollows)
+  // Area graph - Activity (timeLeft, viewers, subFollows)
 
   const activityList_unique_original = []
   viewers_zip
@@ -924,6 +930,7 @@ function createViz(error, ...args) {
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", lowOpacity)
       svg_line_viewers.selectAll(".area_viewers").style("opacity", lowOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", lowOpacity)
       svg_treemap.selectAll(".rect").style("opacity", lowOpacity)
@@ -932,6 +939,7 @@ function createViz(error, ...args) {
       // expect the one that is hovered
       svg_line_timeLeft.selectAll("." + d).style("opacity", highOpacity)
       svg_line_viewers.selectAll("." + d).style("opacity", highOpacity)
+      svg_line_subFollows.selectAll("." + d).style("opacity", highOpacity)
       svg.selectAll(".legendColor-" + d).style("opacity", highOpacity)
       svg.selectAll(".legendText-" + d).style("opacity", highOpacity)
       svg_treemap.selectAll(".treemapRect-" + d).style("opacity", highOpacity)
@@ -946,6 +954,7 @@ function createViz(error, ...args) {
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", lowOpacity)
       svg_line_viewers.selectAll(".area_viewers").style("opacity", lowOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", lowOpacity)
       svg_treemap.selectAll(".rect").style("opacity", lowOpacity)
@@ -955,11 +964,12 @@ function createViz(error, ...args) {
       if(d.id){
         svg_line_timeLeft.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
         svg_line_viewers.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
+        svg_line_subFollows.selectAll("." + cleanString(d.id)).style("opacity", highOpacity)
         svg.selectAll(".legendColor-" + cleanString(d.id)).style("opacity", highOpacity)
         svg.selectAll(".legendText-" + cleanString(d.id)).style("opacity", highOpacity)
         svg_treemap.selectAll(".treemapRect-" + cleanString(d.id)).style("opacity", highOpacity)
-      svg_treemap.selectAll(".treemapTitle-" + cleanString(d.id)).style("opacity", highOpacity)
-      svg_treemap.selectAll(".treemapPercent-" + cleanString(d.id)).style("opacity", highOpacity)
+        svg_treemap.selectAll(".treemapTitle-" + cleanString(d.id)).style("opacity", highOpacity)
+        svg_treemap.selectAll(".treemapPercent-" + cleanString(d.id)).style("opacity", highOpacity)
       }
     }
   }
@@ -969,6 +979,7 @@ function createViz(error, ...args) {
     if (currentMode==="byActivity"){
       svg_line_timeLeft.selectAll(".area_timeLeft").style("opacity", highOpacity)
       svg_line_viewers.selectAll(".area_viewers").style("opacity", highOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows").style("opacity", highOpacity)
       svg.selectAll(".activity_legend_colors").style("opacity", highOpacity)
       svg.selectAll(".activity_legend_text").style("opacity", highOpacity)
       svg_treemap.selectAll(".rect").style("opacity", highOpacity)
@@ -1112,6 +1123,18 @@ function createViz(error, ...args) {
     .attr("stroke-width", 1.5)
     .attr("d", drawLine_subFollows);
 
+  // Add area (subFollows)
+  activityList_data.forEach(activity => {
+    svg_line_subFollows.append("path")
+      .datum(activity.data)
+      .attr("class", d => "area_subFollows " + cleanString(activity.game) + " " + activity.timeStreamed)
+      //.attr("stroke", "steelblue")
+      .attr("stroke-width", 1)
+      .attr("fill", colorDict[cleanString(activity.game)])
+      .attr("d", drawArea_subFollows)
+      .attr("opacity", 0)
+  })
+
   // Add brush (subFollows)
   svg_line_subFollows.append("g")
     .attr("class", "brush_subFollows")
@@ -1225,10 +1248,10 @@ function createViz(error, ...args) {
       var i0_viewers = bisectHour(viewers_zip, xScale_viewers.invert(brushBounds[0]), 1),
           i1_viewers = bisectHour(viewers_zip, xScale_viewers.invert(brushBounds[1]), 1),
           yMax_viewers = d3.max(viewers_zip.slice(i0_viewers, i1_viewers+1).map(d => d.numViewers))
-      // subfollows
-      var i0_subfollows = bisectHour(followers_zip, xScale_subFollows.invert(brushBounds[0]), 1),
-          i1_subfollows = bisectHour(followers_zip, xScale_subFollows.invert(brushBounds[1]), 1),
-          yMax_subfollows = d3.max(followers_zip.slice(i0_subfollows, i1_subfollows+1).map(d => d.gainedFollowers))
+      // subFollows
+      var i0_subFollows = bisectHour(followers_zip, xScale_subFollows.invert(brushBounds[0]), 1),
+          i1_subFollows = bisectHour(followers_zip, xScale_subFollows.invert(brushBounds[1]), 1),
+          yMax_subFollows = d3.max(followers_zip.slice(i0_subFollows, i1_subFollows+1).map(d => d.gainedFollowers))
 
       // update domain for line graphs
       xScale_timeLeft.domain([brushBounds[0], brushBounds[1]].map(xScale_timeLeft.invert, xScale_timeLeft));
@@ -1236,7 +1259,7 @@ function createViz(error, ...args) {
       xScale_viewers.domain([brushBounds[0], brushBounds[1]].map(xScale_viewers.invert, xScale_viewers));
       yScale_viewers.domain([0, yMax_viewers]);
       xScale_subFollows.domain([brushBounds[0], brushBounds[1]].map(xScale_subFollows.invert, xScale_subFollows));
-      yScale_subFollows.domain([0, yMax_subfollows]);
+      yScale_subFollows.domain([0, yMax_subFollows]);
     }
   }
 
@@ -1267,6 +1290,7 @@ function createViz(error, ...args) {
     svg.select(".axis--x--subFollows").transition(t).call(xAxis_subFollows);
     svg.select(".axis--y--subFollows").transition(t).call(yAxis_subFollows);
     svg_line_subFollows.selectAll(".line_subFollows").transition(t).attr("d", drawLine_subFollows);
+    svg_line_subFollows.selectAll(".area_subFollows").transition(t).attr("d", drawArea_subFollows);
   }
 
   /* --- Information Tooltip DEFINITIONS --- */
@@ -1366,6 +1390,8 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       svg_line_viewers.selectAll(".line_viewers")
         .style("opacity", 0)
+      svg_line_subFollows.selectAll(".line_subFollows")
+        .style("opacity", 0)
 
       svg_line_timeLeft.selectAll(".dot-highlight")
         .style("opacity", 0)
@@ -1376,6 +1402,11 @@ function createViz(error, ...args) {
     if(mode!=="byActivity"){
       svg_line_timeLeft.selectAll(".area_timeLeft")
         .style("opacity", 0)
+      svg_line_viewers.selectAll(".area_viewers")
+        .style("opacity", 0)
+      svg_line_subFollows.selectAll(".area_subFollows")
+        .style("opacity", 0)
+
       svg.selectAll(".activity_legend_colors")
         .style("opacity", 0)
       svg.selectAll(".activity_legend_text")
@@ -1401,11 +1432,14 @@ function createViz(error, ...args) {
         .style("opacity", 1)
       svg_line_viewers.selectAll(".line_viewers")
         .style("opacity", 1)
+      svg_line_subFollows.selectAll(".line_subFollows")
+        .style("opacity", 1)
 
       svg_line_timeLeft.selectAll(".dot-highlight")
         .style("opacity", 1)
       svg_line_timeLeft.selectAll(".tooltip_highlights")
         .style("opacity", 1)
+
       tooltip_highlights
         .style("opacity", 1)
     }
@@ -1414,6 +1448,8 @@ function createViz(error, ...args) {
       svg_line_timeLeft.selectAll(".area_timeLeft")
         .style("opacity", 1)
       svg_line_viewers.selectAll(".area_viewers")
+        .style("opacity", 1)
+      svg_line_subFollows.selectAll(".area_subFollows")
         .style("opacity", 1)
 
       svg.selectAll(".activity_legend_colors")
@@ -1433,6 +1469,8 @@ function createViz(error, ...args) {
       svg_line_timeLeft.selectAll(".line_timeLeft")
         .style("opacity", 1)
       svg_line_viewers.selectAll(".line_viewers")
+        .style("opacity", 1)
+      svg_line_subFollows.selectAll(".line_subFollows")
         .style("opacity", 1)
     }
 
