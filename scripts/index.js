@@ -1024,7 +1024,7 @@ function createViz(error, ...args) {
 
   var sleepAwakeList_keys = []
   var sleepAwakeList_data = []
-  var prevSleepAwake = ludwigModcastJson[0].awake
+  var prevSleepAwake = ludwigModcastJson.sleepAwake[0]
   var prevSleepAwakeList = []
 
   timeLeftJson_zip.forEach((d, i) => {
@@ -1120,7 +1120,7 @@ function createViz(error, ...args) {
     // Add area (timeLeft)
     svg_line_timeLeft.append("path")
       .datum(activity.data)
-      .attr("class", d => "area_timeLeft " + cleanString(activity.game) + "-" + activity.timeStreamed)
+      .attr("class", d => "area_timeLeft " + cleanString(activity.game) + " " + cleanString(activity.game) + "-" + activity.timeStreamed)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
@@ -1171,7 +1171,7 @@ function createViz(error, ...args) {
   activityList_data.forEach(activity => {
     svg_line_viewers.append("path")
       .datum(activity.data)
-      .attr("class", d => "area_viewers " + cleanString(activity.game) + "-" + activity.numViewers)
+      .attr("class", d => "area_viewers " + cleanString(activity.game) + " " + cleanString(activity.game) + "-" + activity.numViewers)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
@@ -1221,7 +1221,7 @@ function createViz(error, ...args) {
   activityList_data.forEach(activity => {
     svg_line_subFollows.append("path")
       .datum(activity.data)
-      .attr("class", d => "area_subFollows " + cleanString(activity.game) + "-" + activity.timeStreamed)
+      .attr("class", d => "area_subFollows " + cleanString(activity.game) + " " + cleanString(activity.game) + "-" + activity.timeStreamed)
       //.attr("stroke", "steelblue")
       .attr("stroke-width", 1)
       .attr("fill", colorDict[cleanString(activity.game)])
