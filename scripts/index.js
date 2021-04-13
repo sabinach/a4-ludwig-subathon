@@ -902,22 +902,22 @@ function createViz(error, ...args) {
   viewers_zip.forEach((d, i) => {
     if(d.game!==null || d.numViewers!==null){
       const timeLeft = timeLeftJson_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
-        const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
-        prevActivityList.push({
-          timeStreamed: d.timeStreamed,
-          datetime: d.datetime,
-          game: d.game,
-          timeLeft: timeLeft ? timeLeft.timeLeft : null,
-          numViewers: d.numViewers,
-          numFollowers: followers.numFollowers,
-          gainedFollowers: followers.gainedFollowers
-        })
+      const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
+      prevActivityList.push({
+        timeStreamed: d.timeStreamed,
+        datetime: d.datetime,
+        game: d.game,
+        timeLeft: timeLeft ? timeLeft.timeLeft : null,
+        numViewers: d.numViewers,
+        numFollowers: followers.numFollowers,
+        gainedFollowers: followers.gainedFollowers
+      })
       if (d.game !== prevActivity){
-        activityList_keys.push(cleanString(d.game) + "-" + d.timeStreamed) // ie. JustChatting-1
+        activityList_keys.push(cleanString(viewers_zip[i-1].game) + "-" + viewers_zip[i-2].timeStreamed) // ie. SuperMarioOdyssey-1
         activityList_data.push({
           data: prevActivityList,
           game: cleanString(viewers_zip[i-1].game),
-          timeStreamed: d.timeStreamed
+          timeStreamed: viewers_zip[i-2].timeStreamed
         })
         // reset items
         prevActivity = d.game
@@ -1028,46 +1028,46 @@ function createViz(error, ...args) {
   var prevSleepAwakeList = []
 
   timeLeftJson_zip.forEach((d, i) => {
-    // TODO
-  })
+    const viewers = viewers_zip.filter(obj => obj.timeStreamed === Math.floor(d.timeStreamed))[0] // viewers only has time by the hour
+    const followers = followers_zip.filter(obj => obj.timeStreamed === Math.floor(d.timeStreamed))[0] // followers only has time by the hour
 
-  /*
-  // viewers_zip_withinBounds (d.timeStreamed, d.datetime, d.game, d.numViewers)
-  viewers_zip.forEach((d, i) => {
-    if(d.game!==null || d.numViewers!==null){
-      const timeLeft = timeLeftJson_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
-        const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
-        prevActivityList.push({
-          timeStreamed: d.timeStreamed,
-          datetime: d.datetime,
-          game: d.game,
-          timeLeft: timeLeft ? timeLeft.timeLeft : null,
-          numViewers: d.numViewers,
-          numFollowers: followers.numFollowers,
-          gainedFollowers: followers.gainedFollowers
+    prevSleepAwakeList.push({
+      timeStreamed: d.timeStreamed,
+      datetime: viewers ? viewers.datetime : null,
+      sleepAwake: prevSleepAwake,
+      timeLeft: d.timeLeft,
+      numViewers: viewers ? viewers.numViewers : null,
+      numFollowers: followers ? followers.numFollowers: null,
+      gainedFollowers: followers ? followers.gainedFollowers: null
+    })
+
+    if(ludwigModcastJson.timeStreamed.includes(d.timeStreamed)){
+      const i = ludwigModcastJson.timeStreamed.indexOf(d.timeStreamed)
+      const currentSleepAwake = ludwigModcastJson.sleepAwake[i]
+
+      if(prevSleepAwake!==currentSleepAwake){
+
+        sleepAwakeList_keys.push(ludwigModcastJson.sleepAwake[i-1] + "-" + ludwigModcastJson.timeStreamed[i-1]) // ie. awake-0
+        sleepAwakeList_data.push({
+          data: prevSleepAwakeList,
+          sleepAwake: ludwigModcastJson.sleepAwake[i-1],
+          timeStreamed: ludwigModcastJson.timeStreamed[i-1]
         })
-      if (d.game !== prevActivity){
-        activityList_keys.push(cleanString(d.game) + " " + d.timeStreamed) // ie. JustChatting-1
-        activityList_data.push({
-          data: prevActivityList,
-          game: cleanString(viewers_zip[i-1].game),
-          timeStreamed: d.timeStreamed
-        })
+
         // reset items
-        prevActivity = d.game
-        prevActivityList = [{
+        prevSleepAwake = currentSleepAwake
+        prevSleepAwakeList = [{
           timeStreamed: d.timeStreamed,
-          datetime: d.datetime,
-          game: d.game,
-          timeLeft: timeLeft ? timeLeft.timeLeft : null,
-          numViewers: d.numViewers,
-          numFollowers: followers.numFollowers,
-          gainedFollowers: followers.gainedFollowers
+          datetime: viewers ? viewers.datetime : null,
+          sleepAwake: currentSleepAwake,
+          timeLeft: d.timeLeft,
+          numViewers: viewers ? viewers.numViewers : null,
+          numFollowers: followers ? followers.numFollowers: null,
+          gainedFollowers: followers ? followers.gainedFollowers: null
         }]
       }
     }
   })
-  */
 
   console.log("sleepAwakeList_keys: ", sleepAwakeList_keys)
   console.log("sleepAwakeList_data: ", sleepAwakeList_data)
