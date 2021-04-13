@@ -352,6 +352,21 @@ function createViz(error, ...args) {
 
 
 
+
+  /*
+  // Add legend color
+  svg.append("g")
+    .attr("class", "activity_legend_colors")
+    //.attr("transform", "translate(0," + height_timeLeft + ")")
+    //.call(xAxis_timeLeft);
+
+  // Add legend text
+  svg.append("g")
+    .attr("class", "activity_legend_text")
+  */
+
+
+
   function redrawLegendActivity(viewers_zip_withinBounds, gamePlayed_count){
     // unique values
     const activityList_unique = []
@@ -364,25 +379,21 @@ function createViz(error, ...args) {
 
     console.log("activityList_unique: ", activityList_unique)
 
-    // size
-
-    const legendDotSize = 10
-
-
-    // clear all
-
-    //svg.selectAll(".activity_legend_colors").html(null);
-    //svg.selectAll(".activity_legend_text").html(null);
-
     // legend
 
+    svg.selectAll(".activity_legend_colors").remove();
+    svg.selectAll(".activity_legend_text").remove();
+
+    const legendDotSize = 10
     const svg_legend = svg.append("g")
 
     // color 
 
-    console.log("---color---")
-
     const legendColor = svg_legend.selectAll(".activity_legend_colors").data(activityList_unique)
+
+    legendColor
+      .exit()
+      .remove()
 
     legendColor
       .enter()
@@ -392,33 +403,32 @@ function createViz(error, ...args) {
         .attr("y", function(d,i){ return 10 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
-        .style("fill", function(d){ console.log(d); return colorDict[d]})
+        .style("fill", function(d){ return colorDict[d]})
         .style("opacity", 1)
         .on("mouseover", mouseover_highlightActivity)
         .on("mouseleave", mouseleave_highlightActivity)
 
     // text
 
-    console.log("---text---")
-
     const legendText = svg_legend.selectAll(".activity_legend_text").data(activityList_unique)
 
-    // Add one dot in the legend for each name.
+    legendText
+      .exit()
+      .remove()
+
     legendText
       .enter()
       .append("text")
         .attr("class", "activity_legend_text")
         .attr("x", 400 + legendDotSize*1.2)
         .attr("y", function(d,i){ return 10 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
-        .style("fill", function(d){ console.log(d); return colorDict[d]})
+        .style("fill", function(d){ return colorDict[d]})
         .text(function(d){ return d}) // todo printing here
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
         .style("opacity", 1)
         .on("mouseover", mouseover_highlightActivity)
         .on("mouseleave", mouseleave_highlightActivity)
-
-    console.log("------")
 
   }
 
