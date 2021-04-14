@@ -1,5 +1,5 @@
 // video embed settings
-var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
+var parentDomain = "6859-sp21.github.io" // deploy: 6859-sp21.github.io
                                // test: 127.0.0.1
 
 console.log("parentDomain: ", parentDomain);
@@ -105,7 +105,7 @@ var formatDatetime = d3.timeFormat("%B %d, %Y %H:%M %p")
 var formatTime = d3.timeFormat("%B %d, %Y");
 
 console.log("subathonStartDate: ", subathonStartDate) 
-console.log("subathonEndDate: ", subathonEndDate) // TODO -- update!
+console.log("subathonEndDate: ", subathonEndDate) 
 
 var bisectHour = d3.bisector(function(d) { return d.timeStreamed; }).left;
 
