@@ -313,7 +313,7 @@ function createViz(error, ...args) {
     /* ------ */
     // TimeHour
 
-    //redrawLegendTimeHour()
+    redrawLegendTimeHour(viewers_zip_withinBounds)
 
   }
 
@@ -590,6 +590,8 @@ function createViz(error, ...args) {
     // hide other legends
     svg.selectAll(".sleepAwake_legend_colors").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
     svg.selectAll(".sleepAwake_legend_text").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
+    svg.selectAll(".timeHour_legend_colors").style("opacity", currentMode==="byTime" ? 1 : 0);
+    svg.selectAll(".timeHour_legend_text").style("opacity", currentMode==="byTime" ? 1 : 0);
 
     // legend settings
 
@@ -663,6 +665,8 @@ function createViz(error, ...args) {
     // hide other legends
     svg.selectAll(".activity_legend_colors").style("opacity", currentMode==="byActivity" ? 1 : 0);
     svg.selectAll(".activity_legend_text").style("opacity", currentMode==="byActivity" ? 1 : 0);
+    svg.selectAll(".timeHour_legend_colors").style("opacity", currentMode==="byTime" ? 1 : 0);
+    svg.selectAll(".timeHour_legend_text").style("opacity", currentMode==="byTime" ? 1 : 0);
 
     // legend settings
 
@@ -681,7 +685,7 @@ function createViz(error, ...args) {
       .enter()
       .append("rect")
         .attr("class", d => "sleepAwake_legend_colors legendColor-" + d)
-        .attr("x", 600)
+        .attr("x", 550)
         .attr("y", function(d,i){ return -30 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
@@ -702,7 +706,7 @@ function createViz(error, ...args) {
       .enter()
       .append("text")
         .attr("class", d => "sleepAwake_legend_text legendText-" + d)
-        .attr("x", 600 + legendDotSize*1.2)
+        .attr("x", 550 + legendDotSize*1.2)
         .attr("y", function(d,i){ return -30 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorSleepAwake[d]})
         .text(function(d){ return d})
@@ -712,6 +716,83 @@ function createViz(error, ...args) {
         .on("mouseover", mouseover_legend_allSleepAwake)
         .on("mouseleave", mouseleave_allSleepAwake)
   }
+
+  /* ------------------------------------- */
+  // SleepAwake Legend
+
+  function redrawLegendTimeHour(viewers_zip_withinBounds){
+
+    // unique values
+    const timeHourList_unique = []
+    viewers_zip_withinBounds
+      .forEach((viewer) => {
+        const timeHour = (viewer.timeStreamed+17)%24
+        if(!timeHourList_unique.includes(timeHour)){
+          timeHourList_unique.push(timeHour)
+        }
+      })
+    timeHourList_unique.sort(function(a, b){return a - b});
+    console.log("timeHourList_unique: ", timeHourList_unique)
+
+    // clear previous legend
+    svg.selectAll(".timeHour_legend_colors").remove();
+    svg.selectAll(".timeHour_legend_text").remove();
+
+    // hide other legends
+    svg.selectAll(".activity_legend_colors").style("opacity", currentMode==="byActivity" ? 1 : 0);
+    svg.selectAll(".activity_legend_text").style("opacity", currentMode==="byActivity" ? 1 : 0);
+    svg.selectAll(".sleepAwake_legend_colors").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
+    svg.selectAll(".sleepAwake_legend_text").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
+
+    // legend settings
+
+    const legendDotSize = 5
+    const svg_legend = svg.append("g")
+
+    // color 
+
+    const legendColor = svg_legend.selectAll(".timeHour_legend_colors").data(timeHourList_unique)
+
+    legendColor
+      .exit()
+      .remove()
+
+    legendColor
+      .enter()
+      .append("rect")
+        .attr("class", d => "timeHour_legend_colors legendColor-" + d)
+        .attr("x", 610)
+        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("width", legendDotSize)
+        .attr("height", legendDotSize)
+        .style("fill", function(d){ return colorTimeHour[d]})
+        .style("opacity", currentMode==="byTime" ? 1 : 0)
+        .on("mouseover", mouseover_legend_allTimeHour)
+        .on("mouseleave", mouseleave_allTimeHour)
+
+    // text
+
+    const legendText = svg_legend.selectAll(".timeHour_legend_text").data(timeHourList_unique)
+
+    legendText
+      .exit()
+      .remove()
+
+    legendText
+      .enter()
+      .append("text")
+        .attr("class", d => "timeHour_legend_text legendText-" + d)
+        .attr("x", 610 + legendDotSize*1.2)
+        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .style("fill", function(d){ return colorTimeHour[d]})
+        .text(function(d){ return timeHourToText[d]})
+        .attr("text-anchor", "left")
+        .style("alignment-baseline", "middle")
+        .style("opacity", currentMode==="byTime" ? 1 : 0)
+        .on("mouseover", mouseover_legend_allTimeHour)
+        .on("mouseleave", mouseleave_allTimeHour)
+  }
+
 
   /* --------------------------------------------- */
   // FOLLOWERS
@@ -1455,16 +1536,14 @@ function createViz(error, ...args) {
   const colorTimeHour = ["#3f006b", "#280755", "#280755", "#270d7a", "#200f6a", "#004ee2", "#2898df", "#00ded6", "#67edac", "#aded6f", "#ffe242", "#ffd542", "#ffc343", "#ffac6f", "#ff923d", "#fe8163", "#db348c", "#960f9f", "#691085", "#4b007b", "#391983", "#23106d", "#010c61", "#290a54"] 
   console.log("colorTimeHour: ", colorTimeHour) // colorTimeHour[0] = 12am, colorTimeHour[1] = 1am, etc
 
+  const timeHourToText = ["12 AM","1 AM","2 AM","3 AM","4 AM","5 AM","6 AM","7 AM","8 AM","9 AM","10 AM","11 AM","12 PM","1 PM","2 PM","3 PM","4 PM","5 PM","6 PM","7 PM","8 PM","9 PM","10 PM","11 PM"]
+
   /* ----- */
 
   const timeHourList_unique_original = [...Array(24).keys()] // 24 hours in a day
   console.log("timeHourList_unique_original: ", timeHourList_unique_original)
 
   /* ----- */
-
-
-
-
 
   var timeHourList_keys = []
   var timeHourList_data = []
@@ -1489,7 +1568,7 @@ function createViz(error, ...args) {
 
     if(prevTimeHour!==timeHour){
 
-      timeHourList_keys.push(prevTimeHour + "-" + timeLeftJson_zip[i-2].timeStreamed) // ie. 17-0
+      timeHourList_keys.push("time" + prevTimeHour + "-" + timeLeftJson_zip[i-2].timeStreamed) // ie. 17-0
       timeHourList_data.push({
         data: prevTimeHourList,
         timeHour: prevTimeHour,
@@ -1526,7 +1605,36 @@ function createViz(error, ...args) {
   console.log("timeHourList_data: ", timeHourList_data)
 
 
+  /* ----- */
 
+  // What to do when one group is hovered
+  const mouseover_legend_allTimeHour = function(d){
+    if (currentMode==="byTime"){
+      // reduce opacity of all groups
+      svg_line_timeLeft.selectAll(".area_timeLeft_timeHour").style("opacity", lowOpacity)
+      svg_line_viewers.selectAll(".area_viewers_timeHour").style("opacity", lowOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", lowOpacity)
+      svg.selectAll(".timeHour_legend_colors").style("opacity", lowOpacity)
+      svg.selectAll(".timeHour_legend_text").style("opacity", lowOpacity)
+      // expect the one that is hovered
+      svg_line_timeLeft.selectAll(".time" + d).style("opacity", highOpacity)
+      svg_line_viewers.selectAll(".time" + d).style("opacity", highOpacity)
+      svg_line_subFollows.selectAll(".time" + d).style("opacity", highOpacity)
+      svg.selectAll(".legendColor-" + d).style("opacity", highOpacity)
+      svg.selectAll(".legendText-" + d).style("opacity", highOpacity)
+    }
+  }
+
+  // And when it is not hovered anymore
+  const mouseleave_allTimeHour = function(d){
+    if (currentMode==="byTime"){
+      svg_line_timeLeft.selectAll(".area_timeLeft_timeHour").style("opacity", highOpacity)
+      svg_line_viewers.selectAll(".area_viewers_timeHour").style("opacity", highOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", highOpacity)
+      svg.selectAll(".timeHour_legend_colors").style("opacity", highOpacity)
+      svg.selectAll(".timeHour_legend_text").style("opacity", highOpacity)
+    }
+  }
 
 
 
@@ -1606,7 +1714,7 @@ function createViz(error, ...args) {
   timeHourList_data.forEach(item => {
     svg_line_timeLeft.append("path")
       .datum(item.data)
-      .attr("class", d => "area_timeLeft_timeHour " + item.timeHour + " " + item.timeHour + "-" + item.timeStreamed)
+      .attr("class", d => "area_timeLeft_timeHour " + "time" + item.timeHour + " " + "time" + item.timeHour + "-" + item.timeStreamed)
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
       .attr("fill", colorTimeHour[item.timeHour])
@@ -1681,7 +1789,7 @@ function createViz(error, ...args) {
   timeHourList_data.forEach(item => {
     svg_line_viewers.append("path")
       .datum(item.data)
-      .attr("class", d => "area_viewers_timeHour " + item.timeHour + " " + item.timeHour + "-" + item.timeStreamed)
+      .attr("class", d => "area_viewers_timeHour " + "time" + item.timeHour + " " + "time" + item.timeHour + "-" + item.timeStreamed)
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
       .attr("fill", colorTimeHour[item.timeHour])
@@ -1755,7 +1863,7 @@ function createViz(error, ...args) {
   timeHourList_data.forEach(item => {
     svg_line_subFollows.append("path")
       .datum(item.data)
-      .attr("class", d => "area_subFollows_timeHour " + item.timeHour + " " + item.timeHour + "-" + item.timeStreamed)
+      .attr("class", d => "area_subFollows_timeHour " + "time" + item.timeHour + " " + "time" + item.timeHour + "-" + item.timeStreamed)
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
       .attr("fill", colorTimeHour[item.timeHour])
@@ -2084,6 +2192,11 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       svg_line_subFollows.selectAll(".area_subFollows_timeHour")
         .style("opacity", 0)
+
+      svg.selectAll(".timeHour_legend_colors")
+        .style("opacity", 0)
+      svg.selectAll(".timeHour_legend_text")
+        .style("opacity", 0)
     }
 
   }
@@ -2160,6 +2273,11 @@ function createViz(error, ...args) {
       svg_line_viewers.selectAll(".area_viewers_timeHour")
         .style("opacity", 1)
       svg_line_subFollows.selectAll(".area_subFollows_timeHour")
+        .style("opacity", 1)
+
+      svg.selectAll(".timeHour_legend_colors")
+        .style("opacity", 1)
+      svg.selectAll(".timeHour_legend_text")
         .style("opacity", 1)
     }
 
