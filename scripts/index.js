@@ -43,13 +43,13 @@ var svg_width = 850;
 var svg_height = 750;
 
 // set the dimensions and margins
-var margin_timeLeft = { top: 40, right: 160, bottom: 450, left: 45 };
+var margin_timeLeft = { top: 40, right: 160, bottom: 450, left: 60 };
 var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 
-var margin_viewers = { top: 360, right: 160, bottom: 250, left: 45 };
+var margin_viewers = { top: 360, right: 160, bottom: 250, left: 60 };
 var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
 
-var margin_subFollows = { top: 563, right: 160, bottom: 50, left: 45 };
+var margin_subFollows = { top: 563, right: 160, bottom: 50, left: 60 };
 var height_subFollows = svg_height - margin_subFollows.top - margin_subFollows.bottom;
 
 var margin_text = 20; //global
@@ -67,9 +67,9 @@ var svg = d3.select("#line-viz")
 /* ---------------------- */
 
 // set the dimensions and margins of the graph
-var margin_treemap = {top: 0, right: 8, bottom: 0, left: 5},
-  width_treemap = 425 - margin_treemap.left - margin_treemap.right,
-  height_treemap = 325 - margin_treemap.top - margin_treemap.bottom;
+var margin_treemap = {top: 10, right: 0, bottom: 0, left: 10},
+  width_treemap = 410 - margin_treemap.left - margin_treemap.right,
+  height_treemap = 380 - margin_treemap.top - margin_treemap.bottom;
 
 // append the svg_treemap object to the body of the page
 var svg_treemap = d3.select("#treemap-viz")
@@ -600,8 +600,8 @@ function createViz(error, ...args) {
       .enter()
       .append("rect")
         .attr("class", d => "activity_legend_colors legendColor-" + d)
-        .attr("x", 660)
-        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("x", 640)
+        .attr("y", function(d,i){ return -38 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorDict[d]})
@@ -621,8 +621,8 @@ function createViz(error, ...args) {
       .enter()
       .append("text")
         .attr("class", d => "activity_legend_text legendText-" + d)
-        .attr("x", 660 + legendDotSize*1.2)
-        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("x", 640 + legendDotSize*1.2)
+        .attr("y", function(d,i){ return -38 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorDict[d]})
         .text(function(d){ return d})
         .attr("text-anchor", "left")
@@ -660,7 +660,7 @@ function createViz(error, ...args) {
 
     // legend settings
 
-    const legendDotSize = 10
+    const legendDotSize = 20
     const svg_legend = svg.append("g")
 
     // color 
@@ -675,8 +675,8 @@ function createViz(error, ...args) {
       .enter()
       .append("rect")
         .attr("class", d => "sleepAwake_legend_colors legendColor-" + d)
-        .attr("x", 550)
-        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("x", 640)
+        .attr("y", function(d,i){ return -38 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorSleepAwake[d]})
@@ -696,8 +696,8 @@ function createViz(error, ...args) {
       .enter()
       .append("text")
         .attr("class", d => "sleepAwake_legend_text legendText-" + d)
-        .attr("x", 550 + legendDotSize*1.2)
-        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("x", 640 + legendDotSize*1.2)
+        .attr("y", function(d,i){ return -38 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorSleepAwake[d]})
         .text(function(d){ return d})
         .attr("text-anchor", "left")
@@ -736,7 +736,7 @@ function createViz(error, ...args) {
 
     // legend settings
 
-    const legendDotSize = 5
+    const legendDotSize = 7
     const svg_legend = svg.append("g")
 
     // color 
@@ -751,8 +751,8 @@ function createViz(error, ...args) {
       .enter()
       .append("rect")
         .attr("class", d => "timeHour_legend_colors legendColor-" + d)
-        .attr("x", 610)
-        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("x", 640)
+        .attr("y", function(d,i){ return -35 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorTimeHour[d]})
@@ -772,8 +772,8 @@ function createViz(error, ...args) {
       .enter()
       .append("text")
         .attr("class", d => "timeHour_legend_text legendText-" + d)
-        .attr("x", 610 + legendDotSize*1.2)
-        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("x", 640 + legendDotSize*1.2)
+        .attr("y", function(d,i){ return -35 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorTimeHour[d]})
         .text(function(d){ return timeHourToText[d]})
         .attr("text-anchor", "left")
@@ -969,7 +969,7 @@ function createViz(error, ...args) {
 
   // Add y-axis label (timeLeft)
   svg.append("text")
-    .attr("transform", "translate(15, 20) rotate(-90)")
+    .attr("transform", "translate(-35, 20) rotate(-90)")
     .style("text-anchor", "middle")
     .text("# Hours Left");   
 
@@ -996,7 +996,7 @@ function createViz(error, ...args) {
 
   // Add y-axis label (viewers)
   svg.append("text")
-    .attr("transform", "translate(15," + (margin_viewers.top - margin_text + 15) + ") rotate(-90)")
+    .attr("transform", "translate(-50," + (margin_viewers.top - margin_text + 10) + ") rotate(-90)")
     .style("text-anchor", "middle")
     .text("# Viewers");  
 
@@ -1023,7 +1023,7 @@ function createViz(error, ...args) {
 
   // Add y-axis label (subFollows)
   svg.append("text")
-    .attr("transform", "translate(15," + (margin_subFollows.top - margin_text + 35) + ") rotate(-90)")
+    .attr("transform", "translate(-45," + (margin_subFollows.top - margin_text + 25) + ") rotate(-90)")
     .style("text-anchor", "middle")
     .text("# New Followers");  
 
@@ -2023,9 +2023,9 @@ function createViz(error, ...args) {
     .append("div")
     .attr("class", "info_block")
     .style("background-color", "white")
-    .style("border", "solid")
-    .style("border-width", "1px")
-    .style("border-radius", "5px")
+    //.style("border", "solid")
+    //.style("border-width", "1px")
+    //.style("border-radius", "5px")
     .style("padding", "10px")
     .style("margin-bottom", "10px")
     .style("width", "400px")
@@ -2042,7 +2042,7 @@ function createViz(error, ...args) {
     .style("background-color", "white")
     .style("border", "solid")
     .style("border-width", "1px")
-    .style("border-radius", "5px")
+    //.style("border-radius", "5px")
     .style("padding", "10px")
     .style("width", "400px")
 
