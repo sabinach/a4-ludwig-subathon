@@ -1,5 +1,5 @@
 // video embed settings
-var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io
+var parentDomain = "6859-sp21.github.io" // deploy: 6859-sp21.github.io
                                // test: 127.0.0.1
 
 console.log("parentDomain: ", parentDomain);
@@ -88,7 +88,7 @@ var parseDatetime = d3.timeParse("%Y-%m-%d %H:%M");
 
 // The data recorded began at 2pm PST on March 15th, the time Ludwig intended to start the subathon.
 var subathonStartDate = parseDatetime("2021-03-15 17:00"); // converted to EST (5pm EST start)
-var subathonEndDate = new Date;
+var subathonEndDate = parseDatetime("2021-04-13 23:59"); // converted to EST (11:59pm EST end)
 
 // calculate datetime from timeStreamed hours
 var hoursToDatetime = hours => d3.timeMinute.offset(subathonStartDate, hours*60)
@@ -1433,6 +1433,25 @@ function createViz(error, ...args) {
       svg_treemap.selectAll(".percent-sleepAwake").style("opacity", highOpacity)
     }
   }
+
+
+  /* ------------------------------------- */
+  // Area graph - Time (timeLeft, viewers, subFollows)
+
+  // https://line.17qq.com/articles/scesqrhqx.html
+  const colorTime = ["#3f006b", "#280755", "#280755", "#270d7a", "#200f6a", "#004ee2", "#2898df", "#00ded6", "#67edac", "#aded6f", "#ffe242", "#ffd542", "#ffc343", "#ffac6f", "#ff923d", "#fe8163", "#db348c", "#960f9f", "#691085", "#4b007b", "#391983", "#23106d", "#010c61", "#290a54"] 
+  console.log("colorTime: ", colorTime) // colorTime[0] = 12am, colorTime[1] = 1am...
+
+  /* ----- */
+
+  
+
+
+
+
+
+
+
 
 
   /* --- Brush + Line Clip DEFINITIONS --- */
