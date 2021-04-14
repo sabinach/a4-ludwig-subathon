@@ -2021,9 +2021,9 @@ function createViz(error, ...args) {
   /* --- Information Tooltip DEFINITIONS --- */
 
   // Create tooltip
-  var tooltip_info = d3.select("#info-viz")
+  var info_block = d3.select("#info-viz")
     .append("div")
-    .attr("class", "tooltip_info")
+    .attr("class", "info_block")
     .style("background-color", "white")
     .style("border", "solid")
     .style("border-width", "1px")
@@ -2032,15 +2032,15 @@ function createViz(error, ...args) {
     .style("margin-bottom", "10px")
     .style("width", "400px")
 
-  tooltip_info
+  info_block
     .html("<b>Some cool timeframe-specific statistics</b>" + "<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." + "<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." + "<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.") 
 
-  /* --- Highlights Tooltip DEFINITIONS --- */
+  /* --- Events Tooltip DEFINITIONS --- */
 
   // Create tooltip
-  var tooltip_highlights = d3.select("#highlights-viz")
+  var events_block = d3.select("#events-viz")
     .append("div")
-    .attr("class", "tooltip_highlights")
+    .attr("class", "events_block")
     .style("background-color", "white")
     .style("border", "solid")
     .style("border-width", "1px")
@@ -2052,22 +2052,22 @@ function createViz(error, ...args) {
   // "<br><br>time streamed: " + highlights_zip[0].timeStreamed.toFixed(2) + " hrs" + "<br>time left: " + highlights_zip[0].timeLeft.toFixed(2) + " hrs" +
 
   // Show tooltip (show the first highlight event)
-  tooltip_highlights
+  events_block
     .html("<b>" + "Event Highlight" + "</b><br>" + formatDatetime(highlights_zip[2].datetime) + " EST" + " (<a href='" + highlights_zip[2].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[2].type, highlights_zip[2].embed, parentDomain) + "<br>") 
     .style("opacity", currentMode==="byHighlights" ? 1 : 0) 
 
   // Add nodes (event highlights)
-  svg_line_timeLeft.selectAll(".dot-highlight")
+  svg_line_timeLeft.selectAll(".dot-events")
     .data(highlights_zip)
     .enter().append("circle")
-    .attr("class", "dot-highlight")
+    .attr("class", "dot-events")
     .attr("cx", d => xScale_timeLeft(d.timeStreamed))
     .attr("cy", d =>  yScale_timeLeft(d.timeLeft))
     .attr("r", (d, i) => 6)
     .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
     .style("opacity", currentMode==="byHighlights" ? 1 : 0) // initialize depending on currentMode
-    .on("mouseover", mouseover_highlights) //TODO
+    .on("mouseover", mouseover_events) //TODO
 
   /* --- Highlights Tooltip FUNCTIONS --- */
 
@@ -2082,24 +2082,24 @@ function createViz(error, ...args) {
     return htmlEmbed
   }
 
-  function mouseover_highlights(d, i){
+  function mouseover_events(d, i){
     // only if ON
-    if (svg_line_timeLeft.selectAll(".dot-highlight").style("opacity") === "1"){
+    if (svg_line_timeLeft.selectAll(".dot-events").style("opacity") === "1"){
       //clear previous 
-      svg_line_timeLeft.selectAll(".dot-highlight").style("fill", "#fcb0b5");
-      svg_line_timeLeft.selectAll("#tooltip_highlights").remove();
+      svg_line_timeLeft.selectAll(".dot-events").style("fill", "#fcb0b5");
+      svg_line_timeLeft.selectAll(".tooltip-events").remove();
 
       // add color and text to current
       d3.select(this).transition().duration(100).style("fill", "#d30715");
-      svg_line_timeLeft.selectAll("#tooltip_highlights").data([d]).enter()
+      svg_line_timeLeft.selectAll(".tooltip-events").data([d]).enter()
         .append("text")
-        .attr("id", "tooltip_highlights")
+        .attr("class", "tooltip-events")
         .text(d.timeLeft.toFixed(1) + " hrs")
         .attr("x", d => xScale_timeLeft(d.timeStreamed))
         .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
 
       // update tooltip
-      tooltip_highlights
+      events_block
         .html("<b>" + "Event Highlight" + "</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
     }
   }
@@ -2117,12 +2117,12 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".line_subFollows")
         .style("opacity", 0.5)
 
-      svg_line_timeLeft.selectAll(".dot-highlight")
+      svg_line_timeLeft.selectAll(".dot-events")
         .style("opacity", 0)
-      svg_line_timeLeft.selectAll("#tooltip_highlights")
+      svg_line_timeLeft.selectAll(".tooltip-events")
         .style("opacity", 0)
 
-      tooltip_highlights
+      events_block
         .style("opacity", 0)
     }
 
@@ -2201,15 +2201,15 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".line_subFollows")
         .style("opacity", 1)
 
-      svg_line_timeLeft.selectAll(".dot-highlight")
+      svg_line_timeLeft.selectAll(".dot-events")
         .style("opacity", 1)
-      svg_line_timeLeft.selectAll(".tooltip_highlights")
+      svg_line_timeLeft.selectAll(".tooltip-events")
         .style("opacity", 1)
 
       // hide treemap
       //d3.selectAll("#treemap-viz").style("display","none");
 
-      tooltip_highlights
+      events_block
         .style("opacity", 1)
     }
 
