@@ -6,6 +6,7 @@ body {
 .row {
     display: flex;
     width:1300px;
+    margin:auto;
 }
 
 .column {
