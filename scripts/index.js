@@ -309,6 +309,12 @@ function createViz(error, ...args) {
     // redraw treemap here
     redrawTreemapSleepAwake(sleepAwake_count)
     redrawLegendSleepAwake(ludwigModcastJson_zip_withinBounds)
+
+    /* ------ */
+    // TimeHour
+
+    //redrawLegendTimeHour()
+
   }
 
   // delete and redraw the treemap
