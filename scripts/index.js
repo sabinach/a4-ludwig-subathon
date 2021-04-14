@@ -347,15 +347,10 @@ function createViz(error, ...args) {
     svg_treemap.selectAll(".percent-sleepAwake").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
 
     /** -------- **/
-    // treemap settings
-
-    const svg_treemap_local = svg_treemap.append("g")
-
-    /** -------- **/
     // rect
 
     // create rectangle object
-    const rects = svg_treemap_local.selectAll(".rect-activity").data(root.leaves())
+    const rects = svg_treemap.selectAll(".rect-activity").data(root.leaves())
 
     //remove rectangle
     rects.exit().remove();
@@ -380,7 +375,7 @@ function createViz(error, ...args) {
     // title
 
     // create title object
-    const title = svg_treemap_local.selectAll(".title-activity").data(root.leaves())
+    const title = svg_treemap.selectAll(".title-activity").data(root.leaves())
 
     //remove title
     title
@@ -406,7 +401,7 @@ function createViz(error, ...args) {
     // percent
 
     // create percent object
-    const percent = svg_treemap_local.selectAll(".percent-activity").data(root.leaves())
+    const percent = svg_treemap.selectAll(".percent-activity").data(root.leaves())
 
     //remove percent
     percent
@@ -473,15 +468,10 @@ function createViz(error, ...args) {
     svg_treemap.selectAll(".percent-activity").style("opacity", currentMode==="byActivity" ? 1 : 0);
 
     /** -------- **/
-    // treemap settings
-
-    const svg_treemap_local = svg_treemap.append("g")
-
-    /** -------- **/
     // rect
 
     // create rectangle object
-    const rects = svg_treemap_local.selectAll(".rect-sleepAwake").data(root.leaves())
+    const rects = svg_treemap.selectAll(".rect-sleepAwake").data(root.leaves())
 
     //remove rectangle
     rects.exit().remove();
@@ -506,7 +496,7 @@ function createViz(error, ...args) {
     // title
 
     // create title object
-    const title = svg_treemap_local.selectAll(".title-sleepAwake").data(root.leaves())
+    const title = svg_treemap.selectAll(".title-sleepAwake").data(root.leaves())
 
     //remove title
     title
@@ -532,7 +522,7 @@ function createViz(error, ...args) {
     // percent
 
     // create percent object
-    const percent = svg_treemap_local.selectAll(".percent-sleepAwake").data(root.leaves())
+    const percent = svg_treemap.selectAll(".percent-sleepAwake").data(root.leaves())
 
     //remove percent
     percent
@@ -1526,7 +1516,6 @@ function createViz(error, ...args) {
   // Area graph - colorTimeHour (timeLeft, viewers, subFollows)
 
   // https://line.17qq.com/articles/scesqrhqx.html
-  //const colorTimeHour = ["#3f006b", "#280755", "#280755", "#270d7a", "#200f6a", "#004ee2", "#2898df", "#00ded6", "#67edac", "#aded6f", "#ffe242", "#ffd542", "#ffc343", "#ffac6f", "#ff923d", "#fe8163", "#db348c", "#960f9f", "#691085", "#4b007b", "#391983", "#23106d", "#010c61", "#290a54"] 
   const colorTimeHour = ["#793ba9", "#571189", "#4a2bae", "#105ca3", "#0594cc", "#17c3ea", "#00d3ec", "#71eead", "#eeeebe", "#fdea8a", "#e6ffa9", "#f9ef93", "#ffe677", "#ffda35", "#ffcf79", "#e3ab44", "#e09a19", "#ffb8a5", "#f15293", "#872ba3", "#7821a0", "#6a27a2", "#4d157b", "#43106f"] 
   console.log("colorTimeHour: ", colorTimeHour) // colorTimeHour[0] = 12am, colorTimeHour[1] = 1am, etc
 
@@ -2177,6 +2166,9 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       svg_treemap.selectAll(".percent-sleepAwake")
         .style("opacity", 0)
+      d3.selectAll(".rect-sleepAwake").style("display","none");
+      d3.selectAll(".title-sleepAwake").style("display","none");
+      d3.selectAll(".percent-sleepAwake").style("display","none");
     }
 
     if(mode!=="byTime"){
@@ -2214,6 +2206,9 @@ function createViz(error, ...args) {
       svg_line_timeLeft.selectAll(".tooltip_highlights")
         .style("opacity", 1)
 
+      // hide treemap
+      //d3.selectAll("#treemap-viz").style("display","none");
+
       tooltip_highlights
         .style("opacity", 1)
     }
@@ -2237,7 +2232,6 @@ function createViz(error, ...args) {
         .style("opacity", 1)
       svg_treemap.selectAll(".percent-activity")
         .style("opacity", 1)
-
     }
 
     else if(currentMode === "byLudwigModcast"){
@@ -2259,6 +2253,9 @@ function createViz(error, ...args) {
         .style("opacity", 1)
       svg_treemap.selectAll(".percent-sleepAwake")
         .style("opacity", 1)
+      d3.selectAll(".rect-sleepAwake").style("display",null);
+      d3.selectAll(".title-sleepAwake").style("display",null);
+      d3.selectAll(".percent-sleepAwake").style("display",null);
     }
 
     else if(currentMode === "byTime"){

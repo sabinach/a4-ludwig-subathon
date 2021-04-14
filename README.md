@@ -19,7 +19,7 @@ https://6859-sp21.github.io/a4-ludwig-subathon/
 ### Overview
 
 THE SUBATHON HAS OFFICIALLY ENDED. CONGRATS LUDWIG!!!!!! 
-- It's been a wild ride! I hope this visualization is interesting for both Ludwig and fellow Ludwig fans out there :)
+- It's been a wild ride! To fellow Ludwig fans out there, I hope you find this visualization interesting. I had a blast making it :) 
 
 Subathon Dates:
 - START: March 14, 2021 @ 2:00pm PST (5:00pm EST)
