@@ -4,7 +4,7 @@
 
 #### Project Description
 - Kind of a meme project :) More details to come when I do the actual writeup..    
-- At the rate the subathon is going, I will finish/submit this website the exact day that Ludwig hits the 30-day cap (Tuesday night)!!!
+- THE SUBATHON HAS OFFICIALLY ENDED. CONGRATS LUDWIG!!!!!! It's been a wild ride! I hope this visualization is interesting for both Ludwig and fellow Ludwig fans out there :)
 
 #### Project Deliverables
 - Final Submission [[Writeup]()]
