@@ -67,9 +67,9 @@ var svg = d3.select("#line-viz")
 /* ---------------------- */
 
 // set the dimensions and margins of the graph
-var margin_treemap = {top: 10, right: 8, bottom: 10, left: 5},
+var margin_treemap = {top: 0, right: 8, bottom: 0, left: 5},
   width_treemap = 425 - margin_treemap.left - margin_treemap.right,
-  height_treemap = 300 - margin_treemap.top - margin_treemap.bottom;
+  height_treemap = 325 - margin_treemap.top - margin_treemap.bottom;
 
 // append the svg_treemap object to the body of the page
 var svg_treemap = d3.select("#treemap-viz")
@@ -1522,18 +1522,12 @@ function createViz(error, ...args) {
   }
 
 
-
-
-
-
-
-
-
   /* ------------------------------------- */
   // Area graph - colorTimeHour (timeLeft, viewers, subFollows)
 
   // https://line.17qq.com/articles/scesqrhqx.html
-  const colorTimeHour = ["#3f006b", "#280755", "#280755", "#270d7a", "#200f6a", "#004ee2", "#2898df", "#00ded6", "#67edac", "#aded6f", "#ffe242", "#ffd542", "#ffc343", "#ffac6f", "#ff923d", "#fe8163", "#db348c", "#960f9f", "#691085", "#4b007b", "#391983", "#23106d", "#010c61", "#290a54"] 
+  //const colorTimeHour = ["#3f006b", "#280755", "#280755", "#270d7a", "#200f6a", "#004ee2", "#2898df", "#00ded6", "#67edac", "#aded6f", "#ffe242", "#ffd542", "#ffc343", "#ffac6f", "#ff923d", "#fe8163", "#db348c", "#960f9f", "#691085", "#4b007b", "#391983", "#23106d", "#010c61", "#290a54"] 
+  const colorTimeHour = ["#793ba9", "#571189", "#4a2bae", "#105ca3", "#0594cc", "#17c3ea", "#00d3ec", "#71eead", "#eeeebe", "#fdea8a", "#e6ffa9", "#f9ef93", "#ffe677", "#ffda35", "#ffcf79", "#e3ab44", "#e09a19", "#ffb8a5", "#f15293", "#872ba3", "#7821a0", "#6a27a2", "#4d157b", "#43106f"] 
   console.log("colorTimeHour: ", colorTimeHour) // colorTimeHour[0] = 12am, colorTimeHour[1] = 1am, etc
 
   const timeHourToText = ["12 AM","1 AM","2 AM","3 AM","4 AM","5 AM","6 AM","7 AM","8 AM","9 AM","10 AM","11 AM","12 PM","1 PM","2 PM","3 PM","4 PM","5 PM","6 PM","7 PM","8 PM","9 PM","10 PM","11 PM"]
