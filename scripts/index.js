@@ -1024,9 +1024,9 @@ function createViz(error, ...args) {
 
   // Add y-axis label (subFollows)
   svg.append("text")
-    .attr("transform", "translate(-45," + (margin_subFollows.top - margin_text + 25) + ") rotate(-90)")
+    .attr("transform", "translate(-45," + (margin_subFollows.top - margin_text + 35) + ") rotate(-90)")
     .style("text-anchor", "middle")
-    .text("# New Followers");  
+    .text("# Followers Gained");  
 
   /* --- Focus / Hover DEFINITIONS --- */
 
@@ -2033,7 +2033,40 @@ function createViz(error, ...args) {
 
   info_block
     .html(
-      "<b>What is this visualization?</b>" 
+      "<b>What are these visualizations?</b>" 
+      +
+      "<div id='help-tooltip' style='display:inline-block;margin-left:6px;'>\
+          <abbr><i class='fa fa-question-circle'></i>\
+            <span>\
+              <b>Subathon Timer</b>\
+              <br>\
+              Amount of time left in stream. Represented as (hours:minutes :seconds). Each new subscriber adds 10 seconds to the subathon timer.\
+              <br><br>\
+              <b>Reset Zoom</b>\
+              <br>\
+              Zooms out the graphs to show all the data. The same command can be applied by double-clicking the graphs when zoomed in.\
+              <br><br>\
+              ---\
+              <br><br>\
+              <b>By Activity</b>\
+              <br>\
+              Game specified during the Twitch stream.\
+              <br><br>\
+              <b>By SleepAwake</b>\
+              <br>\
+              Shows when Ludwig is awake, asleep, or away. Modcast occurs when Ludwig is asleep, and Slime takes over when Ludwig is away.\
+              <br><br>\
+              <b>By Time</b>\
+              <br>\
+              Colors the graph according to the time of day. All times are calculated in EST.\
+              <br><br>\
+              <b>By Events</b>\
+              <br>\
+              Interesting mini-clips of events that occurred during the stream. Events can help explain sub spikes or other phenomeons that happened during this time.\
+            </span>\
+          </abbr>\
+        </div>\
+      "
       + 
       "<br><br>"
       +
