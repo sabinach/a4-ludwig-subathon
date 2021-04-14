@@ -1836,6 +1836,7 @@ function createViz(error, ...args) {
   // Show tooltip (show the first highlight event)
   tooltip_highlights
     .html("<b>" + highlights_zip[2].title + "</b><br>" + formatDatetime(highlights_zip[2].datetime) + " EST" + " (<a href='" + highlights_zip[2].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[2].type, highlights_zip[2].embed, parentDomain) + "<br>") 
+    .style("opacity", currentMode==="byHighlights" ? 1 : 0) 
 
   // Add nodes (event highlights)
   svg_line_timeLeft.selectAll(".dot-highlight")
@@ -1901,6 +1902,9 @@ function createViz(error, ...args) {
       svg_line_timeLeft.selectAll(".dot-highlight")
         .style("opacity", 0)
       svg_line_timeLeft.selectAll("#tooltip_highlights")
+        .style("opacity", 0)
+
+      tooltip_highlights
         .style("opacity", 0)
     }
 
