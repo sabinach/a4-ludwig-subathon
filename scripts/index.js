@@ -1435,16 +1435,98 @@ function createViz(error, ...args) {
   }
 
 
+
+
+
+
+
+
+
   /* ------------------------------------- */
-  // Area graph - Time (timeLeft, viewers, subFollows)
+  // Area graph - colorTimeHour (timeLeft, viewers, subFollows)
 
   // https://line.17qq.com/articles/scesqrhqx.html
-  const colorTime = ["#3f006b", "#280755", "#280755", "#270d7a", "#200f6a", "#004ee2", "#2898df", "#00ded6", "#67edac", "#aded6f", "#ffe242", "#ffd542", "#ffc343", "#ffac6f", "#ff923d", "#fe8163", "#db348c", "#960f9f", "#691085", "#4b007b", "#391983", "#23106d", "#010c61", "#290a54"] 
-  console.log("colorTime: ", colorTime) // colorTime[0] = 12am, colorTime[1] = 1am...
+  const colorTimeHour = ["#3f006b", "#280755", "#280755", "#270d7a", "#200f6a", "#004ee2", "#2898df", "#00ded6", "#67edac", "#aded6f", "#ffe242", "#ffd542", "#ffc343", "#ffac6f", "#ff923d", "#fe8163", "#db348c", "#960f9f", "#691085", "#4b007b", "#391983", "#23106d", "#010c61", "#290a54"] 
+  console.log("colorTimeHour: ", colorTimeHour) // colorTimeHour[0] = 12am, colorTimeHour[1] = 1am, etc
 
   /* ----- */
 
-  
+  const timeHourList_unique_original = [...Array(24).keys()] // 24 hours in a day
+  console.log("timeHourList_unique_original: ", timeHourList_unique_original)
+
+  /* ----- */
+
+
+
+
+
+  var timeHourList_keys = []
+  var timeHourList_data = []
+  var prevTimeHour = Math.floor(timeLeftJson_zip[0].timeStreamed+17)%24 // modulo requires integer, only counting by the hour //17 
+  var prevTimeHourList = []
+
+  timeLeftJson_zip.forEach((d, i) => {
+    const viewers = viewers_zip.filter(obj => obj.timeStreamed === Math.floor(d.timeStreamed))[0] // viewers only has time by the hour
+    const followers = followers_zip.filter(obj => obj.timeStreamed === Math.floor(d.timeStreamed))[0] // followers only has time by the hour
+    const timeHour = Math.floor(d.timeStreamed + 17)%24 //Math.floor(hour+17)%24 --> 17
+
+    prevTimeHourList.push({
+      timeStreamed: d.timeStreamed, // 0    1
+      datetime: viewers ? viewers.datetime : null,
+      timeHour: timeHour, // 17   18
+      timeLeft: d.timeLeft,
+      numViewers: viewers ? viewers.numViewers : null,
+      numFollowers: followers ? followers.numFollowers: null,
+      gainedFollowers: followers ? followers.gainedFollowers: null
+    })
+
+
+    if(prevTimeHour!==timeHour){
+
+      timeHourList_keys.push(prevTimeHour + "-" + timeLeftJson_zip[i-2].timeStreamed) // ie. 17-0
+      timeHourList_data.push({
+        data: prevTimeHourList,
+        timeHour: prevTimeHour,
+        timeStreamed: timeLeftJson_zip[i-2].timeStreamed
+      })
+
+      // reset items
+      prevTimeHour = timeHour
+      prevTimeHourList = [{
+        timeStreamed: d.timeStreamed,
+        datetime: viewers ? viewers.datetime : null,
+        timeHour: timeHour,
+        timeLeft: d.timeLeft,
+        numViewers: viewers ? viewers.numViewers : null,
+        numFollowers: followers ? followers.numFollowers: null,
+        gainedFollowers: followers ? followers.gainedFollowers: null
+      }]
+    }
+
+    if(i===timeLeftJson_zip.length-1){
+      const lastItem = timeHourList_data[timeHourList_data.length-1]
+      const lastTimeStreamed = lastItem.data[lastItem.data.length-1].timeStreamed
+      timeHourList_keys.push(prevTimeHour + "-" + lastTimeStreamed) 
+      timeHourList_data.push({
+        data: prevTimeHourList,
+        timeHour: prevTimeHour,
+        timeStreamed: lastTimeStreamed
+      })
+    }
+
+  })
+
+  console.log("timeHourList_keys: ", timeHourList_keys)
+  console.log("timeHourList_data: ", timeHourList_data)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1514,6 +1596,18 @@ function createViz(error, ...args) {
       .attr("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
   })
 
+  // Add timeHour area (timeLeft)
+  timeHourList_data.forEach(item => {
+    svg_line_timeLeft.append("path")
+      .datum(item.data)
+      .attr("class", d => "area_timeLeft_timeHour " + item.timeHour + " " + item.timeHour + "-" + item.timeStreamed)
+      .attr("stroke", "black")
+      .attr("stroke-width", 0.5)
+      .attr("fill", colorTimeHour[item.timeHour])
+      .attr("d", drawarea_timeLeft)
+      .attr("opacity", currentMode==="byTime" ? 1 : 0)
+  })
+
   // Add brush + hover (timeLeft)
   svg_line_timeLeft.append("g")
     .attr("class", "brush_timeLeft")
@@ -1577,6 +1671,18 @@ function createViz(error, ...args) {
       .attr("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
   })
 
+  // Add timeHour area (viewers)
+  timeHourList_data.forEach(item => {
+    svg_line_viewers.append("path")
+      .datum(item.data)
+      .attr("class", d => "area_viewers_timeHour " + item.timeHour + " " + item.timeHour + "-" + item.timeStreamed)
+      .attr("stroke", "black")
+      .attr("stroke-width", 0.5)
+      .attr("fill", colorTimeHour[item.timeHour])
+      .attr("d", drawarea_viewers)
+      .attr("opacity", currentMode==="byTime" ? 1 : 0)
+  })
+
   // Add brush (viewers)
   svg_line_viewers.append("g")
     .attr("class", "brush_viewers")
@@ -1637,6 +1743,18 @@ function createViz(error, ...args) {
       .attr("fill", colorSleepAwake[item.sleepAwake])
       .attr("d", drawarea_subFollows)
       .attr("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+  })
+
+  // Add timeHour area (subFollows)
+  timeHourList_data.forEach(item => {
+    svg_line_subFollows.append("path")
+      .datum(item.data)
+      .attr("class", d => "area_subFollows_timeHour " + item.timeHour + " " + item.timeHour + "-" + item.timeStreamed)
+      .attr("stroke", "black")
+      .attr("stroke-width", 0.5)
+      .attr("fill", colorTimeHour[item.timeHour])
+      .attr("d", drawarea_subFollows)
+      .attr("opacity", currentMode==="byTime" ? 1 : 0)
   })
 
   // Add brush (subFollows)
@@ -1774,6 +1892,7 @@ function createViz(error, ...args) {
     svg_line_timeLeft.selectAll(".line_timeLeft").transition(t).attr("d", drawLine_timeLeft);
     svg_line_timeLeft.selectAll(".area_timeLeft_activity").transition(t).attr("d", drawarea_timeLeft);
     svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").transition(t).attr("d", drawarea_timeLeft);
+    svg_line_timeLeft.selectAll(".area_timeLeft_timeHour").transition(t).attr("d", drawarea_timeLeft);
     svg_line_timeLeft.selectAll("circle").transition(t)
       .attr("cx", d => xScale_timeLeft(d.timeStreamed))
       .attr("cy", d => yScale_timeLeft(d.timeLeft));
@@ -1789,6 +1908,7 @@ function createViz(error, ...args) {
     svg_line_viewers.selectAll(".line_viewers").transition(t).attr("d", drawLine_viewers);
     svg_line_viewers.selectAll(".area_viewers_activity").transition(t).attr("d", drawarea_viewers);
     svg_line_viewers.selectAll(".area_viewers_sleepAwake").transition(t).attr("d", drawarea_viewers);
+    svg_line_viewers.selectAll(".area_viewers_timeHour").transition(t).attr("d", drawarea_viewers);
   }
 
   function zoom_subFollows() {
@@ -1798,6 +1918,7 @@ function createViz(error, ...args) {
     svg_line_subFollows.selectAll(".line_subFollows").transition(t).attr("d", drawLine_subFollows);
     svg_line_subFollows.selectAll(".area_subFollows_activity").transition(t).attr("d", drawarea_subFollows);
     svg_line_subFollows.selectAll(".area_subFollows_sleepAwake").transition(t).attr("d", drawarea_subFollows);
+    svg_line_subFollows.selectAll(".area_subFollows_timeHour").transition(t).attr("d", drawarea_subFollows);
   }
 
   /* --- Information Tooltip DEFINITIONS --- */
@@ -1835,7 +1956,7 @@ function createViz(error, ...args) {
 
   // Show tooltip (show the first highlight event)
   tooltip_highlights
-    .html("<b>" + highlights_zip[2].title + "</b><br>" + formatDatetime(highlights_zip[2].datetime) + " EST" + " (<a href='" + highlights_zip[2].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[2].type, highlights_zip[2].embed, parentDomain) + "<br>") 
+    .html("<b>" + "Event Highlight" + "</b><br>" + formatDatetime(highlights_zip[2].datetime) + " EST" + " (<a href='" + highlights_zip[2].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[2].type, highlights_zip[2].embed, parentDomain) + "<br>") 
     .style("opacity", currentMode==="byHighlights" ? 1 : 0) 
 
   // Add nodes (event highlights)
@@ -1882,7 +2003,7 @@ function createViz(error, ...args) {
 
       // update tooltip
       tooltip_highlights
-        .html("<b>" + d.title + "</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
+        .html("<b>" + "Event Highlight" + "</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
     }
   }
 
@@ -1951,6 +2072,12 @@ function createViz(error, ...args) {
     }
 
     if(mode!=="byTime"){
+      svg_line_timeLeft.selectAll(".area_timeLeft_timeHour")
+        .style("opacity", 0)
+      svg_line_viewers.selectAll(".area_viewers_timeHour")
+        .style("opacity", 0)
+      svg_line_subFollows.selectAll(".area_subFollows_timeHour")
+        .style("opacity", 0)
     }
 
   }
@@ -2022,6 +2149,12 @@ function createViz(error, ...args) {
     }
 
     else if(currentMode === "byTime"){
+      svg_line_timeLeft.selectAll(".area_timeLeft_timeHour")
+        .style("opacity", 1)
+      svg_line_viewers.selectAll(".area_viewers_timeHour")
+        .style("opacity", 1)
+      svg_line_subFollows.selectAll(".area_subFollows_timeHour")
+        .style("opacity", 1)
     }
 
     else if(currentMode === "byNone"){
