@@ -88,7 +88,7 @@ var parseDatetime = d3.timeParse("%Y-%m-%d %H:%M");
 
 // The data recorded began at 2pm PST on March 15th, the time Ludwig intended to start the subathon.
 var subathonStartDate = parseDatetime("2021-03-15 17:00"); // converted to EST (5pm EST start)
-var subathonEndDate = parseDatetime("2021-04-13 23:59"); // converted to EST (11:59pm EST end)
+var subathonEndDate = parseDatetime("2021-04-14 00:00"); // converted to EST (12am EST end)
 
 // calculate datetime from timeStreamed hours
 var hoursToDatetime = hours => d3.timeMinute.offset(subathonStartDate, hours*60)
