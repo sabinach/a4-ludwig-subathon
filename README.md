@@ -4,10 +4,9 @@
 
 #### Project Description
 - Kind of a meme project :) More details to come when I do the actual writeup..    
-- THE SUBATHON HAS OFFICIALLY ENDED. CONGRATS LUDWIG!!!!!! It's been a wild ride! I hope this visualization is interesting for both Ludwig and fellow Ludwig fans out there :)
 
 #### Project Deliverables
-- Final Submission [[Writeup]()]
+- Final Submission [[Writeup](https://github.com/6859-sp21/a4-ludwig-subathon/blob/main/README.md)]
 - MVP [[Video](https://youtu.be/nUda4JRYS7U)] [[Slides](https://docs.google.com/presentation/d/1e-SIilkMOaA-3OfUn5qYDrHJ5L7LxpdqVNObbwEFuuA/edit?usp=sharing)]
 
 #### Deploy URL
@@ -15,13 +14,18 @@ https://6859-sp21.github.io/a4-ludwig-subathon/
 
 -----------------------------
 
+## Dev Notes
+
 ### Overview
 
-Subathon Dates:
-- START: March 14, 2021 @ 2:00pm PST (5:00pm EST) ([First Day VOD](https://youtu.be/2dwZZAGx5Gc))
-- END: April 13, 2021 @ 8:59pm PST (11:59am EST) ([Last Day VOD]())
+THE SUBATHON HAS OFFICIALLY ENDED. CONGRATS LUDWIG!!!!!! 
+- It's been a wild ride! I hope this visualization is interesting for both Ludwig and fellow Ludwig fans out there :)
 
-Current Data Extracted from Subathon Tracker (manually updated):
+Subathon Dates:
+- START: March 14, 2021 @ 2:00pm PST (5:00pm EST)
+- END: April 13, 2021 @ 8:59pm PST (11:59pm EST)
+
+Current Data Extracted from baddog86's spreadsheet (manually updated):
 - START: 0 hr
 - END: 694.5 hr (missing 681-693.5hr due to deleted VOD)
 
@@ -65,3 +69,9 @@ node scrapeHighlightsSheet.js
 - subathon tracker (to calculate datetime, add # hr of time streamed to 5pm EST start)
 - sullygnome (make sure to convert to EST on the bottom left dropdown of the website before downloading .json)
 - before scraping, make sure BOTH spreadsheets' COLUMN DIVS are still correct bc it's HARDCODED in the script, and constantly changing in real-time since the subathon is ongoing
+
+-----------------------------
+
+## Writeup
+
+### TBD
