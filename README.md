@@ -66,10 +66,11 @@ node scrapeHighlightsSheet.js
 
 ### Notes to Self:
 - all dates are converted to EST
-- subathon tracker (to calculate datetime, add # hr of time streamed to 5pm EST start)
+- baddog's spreadsheet (to calculate datetime, add # hr of time streamed to 5pm EST start)
 - sullygnome (make sure to convert to EST on the bottom left dropdown of the website before downloading .json)
 - before scraping, make sure BOTH spreadsheets' COLUMN DIVS are still correct bc it's HARDCODED in the script, and constantly changing in real-time since the subathon is ongoing
-- legacy renaming equivalents: highlights = events; ludwigModcast = sleepAwake
+	* for baddog's spreadsheet, specifically use the "Hours Streamed" and "Subathon Timer" column from the "Calculations" tab
+- name equivalents for legacy code: highlights = events; ludwigModcast = sleepAwake
 
 -----------------------------
 

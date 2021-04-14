@@ -17,20 +17,25 @@ const scrapeSpreadsheet = () => {
 
             let evaluated = await page.evaluate(() => {
 				
-				const timeStreamedDomId = "td.s208"; 	// hardcoded dom element id -- TODO: incorrect values scraped
-                const timeStreamedDomId_2 = "td.s233"   // hardcoded dom element id (highlighted values on the spreadsheet have different domid)
+                // hardcoded dom element id 
+				const timeStreamedDomId = "td.s206"; 	
+                const timeStreamedDomId_2 = "td.s231"   // highlighted values on the spreadsheet have different domid
 
-				const timeLeftDomId = "td.s209";		// hardcoded dom element id
-				const subsGainedDomId = "td.s212";		// hardcoded dom element id
+				const timeLeftDomId = "td.s207";		// hardcoded dom element id
+
+                const maxSubsTotalDomId = "td.s209";    // hardcoded dom element id
+				const subsGainedDomId = "td.s210";		// hardcoded dom element id
 
                 const timeStreamedDom = document.querySelectorAll(timeStreamedDomId);
                 const timeStreamedDom_2 = document.querySelectorAll(timeStreamedDomId_2);
                 const timeLeftDom = document.querySelectorAll(timeLeftDomId);
+                const maxSubsTotalDom = document.querySelectorAll(maxSubsTotalDomId);
 				const subsGainedDom = document.querySelectorAll(subsGainedDomId);
 				
                 const timeStreamedList = []; 
                 const timeStreamedList_2 = []; 									
                 const timeLeftList = [];
+                const maxSubsTotalList = [];
 				const subsGainedList = [];
 
                 timeStreamedDom.forEach((domItem) => {
@@ -53,6 +58,13 @@ const scrapeSpreadsheet = () => {
                         ? timeLeftList.push(timeLeft)
                         : null;
                 });
+
+                maxSubsTotalDom.forEach((domItem) => {
+                    const maxSubsTotal = parseInt(domItem.innerText);
+                    maxSubsTotal!=='' && !isNaN(maxSubsTotal)
+                        ? maxSubsTotalList.push(maxSubsTotal)
+                        : null;
+                });
 				
 				subsGainedDom.forEach((domItem) => {
                     const subsGained = parseInt(domItem.innerText);
@@ -65,6 +77,7 @@ const scrapeSpreadsheet = () => {
                     timeStreamed: timeStreamedList,
                     timeStreamed_2: timeStreamedList_2,
                     timeLeft: timeLeftList,
+                    maxSubsTotal: maxSubsTotalList,
 					subsGained: subsGainedList
                 };
 

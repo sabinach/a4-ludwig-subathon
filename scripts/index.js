@@ -1,5 +1,5 @@
 // video embed settings
-var parentDomain = "6859-sp21.github.io" // deploy: 6859-sp21.github.io
+var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io.  OR   sabinach.github.io
                                // test: 127.0.0.1
 
 console.log("parentDomain: ", parentDomain);
