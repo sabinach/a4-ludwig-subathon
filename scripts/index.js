@@ -393,7 +393,7 @@ function createViz(error, ...args) {
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 13) // +lower
-      .html(d => `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
+      .html(d => (d.dx < 10 || d.dy < 10) ? null : `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
       .style("display", currentMode==="byActivity" ? null : "none")
@@ -2033,11 +2033,15 @@ function createViz(error, ...args) {
 
   info_block
     .html(
-      "<b>Some cool timeframe-specific statistics</b>" 
+      "<b>What is this visualization?</b>" 
       + 
-      "<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." 
+      "<br><br>"
+      +
+      "On March 14, 2021, Twitch streamer, <a href='https://www.twitch.tv/ludwig' target='_blank'>Ludwig Ahgren</a>, started a subathon for which every new subscriber would add 10 seconds to the length of his stream. Due to overwhelming support from the Twitch community, the stream ended up lasting 31 days, averaging 40k viewers, gaining over 970k new followers and 250k new subscribers, and enabling Ludwig to ultimately surpass <a href='https://twitchtracker.com/subscribers/all-time' target='_blank'>Ninja's record</a> for \"Most Concurrent Twitch Subscribers\" by amassing over 280k active subscribers at peak. I created an interactive visualization for viewers interested in learning more about activity statistics and stream highlights during this record-breaking event." 
       + 
-      "<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." 
+      "<br><br>"
+      +
+      "To learn more about the subathon, check out this <a href='https://www.theverge.com/2021/4/14/22362532/ludwig-twitch-subathon-ends-stream-ninja-subs-record' target='_blank'>article</a>." 
       + 
       "<p>Data Credits To: \
           <ul> \

@@ -1,4 +1,4 @@
-# Visualizing Ludwig's 30-Day Subathon
+# Visualizing Ludwig's 31-Day Subathon
 
 ## MIT 6.859 Spring 2021
 
