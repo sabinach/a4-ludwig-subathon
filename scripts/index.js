@@ -67,7 +67,7 @@ var svg = d3.select("#line-viz")
 /* ---------------------- */
 
 // set the dimensions and margins of the graph
-var margin_treemap = {top: 10, right: 0, bottom: 0, left: 10},
+var margin_treemap = {top: 0, right: 0, bottom: 0, left: 10},
   width_treemap = 410 - margin_treemap.left - margin_treemap.right,
   height_treemap = 380 - margin_treemap.top - margin_treemap.bottom;
 
@@ -2031,7 +2031,24 @@ function createViz(error, ...args) {
     .style("width", "400px")
 
   info_block
-    .html("<b>Some cool timeframe-specific statistics</b>" + "<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." + "<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." + "<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.") 
+    .html(
+      "<b>Some cool timeframe-specific statistics</b>" 
+      + 
+      "<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." 
+      + 
+      "<br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." 
+      + 
+      "<p>Data Credits To: \
+          <ul> \
+            <li><a href='https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#' target='_blank'>baddog86, smartax1111, itzdanbarz, and ogsheeper</a></li> \
+            <li><a href='https://sullygnome.com/channel/ludwig' target='_blank'>SullyGnome</a></li> \
+            <li><a href='https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#' target='_blank'>Twitch Highlight Clips</a></li> \
+          </ul> \
+        </p> \
+        <p> \
+          Want to add an event highlight? Submit the video link <a href='XXX' target='_blank'>here</a>! \
+        </p>"
+      ) 
 
   /* --- Events Tooltip DEFINITIONS --- */
 
@@ -2046,9 +2063,6 @@ function createViz(error, ...args) {
     .style("padding", "10px")
     .style("width", "400px")
 
-  // "<b>" + highlights_zip[0].title + "</b>" + " (<a href='" + highlights_zip[0].url + "' target='_blank'>video</a>)</h4>" + "<br>" + formatDatetime(highlights_zip[0].datetime) + " EST" + "<br>" + getHtmlEmbed(highlights_zip[0].type, highlights_zip[0].embed, parentDomain) + "<br>"
-  // "<br><br>time streamed: " + highlights_zip[0].timeStreamed.toFixed(2) + " hrs" + "<br>time left: " + highlights_zip[0].timeLeft.toFixed(2) + " hrs" +
-
   // Show tooltip (show the first highlight event)
   events_block
     .html("<b>" + "Event Highlight" + "</b><br>" + formatDatetime(highlights_zip[2].datetime) + " EST" + " (<a href='" + highlights_zip[2].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[2].type, highlights_zip[2].embed, parentDomain) + "<br>") 
@@ -2059,13 +2073,28 @@ function createViz(error, ...args) {
     .data(highlights_zip)
     .enter().append("circle")
     .attr("class", "dot-events")
+    .attr("id", d => "dot-events-" + d.id)
     .attr("cx", d => xScale_timeLeft(d.timeStreamed))
     .attr("cy", d =>  yScale_timeLeft(d.timeLeft))
     .attr("r", (d, i) => 6)
-    .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
     .style("display", currentMode==="byHighlights" ? null : "none")
-    .on("mouseover", mouseover_events) //TODO
+    .on("mouseover", mouseover_events)
+
+  // add color to first event example
+  svg_line_timeLeft.selectAll("#dot-events-2") // highlights_zip[2]
+    .style("fill", "#d30715")
+
+  // add text to first event example
+  svg_line_timeLeft.selectAll(".tooltip-events")
+    .data([highlights_zip[2]])
+    .enter()
+      .append("text")
+      .attr("class", "tooltip-events")
+      .text(highlights_zip[2].timeLeft.toFixed(1) + " hrs")
+      .attr("x", d => xScale_timeLeft(d.timeStreamed))
+      .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
+      .style("display", currentMode==="byHighlights" ? null : "none")
 
   /* --- Highlights Tooltip FUNCTIONS --- */
 
@@ -2081,7 +2110,6 @@ function createViz(error, ...args) {
   }
 
   function mouseover_events(d, i){
-    // only if ON
     if (currentMode==="byHighlights"){
       //clear previous 
       svg_line_timeLeft.selectAll(".dot-events").style("fill", "#fcb0b5");
