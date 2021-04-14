@@ -342,9 +342,9 @@ function createViz(error, ...args) {
     svg_treemap.selectAll(".percent-activity").remove();
 
     // hide other treemaps
-    svg_treemap.selectAll(".rect-sleepAwake").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
-    svg_treemap.selectAll(".title-sleepAwake").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
-    svg_treemap.selectAll(".percent-sleepAwake").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
+    svg_treemap.selectAll(".rect-sleepAwake").style("display", currentMode==="byLudwigModcast" ? null : "none");
+    svg_treemap.selectAll(".title-sleepAwake").style("display", currentMode==="byLudwigModcast" ? null : "none");
+    svg_treemap.selectAll(".percent-sleepAwake").style("display", currentMode==="byLudwigModcast" ? null : "none");
 
     /** -------- **/
     // rect
@@ -367,7 +367,7 @@ function createViz(error, ...args) {
       .attr("height", d => d.y1 - d.y0)
       .style("stroke", "black")
       .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
-      .style("opacity", currentMode==="byActivity" ? 1 : 0)
+      .style("display", currentMode==="byActivity" ? null : "none")
       .on("mouseover", mouseover_treemap_allActivity)
       .on("mouseleave", mouseleave_allActivity)
 
@@ -395,7 +395,7 @@ function createViz(error, ...args) {
       .html(d => `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
-      .style("opacity", currentMode==="byActivity" ? 1 : 0)
+      .style("display", currentMode==="byActivity" ? null : "none")
 
     /** -------- **/
     // percent
@@ -421,7 +421,7 @@ function createViz(error, ...args) {
       .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
-      .style("opacity", currentMode==="byActivity" ? 1 : 0)
+      .style("display", currentMode==="byActivity" ? null : "none")
 
     /** -------- **/
     /*
@@ -463,9 +463,9 @@ function createViz(error, ...args) {
     svg_treemap.selectAll(".percent-sleepAwake").remove();
 
     // hide other treemaps
-    svg_treemap.selectAll(".rect-activity").style("opacity", currentMode==="byActivity" ? 1 : 0);
-    svg_treemap.selectAll(".title-activity").style("opacity", currentMode==="byActivity" ? 1 : 0);
-    svg_treemap.selectAll(".percent-activity").style("opacity", currentMode==="byActivity" ? 1 : 0);
+    svg_treemap.selectAll(".rect-activity").style("display", currentMode==="byActivity" ? null : "none")
+    svg_treemap.selectAll(".title-activity").style("display", currentMode==="byActivity" ? null : "none")
+    svg_treemap.selectAll(".percent-activity").style("display", currentMode==="byActivity" ? null : "none")
 
     /** -------- **/
     // rect
@@ -488,7 +488,7 @@ function createViz(error, ...args) {
       .attr("height", d => d.y1 - d.y0)
       .style("stroke", "black")
       .style("fill", d => d.id ? colorSleepAwake[d.id] : "#9cbdd9")
-      .style("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+      .style("display", currentMode==="byLudwigModcast" ? null : "none")
       .on("mouseover", mouseover_treemap_allSleepAwake)
       .on("mouseleave", mouseleave_allSleepAwake)
 
@@ -516,7 +516,7 @@ function createViz(error, ...args) {
       .html(d => `<tspan style='font-weight: 500'>${d.data.sleepAwake}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
-      .style("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+      .style("display", currentMode==="byLudwigModcast" ? null : "none")
 
     /** -------- **/
     // percent
@@ -542,7 +542,7 @@ function createViz(error, ...args) {
       .html(d => `<tspan style='font-weight: 500'>${(d.data.count/sleepAwake_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
-      .style("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+      .style("display", currentMode==="byLudwigModcast" ? null : "none")
 
     /** -------- **/
     /*
@@ -578,10 +578,10 @@ function createViz(error, ...args) {
     svg.selectAll(".activity_legend_text").remove();
 
     // hide other legends
-    svg.selectAll(".sleepAwake_legend_colors").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
-    svg.selectAll(".sleepAwake_legend_text").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
-    svg.selectAll(".timeHour_legend_colors").style("opacity", currentMode==="byTime" ? 1 : 0);
-    svg.selectAll(".timeHour_legend_text").style("opacity", currentMode==="byTime" ? 1 : 0);
+    svg.selectAll(".sleepAwake_legend_colors").style("display", currentMode==="byLudwigModcast" ? null : "none")
+    svg.selectAll(".sleepAwake_legend_text").style("display", currentMode==="byLudwigModcast" ? null : "none")
+    svg.selectAll(".timeHour_legend_colors").style("display", currentMode==="byTime" ? null : "none")
+    svg.selectAll(".timeHour_legend_text").style("display", currentMode==="byTime" ? null : "none")
 
     // legend settings
 
@@ -605,7 +605,7 @@ function createViz(error, ...args) {
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorDict[d]})
-        .style("opacity", currentMode==="byActivity" ? 1 : 0)
+        .style("display", currentMode==="byActivity" ? null : "none")
         .on("mouseover", mouseover_legend_allActivity)
         .on("mouseleave", mouseleave_allActivity)
 
@@ -627,7 +627,7 @@ function createViz(error, ...args) {
         .text(function(d){ return d})
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
-        .style("opacity", currentMode==="byActivity" ? 1 : 0)
+        .style("display", currentMode==="byActivity" ? null : "none")
         .on("mouseover", mouseover_legend_allActivity)
         .on("mouseleave", mouseleave_allActivity)
 
@@ -653,10 +653,10 @@ function createViz(error, ...args) {
     svg.selectAll(".sleepAwake_legend_text").remove();
 
     // hide other legends
-    svg.selectAll(".activity_legend_colors").style("opacity", currentMode==="byActivity" ? 1 : 0);
-    svg.selectAll(".activity_legend_text").style("opacity", currentMode==="byActivity" ? 1 : 0);
-    svg.selectAll(".timeHour_legend_colors").style("opacity", currentMode==="byTime" ? 1 : 0);
-    svg.selectAll(".timeHour_legend_text").style("opacity", currentMode==="byTime" ? 1 : 0);
+    svg.selectAll(".activity_legend_colors").style("display", currentMode==="byActivity" ? null : "none")
+    svg.selectAll(".activity_legend_text").style("display", currentMode==="byActivity" ? null : "none")
+    svg.selectAll(".timeHour_legend_colors").style("display", currentMode==="byTime" ? null : "none")
+    svg.selectAll(".timeHour_legend_text").style("display", currentMode==="byTime" ? null : "none")
 
     // legend settings
 
@@ -680,7 +680,7 @@ function createViz(error, ...args) {
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorSleepAwake[d]})
-        .style("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+        .style("display", currentMode==="byLudwigModcast" ? null : "none")
         .on("mouseover", mouseover_legend_allSleepAwake)
         .on("mouseleave", mouseleave_allSleepAwake)
 
@@ -702,7 +702,7 @@ function createViz(error, ...args) {
         .text(function(d){ return d})
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
-        .style("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+        .style("display", currentMode==="byLudwigModcast" ? null : "none")
         .on("mouseover", mouseover_legend_allSleepAwake)
         .on("mouseleave", mouseleave_allSleepAwake)
   }
@@ -729,10 +729,10 @@ function createViz(error, ...args) {
     svg.selectAll(".timeHour_legend_text").remove();
 
     // hide other legends
-    svg.selectAll(".activity_legend_colors").style("opacity", currentMode==="byActivity" ? 1 : 0);
-    svg.selectAll(".activity_legend_text").style("opacity", currentMode==="byActivity" ? 1 : 0);
-    svg.selectAll(".sleepAwake_legend_colors").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
-    svg.selectAll(".sleepAwake_legend_text").style("opacity", currentMode==="byLudwigModcast" ? 1 : 0);
+    svg.selectAll(".activity_legend_colors").style("display", currentMode==="byActivity" ? null : "none")
+    svg.selectAll(".activity_legend_text").style("display", currentMode==="byActivity" ? null : "none")
+    svg.selectAll(".sleepAwake_legend_colors").style("display", currentMode==="byLudwigModcast" ? null : "none")
+    svg.selectAll(".sleepAwake_legend_text").style("display", currentMode==="byLudwigModcast" ? null : "none")
 
     // legend settings
 
@@ -756,7 +756,7 @@ function createViz(error, ...args) {
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorTimeHour[d]})
-        .style("opacity", currentMode==="byTime" ? 1 : 0)
+        .style("display", currentMode==="byTime" ? null : "none")
         .on("mouseover", mouseover_legend_allTimeHour)
         .on("mouseleave", mouseleave_allTimeHour)
 
@@ -778,7 +778,7 @@ function createViz(error, ...args) {
         .text(function(d){ return timeHourToText[d]})
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
-        .style("opacity", currentMode==="byTime" ? 1 : 0)
+        .style("display", currentMode==="byTime" ? null : "none")
         .on("mouseover", mouseover_legend_allTimeHour)
         .on("mouseleave", mouseleave_allTimeHour)
   }
@@ -1325,7 +1325,6 @@ function createViz(error, ...args) {
   // What to do when one group is hovered
   const mouseover_treemap_allActivity = function(d){
     if (currentMode==="byActivity"){
-      console.log(d.id)
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft_activity").style("opacity", lowOpacity)
       svg_line_viewers.selectAll(".area_viewers_activity").style("opacity", lowOpacity)
@@ -1473,7 +1472,6 @@ function createViz(error, ...args) {
   // What to do when one group is hovered
   const mouseover_treemap_allSleepAwake = function(d){
     if (currentMode==="byLudwigModcast"){
-      console.log(d.id)
       // reduce opacity of all groups
       svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake").style("opacity", lowOpacity)
       svg_line_viewers.selectAll(".area_viewers_sleepAwake").style("opacity", lowOpacity)
@@ -1678,7 +1676,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 0.5)
       .attr("fill", colorDict[cleanString(activity.game)])
       .attr("d", drawarea_timeLeft)
-      .attr("opacity", currentMode==="byActivity" ? 1 : 0)
+      .style("display", currentMode==="byActivity" ? null : "none")
   })
 
   // Add sleepAwake area (timeLeft)
@@ -1690,7 +1688,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 0.5)
       .attr("fill", colorSleepAwake[item.sleepAwake])
       .attr("d", drawarea_timeLeft)
-      .attr("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+      .style("display", currentMode==="byLudwigModcast" ? null : "none")
   })
 
   // Add timeHour area (timeLeft)
@@ -1702,7 +1700,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 0.5)
       .attr("fill", colorTimeHour[item.timeHour])
       .attr("d", drawarea_timeLeft)
-      .attr("opacity", currentMode==="byTime" ? 1 : 0)
+      .style("display", currentMode==="byTime" ? null : "none")
   })
 
   // Add brush + hover (timeLeft)
@@ -1753,7 +1751,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 0.5)
       .attr("fill", colorDict[cleanString(activity.game)])
       .attr("d", drawarea_viewers)
-      .attr("opacity", currentMode==="byActivity" ? 1 : 0)
+      .style("display", currentMode==="byActivity" ? null : "none")
   })
 
   // Add sleepAwake area (viewers)
@@ -1765,7 +1763,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 0.5)
       .attr("fill", colorSleepAwake[item.sleepAwake])
       .attr("d", drawarea_viewers)
-      .attr("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+      .style("display", currentMode==="byLudwigModcast" ? null : "none")
   })
 
   // Add timeHour area (viewers)
@@ -1777,7 +1775,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 0.5)
       .attr("fill", colorTimeHour[item.timeHour])
       .attr("d", drawarea_viewers)
-      .attr("opacity", currentMode==="byTime" ? 1 : 0)
+      .style("display", currentMode==="byTime" ? null : "none")
   })
 
   // Add brush (viewers)
@@ -1827,7 +1825,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 0.5)
       .attr("fill", colorDict[cleanString(activity.game)])
       .attr("d", drawarea_subFollows)
-      .attr("opacity", currentMode==="byActivity" ? 1 : 0)
+      .style("display", currentMode==="byActivity" ? null : "none")
   })
 
   // Add sleepAwake area (subFollows)
@@ -1839,7 +1837,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 0.5)
       .attr("fill", colorSleepAwake[item.sleepAwake])
       .attr("d", drawarea_subFollows)
-      .attr("opacity", currentMode==="byLudwigModcast" ? 1 : 0)
+      .style("display", currentMode==="byLudwigModcast" ? null : "none")
   })
 
   // Add timeHour area (subFollows)
@@ -1851,7 +1849,7 @@ function createViz(error, ...args) {
       .attr("stroke-width", 0.5)
       .attr("fill", colorTimeHour[item.timeHour])
       .attr("d", drawarea_subFollows)
-      .attr("opacity", currentMode==="byTime" ? 1 : 0)
+      .style("display", currentMode==="byTime" ? null : "none")
   })
 
   // Add brush (subFollows)
@@ -2054,7 +2052,7 @@ function createViz(error, ...args) {
   // Show tooltip (show the first highlight event)
   events_block
     .html("<b>" + "Event Highlight" + "</b><br>" + formatDatetime(highlights_zip[2].datetime) + " EST" + " (<a href='" + highlights_zip[2].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[2].type, highlights_zip[2].embed, parentDomain) + "<br>") 
-    .style("opacity", currentMode==="byHighlights" ? 1 : 0) 
+    .style("display", currentMode==="byHighlights" ? null : "none")
 
   // Add nodes (event highlights)
   svg_line_timeLeft.selectAll(".dot-events")
@@ -2066,7 +2064,7 @@ function createViz(error, ...args) {
     .attr("r", (d, i) => 6)
     .attr("id", d => "node" + d.id)
     .style("fill", "#fcb0b5")
-    .style("opacity", currentMode==="byHighlights" ? 1 : 0) // initialize depending on currentMode
+    .style("display", currentMode==="byHighlights" ? null : "none")
     .on("mouseover", mouseover_events) //TODO
 
   /* --- Highlights Tooltip FUNCTIONS --- */
@@ -2084,7 +2082,7 @@ function createViz(error, ...args) {
 
   function mouseover_events(d, i){
     // only if ON
-    if (svg_line_timeLeft.selectAll(".dot-events").style("opacity") === "1"){
+    if (currentMode==="byHighlights"){
       //clear previous 
       svg_line_timeLeft.selectAll(".dot-events").style("fill", "#fcb0b5");
       svg_line_timeLeft.selectAll(".tooltip-events").remove();
@@ -2117,12 +2115,6 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".line_subFollows")
         .style("opacity", 0.5)
 
-      svg_line_timeLeft.selectAll(".dot-events")
-        .style("opacity", 0)
-      svg_line_timeLeft.selectAll(".tooltip-events")
-        .style("opacity", 0)
-      events_block
-        .style("opacity", 0)
       d3.selectAll(".dot-events").style("display","none");
       d3.selectAll(".tooltip-events").style("display","none");
       events_block.style("display","none");
@@ -2132,69 +2124,36 @@ function createViz(error, ...args) {
     }
 
     if(mode!=="byActivity"){
-      svg_line_timeLeft.selectAll(".area_timeLeft_activity")
-        .style("opacity", 0)
-      svg_line_viewers.selectAll(".area_viewers_activity")
-        .style("opacity", 0)
-      svg_line_subFollows.selectAll(".area_subFollows_activity")
-        .style("opacity", 0)
+      d3.selectAll(".area_timeLeft_activity").style("display","none");
+      d3.selectAll(".area_viewers_activity").style("display","none");
+      d3.selectAll(".area_subFollows_activity").style("display","none");
 
-      svg.selectAll(".activity_legend_colors")
-        .style("opacity", 0)
-      svg.selectAll(".activity_legend_text")
-        .style("opacity", 0)
       d3.selectAll(".activity_legend_colors").style("display","none");
       d3.selectAll(".activity_legend_text").style("display","none");
 
-      svg_treemap.selectAll(".rect-activity")
-        .style("opacity", 0)
-      svg_treemap.selectAll(".title-activity")
-        .style("opacity", 0)
-      svg_treemap.selectAll(".percent-activity")
-        .style("opacity", 0)
       d3.selectAll(".rect-activity").style("display","none");
       d3.selectAll(".title-activity").style("display","none");
       d3.selectAll(".percent-activity").style("display","none");
     }
 
     if(mode!=="byLudwigModcast"){
-      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake")
-        .style("opacity", 0)
-      svg_line_viewers.selectAll(".area_viewers_sleepAwake")
-        .style("opacity", 0)
-      svg_line_subFollows.selectAll(".area_subFollows_sleepAwake")
-        .style("opacity", 0)
+      d3.selectAll(".area_timeLeft_sleepAwake").style("display","none");
+      d3.selectAll(".area_viewers_sleepAwake").style("display","none");
+      d3.selectAll(".area_subFollows_sleepAwake").style("display","none");
 
-      svg.selectAll(".sleepAwake_legend_colors")
-        .style("opacity", 0)
-      svg.selectAll(".sleepAwake_legend_text")
-        .style("opacity", 0)
       d3.selectAll(".sleepAwake_legend_colors").style("display","none");
       d3.selectAll(".sleepAwake_legend_text").style("display","none");
 
-      svg_treemap.selectAll(".rect-sleepAwake")
-        .style("opacity", 0)
-      svg_treemap.selectAll(".title-sleepAwake")
-        .style("opacity", 0)
-      svg_treemap.selectAll(".percent-sleepAwake")
-        .style("opacity", 0)
       d3.selectAll(".rect-sleepAwake").style("display","none");
       d3.selectAll(".title-sleepAwake").style("display","none");
       d3.selectAll(".percent-sleepAwake").style("display","none");
     }
 
     if(mode!=="byTime"){
-      svg_line_timeLeft.selectAll(".area_timeLeft_timeHour")
-        .style("opacity", 0)
-      svg_line_viewers.selectAll(".area_viewers_timeHour")
-        .style("opacity", 0)
-      svg_line_subFollows.selectAll(".area_subFollows_timeHour")
-        .style("opacity", 0)
+      d3.selectAll(".area_timeLeft_timeHour").style("display","none");
+      d3.selectAll(".area_viewers_timeHour").style("display","none");
+      d3.selectAll(".area_subFollows_timeHour").style("display","none");
 
-      svg.selectAll(".timeHour_legend_colors")
-        .style("opacity", 0)
-      svg.selectAll(".timeHour_legend_text")
-        .style("opacity", 0)
       d3.selectAll(".timeHour_legend_colors").style("display","none");
       d3.selectAll(".timeHour_legend_text").style("display","none");
     }
@@ -2215,12 +2174,6 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".line_subFollows")
         .style("opacity", 1)
 
-      svg_line_timeLeft.selectAll(".dot-events")
-        .style("opacity", 1)
-      svg_line_timeLeft.selectAll(".tooltip-events")
-        .style("opacity", 1)
-      events_block
-        .style("opacity", 1)
       d3.selectAll(".dot-events").style("display",null);
       d3.selectAll(".tooltip-events").style("display",null);
       events_block.style("display",null);
@@ -2230,69 +2183,36 @@ function createViz(error, ...args) {
     }
 
     else if(currentMode === "byActivity"){
-      svg_line_timeLeft.selectAll(".area_timeLeft_activity")
-        .style("opacity", 1)
-      svg_line_viewers.selectAll(".area_viewers_activity")
-        .style("opacity", 1)
-      svg_line_subFollows.selectAll(".area_subFollows_activity")
-        .style("opacity", 1)
+      d3.selectAll(".area_timeLeft_activity").style("display",null);
+      d3.selectAll(".area_viewers_activity").style("display",null);
+      d3.selectAll(".area_subFollows_activity").style("display",null);
 
-      svg.selectAll(".activity_legend_colors")
-        .style("opacity", 1)
-      svg.selectAll(".activity_legend_text")
-        .style("opacity", 1)
       d3.selectAll(".activity_legend_colors").style("display",null);
       d3.selectAll(".activity_legend_text").style("display",null);
 
-      svg_treemap.selectAll(".rect-activity")
-        .style("opacity", 1)
-      svg_treemap.selectAll(".title-activity")
-        .style("opacity", 1)
-      svg_treemap.selectAll(".percent-activity")
-        .style("opacity", 1)
       d3.selectAll(".rect-activity").style("display",null);
       d3.selectAll(".title-activity").style("display",null);
       d3.selectAll(".percent-activity").style("display",null);
     }
 
     else if(currentMode === "byLudwigModcast"){
-      svg_line_timeLeft.selectAll(".area_timeLeft_sleepAwake")
-        .style("opacity", 1)
-      svg_line_viewers.selectAll(".area_viewers_sleepAwake")
-        .style("opacity", 1)
-      svg_line_subFollows.selectAll(".area_subFollows_sleepAwake")
-        .style("opacity", 1)
+      d3.selectAll(".area_timeLeft_sleepAwake").style("display",null);
+      d3.selectAll(".area_viewers_sleepAwake").style("display",null);
+      d3.selectAll(".area_subFollows_sleepAwake").style("display",null);
 
-      svg.selectAll(".sleepAwake_legend_colors")
-        .style("opacity", 1)
-      svg.selectAll(".sleepAwake_legend_text")
-        .style("opacity", 1)
       d3.selectAll(".sleepAwake_legend_colors").style("display",null);
       d3.selectAll(".sleepAwake_legend_text").style("display",null);
 
-      svg_treemap.selectAll(".rect-sleepAwake")
-        .style("opacity", 1)
-      svg_treemap.selectAll(".title-sleepAwake")
-        .style("opacity", 1)
-      svg_treemap.selectAll(".percent-sleepAwake")
-        .style("opacity", 1)
       d3.selectAll(".rect-sleepAwake").style("display",null);
       d3.selectAll(".title-sleepAwake").style("display",null);
       d3.selectAll(".percent-sleepAwake").style("display",null);
     }
 
     else if(currentMode === "byTime"){
-      svg_line_timeLeft.selectAll(".area_timeLeft_timeHour")
-        .style("opacity", 1)
-      svg_line_viewers.selectAll(".area_viewers_timeHour")
-        .style("opacity", 1)
-      svg_line_subFollows.selectAll(".area_subFollows_timeHour")
-        .style("opacity", 1)
+      d3.selectAll(".area_timeLeft_timeHour").style("display",null);
+      d3.selectAll(".area_viewers_timeHour").style("display",null);
+      d3.selectAll(".area_subFollows_timeHour").style("display",null);
 
-      svg.selectAll(".timeHour_legend_colors")
-        .style("opacity", 1)
-      svg.selectAll(".timeHour_legend_text")
-        .style("opacity", 1)
       d3.selectAll(".timeHour_legend_colors").style("display",null);
       d3.selectAll(".timeHour_legend_text").style("display",null);
     }
