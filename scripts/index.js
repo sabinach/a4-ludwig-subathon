@@ -147,7 +147,8 @@ function createViz(error, ...args) {
     return {
       timeStreamed: timeStreamed, 
       timeLeft: timeLeft_hours[index],
-      subsGained: timeLeftJson.subsGained[index]
+      subsGained: timeLeftJson.subsGained[index],
+      subathonTimer: timeLeftJson.timeLeft[index]
     }
   });
 
@@ -969,9 +970,9 @@ function createViz(error, ...args) {
 
   // Add y-axis label (timeLeft)
   svg.append("text")
-    .attr("transform", "translate(-35, 20) rotate(-90)")
+    .attr("transform", "translate(-35, 55) rotate(-90)")
     .style("text-anchor", "middle")
-    .text("# Hours Left");   
+    .text("Subathon Timer (hr:min:sec)");   
 
   /* ---------- */
 
@@ -1131,7 +1132,7 @@ function createViz(error, ...args) {
         .attr("cy", yTransformed_timeLeft)
         .style("opacity", 1)
       focus_text_timeLeft
-        .html(selectedData_timeLeft.timeLeft.toFixed(1) + " hrs")
+        .html(selectedData_timeLeft.subathonTimer)
         .attr("x", xTransformed_timeLeft + 5)
         .attr("y", yTransformed_timeLeft - 25)
         .style("opacity", 1)
