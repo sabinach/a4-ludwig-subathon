@@ -2121,9 +2121,14 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       svg_line_timeLeft.selectAll(".tooltip-events")
         .style("opacity", 0)
-
       events_block
         .style("opacity", 0)
+      d3.selectAll(".dot-events").style("display","none");
+      d3.selectAll(".tooltip-events").style("display","none");
+      events_block.style("display","none");
+
+      // unhide treemap
+      d3.selectAll("#treemap-viz").style("display",null);
     }
 
     if(mode!=="byActivity"){
@@ -2138,6 +2143,8 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       svg.selectAll(".activity_legend_text")
         .style("opacity", 0)
+      d3.selectAll(".activity_legend_colors").style("display","none");
+      d3.selectAll(".activity_legend_text").style("display","none");
 
       svg_treemap.selectAll(".rect-activity")
         .style("opacity", 0)
@@ -2145,6 +2152,9 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       svg_treemap.selectAll(".percent-activity")
         .style("opacity", 0)
+      d3.selectAll(".rect-activity").style("display","none");
+      d3.selectAll(".title-activity").style("display","none");
+      d3.selectAll(".percent-activity").style("display","none");
     }
 
     if(mode!=="byLudwigModcast"){
@@ -2159,6 +2169,8 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       svg.selectAll(".sleepAwake_legend_text")
         .style("opacity", 0)
+      d3.selectAll(".sleepAwake_legend_colors").style("display","none");
+      d3.selectAll(".sleepAwake_legend_text").style("display","none");
 
       svg_treemap.selectAll(".rect-sleepAwake")
         .style("opacity", 0)
@@ -2183,6 +2195,8 @@ function createViz(error, ...args) {
         .style("opacity", 0)
       svg.selectAll(".timeHour_legend_text")
         .style("opacity", 0)
+      d3.selectAll(".timeHour_legend_colors").style("display","none");
+      d3.selectAll(".timeHour_legend_text").style("display","none");
     }
 
   }
@@ -2205,12 +2219,14 @@ function createViz(error, ...args) {
         .style("opacity", 1)
       svg_line_timeLeft.selectAll(".tooltip-events")
         .style("opacity", 1)
-
-      // hide treemap
-      //d3.selectAll("#treemap-viz").style("display","none");
-
       events_block
         .style("opacity", 1)
+      d3.selectAll(".dot-events").style("display",null);
+      d3.selectAll(".tooltip-events").style("display",null);
+      events_block.style("display",null);
+
+      // hide treemap
+      d3.selectAll("#treemap-viz").style("display","none");
     }
 
     else if(currentMode === "byActivity"){
@@ -2225,6 +2241,8 @@ function createViz(error, ...args) {
         .style("opacity", 1)
       svg.selectAll(".activity_legend_text")
         .style("opacity", 1)
+      d3.selectAll(".activity_legend_colors").style("display",null);
+      d3.selectAll(".activity_legend_text").style("display",null);
 
       svg_treemap.selectAll(".rect-activity")
         .style("opacity", 1)
@@ -2232,6 +2250,9 @@ function createViz(error, ...args) {
         .style("opacity", 1)
       svg_treemap.selectAll(".percent-activity")
         .style("opacity", 1)
+      d3.selectAll(".rect-activity").style("display",null);
+      d3.selectAll(".title-activity").style("display",null);
+      d3.selectAll(".percent-activity").style("display",null);
     }
 
     else if(currentMode === "byLudwigModcast"){
@@ -2246,6 +2267,8 @@ function createViz(error, ...args) {
         .style("opacity", 1)
       svg.selectAll(".sleepAwake_legend_text")
         .style("opacity", 1)
+      d3.selectAll(".sleepAwake_legend_colors").style("display",null);
+      d3.selectAll(".sleepAwake_legend_text").style("display",null);
 
       svg_treemap.selectAll(".rect-sleepAwake")
         .style("opacity", 1)
@@ -2270,6 +2293,8 @@ function createViz(error, ...args) {
         .style("opacity", 1)
       svg.selectAll(".timeHour_legend_text")
         .style("opacity", 1)
+      d3.selectAll(".timeHour_legend_colors").style("display",null);
+      d3.selectAll(".timeHour_legend_text").style("display",null);
     }
 
     else if(currentMode === "byNone"){
