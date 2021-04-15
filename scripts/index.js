@@ -2043,7 +2043,7 @@ function createViz(error, ...args) {
             <span>\
               <b>Subathon Timer</b>\
               <br>\
-              Amount of time left in stream. Represented as (hours:minutes :seconds). Each new subscriber adds 10 seconds to the subathon timer.\
+              Amount of time left in stream (hours:minutes :seconds). Each new subscriber adds 10 seconds to the subathon timer.\
               <br><br>\
               <b>Reset Zoom</b>\
               <br>\
@@ -2053,7 +2053,7 @@ function createViz(error, ...args) {
               <br><br>\
               <b>By Activity</b>\
               <br>\
-              Game specified during the Twitch stream.\
+              Game category on Twitch specified during the stream.\
               <br><br>\
               <b>By SleepAwake</b>\
               <br>\
