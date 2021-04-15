@@ -1087,6 +1087,16 @@ function createViz(error, ...args) {
 
   /* --- Focus / Hover DEFINITIONS --- */
 
+  // Define focus datetime 
+  var focus_datetime = svg.append("g")
+    .append("text")
+    .style("opacity", 0)
+
+  // Define focus dayHour
+  var focus_dayHour = svg.append("g")
+    .append("text")
+    .style("opacity", 0)
+
   // Define focus circle (timeLeft)
   var focus_circle_timeLeft = svg.append("g")
     .append("circle")
@@ -1174,6 +1184,8 @@ function createViz(error, ...args) {
     .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
 
   function mouseoutFocus(){
+    focus_datetime.style("opacity", 0)
+    focus_dayHour.style("opacity", 0)
     focus_circle_timeLeft.style("opacity", 0)
     focus_text_timeLeft.style("opacity", 0)
     focus_textMode_timeLeft.style("opacity", 0)
@@ -1202,12 +1214,24 @@ function createViz(error, ...args) {
     if(selectedData_timeLeft){
       var xTransformed_timeLeft = xScale_timeLeft(selectedData_timeLeft.timeStreamed),
           yTransformed_timeLeft = yScale_timeLeft(selectedData_timeLeft.timeLeft)
+      focus_datetime
+        .html(d3.timeFormat("%B %d, %Y @ %I:%M %p")(hoursToDatetime(selectedData_timeLeft.timeStreamed)) + " EST") //" (" + selectedData_timeLeft.timeStreamed + " hrs)"
+        .attr("x", xTransformed_timeLeft)
+        .attr("y", -30)
+        .style("text-anchor", "middle")
+        .style("opacity", 1)
+      focus_dayHour
+        .html("Day " + (Math.floor(selectedData_timeLeft.timeStreamed/24)+1) + " (" + selectedData_timeLeft.timeStreamed + " hrs)") 
+        .attr("x", xTransformed_timeLeft)
+        .attr("y", -15)
+        .style("text-anchor", "middle")
+        .style("opacity", 1)
       focus_circle_timeLeft
         .attr("cx", xTransformed_timeLeft)
         .attr("cy", yTransformed_timeLeft)
         .style("opacity", 1)
       focus_text_timeLeft
-        .html(selectedData_timeLeft.subathonTimer)
+        .html(selectedData_timeLeft.subathonTimer + " on timer")
         .attr("x", xTransformed_timeLeft + 5)
         .attr("y", yTransformed_timeLeft - 25)
         .style("opacity", 1)
@@ -1239,9 +1263,11 @@ function createViz(error, ...args) {
         .attr("x1", xTransformed_timeLeft)
         .attr("y1", height_timeLeft)
         .attr("x2", xTransformed_timeLeft)
-        .attr("y2", 0)
+        .attr("y2", -10)
         .style("opacity", 1)
     }else{
+      focus_datetime.style("opacity", 0)
+      focus_dayHour.style("opacity", 0)
       focus_circle_timeLeft.style("opacity", 0)
       focus_text_timeLeft.style("opacity", 0)
       focus_textMode_timeLeft.style("opacity", 0)
@@ -1288,7 +1314,7 @@ function createViz(error, ...args) {
         .attr("x1", xTransformed_viewers)
         .attr("y1", height_viewers)
         .attr("x2", xTransformed_viewers)
-        .attr("y2", 0)
+        .attr("y2", -10)
         .style("opacity", 1)
     }else{
       focus_circle_viewers.style("opacity", 0)
@@ -1336,7 +1362,7 @@ function createViz(error, ...args) {
         .attr("x1", xTransformed_subFollows)
         .attr("y1", height_subFollows)
         .attr("x2", xTransformed_subFollows)
-        .attr("y2", 0)
+        .attr("y2", -10)
         .style("opacity", 1)
     }else{
       focus_circle_subFollows.style("opacity", 0)
