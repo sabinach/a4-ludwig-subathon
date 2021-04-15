@@ -1510,65 +1510,62 @@ function createViz(error, ...args) {
 
   var sleepAwakeList_keys = []
   var sleepAwakeList_data = []
-  var prevSleepAwake = ludwigModcastJson.sleepAwake[0]
+
+  var prevSleepAwakeStart = 0
+  var prevSleepAwake = ludwigModcastJson_zip[0].sleepAwake
   var prevSleepAwakeList = []
 
-
   timeLeftJson_zip.forEach((d, i) => {
-    const viewers = viewers_zip.filter(obj => obj.timeStreamed === Math.floor(d.timeStreamed))[0] // viewers only has time by the hour
-    const followers = followers_zip.filter(obj => obj.timeStreamed === Math.floor(d.timeStreamed))[0] // followers only has time by the hour
+    const viewers = viewers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
+    const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
+    const ludwigModcast = ludwigModcastJson_zip[i]
 
     prevSleepAwakeList.push({
       timeStreamed: d.timeStreamed,
-      datetime: viewers ? viewers.datetime : null,
-      sleepAwake: prevSleepAwake,
+      datetime: hoursToDatetime(d.timeStreamed),
+      sleepAwake: ludwigModcast.sleepAwake,
       timeLeft: d.timeLeft,
-      numViewers: viewers ? viewers.numViewers : null,
-      numFollowers: followers ? followers.numFollowers: null,
-      gainedFollowers: followers ? followers.gainedFollowers: null
+      numViewers: (viewers && viewers.numViewers) ? viewers.numViewers : null,
+      numFollowers: (followers && followers.numFollowers) ? followers.numFollowers : null,
+      gainedFollowers: (followers && followers.gainedFollowers) ? followers.gainedFollowers : null
     })
 
-    if(ludwigModcastJson.timeStreamed.includes(d.timeStreamed)){
-      const j = ludwigModcastJson.timeStreamed.indexOf(d.timeStreamed)
-      const currentSleepAwake = ludwigModcastJson.sleepAwake[j]
+    if (ludwigModcast.sleepAwake !== prevSleepAwake){
+      sleepAwakeList_keys.push(prevSleepAwake + "-" + prevSleepAwakeStart) // ie. awake-0
+      sleepAwakeList_data.push({
+        data: prevSleepAwakeList,
+        sleepAwake: prevSleepAwake,
+        timeStreamed: prevSleepAwakeStart
+      })
 
-      if(prevSleepAwake!==currentSleepAwake && d.timeStreamed%1===0){
+      // reset items
+      prevSleepAwake = ludwigModcast.sleepAwake
+      prevSleepAwakeStart = d.timeStreamed
 
-        sleepAwakeList_keys.push(ludwigModcastJson.sleepAwake[j-1] + "-" + ludwigModcastJson.timeStreamed[j-1]) // ie. awake-0
-        //hack modify last element
-        prevSleepAwakeList[prevSleepAwakeList.length-1].sleepAwake = currentSleepAwake
-        sleepAwakeList_data.push({
-          data: prevSleepAwakeList,
-          sleepAwake: ludwigModcastJson.sleepAwake[j-1],
-          timeStreamed: ludwigModcastJson.timeStreamed[j-1]
-        })
-
-        // reset items
-        prevSleepAwake = currentSleepAwake
-        prevSleepAwakeList = [{
-          timeStreamed: d.timeStreamed,
-          datetime: viewers ? viewers.datetime : null,
-          sleepAwake: currentSleepAwake,
-          timeLeft: d.timeLeft,
-          numViewers: viewers ? viewers.numViewers : null,
-          numFollowers: followers ? followers.numFollowers: null,
-          gainedFollowers: followers ? followers.gainedFollowers: null
-        }]
-      }
+      prevSleepAwakeList = [{
+        timeStreamed: d.timeStreamed,
+        datetime: hoursToDatetime(d.timeStreamed),
+        sleepAwake: ludwigModcast.sleepAwake,
+        timeLeft: d.timeLeft,
+        numViewers: (viewers && viewers.numViewers) ? viewers.numViewers : null,
+        numFollowers: (followers && followers.numFollowers) ? followers.numFollowers : null,
+        gainedFollowers: (followers && followers.gainedFollowers) ? followers.gainedFollowers : null
+      }]
     }
 
     if(i===timeLeftJson_zip.length-1){
       const lastItem = sleepAwakeList_data[sleepAwakeList_data.length-1]
-      const lastTimeStreamed = lastItem.data[lastItem.data.length-1].timeStreamed
-      sleepAwakeList_keys.push(prevSleepAwake + "-" + lastTimeStreamed) 
+      const prevSleepAwakeStart = lastItem.data[lastItem.data.length-1].timeStreamed
+      sleepAwakeList_keys.push(prevSleepAwake + "-" + prevSleepAwakeStart) // ie. awake-0
       sleepAwakeList_data.push({
         data: prevSleepAwakeList,
         sleepAwake: prevSleepAwake,
-        timeStreamed: lastTimeStreamed
+        timeStreamed: prevSleepAwakeStart
       })
     }
-
+  
   })
+
 
   console.log("sleepAwakeList_keys: ", sleepAwakeList_keys)
   console.log("sleepAwakeList_data: ", sleepAwakeList_data)
