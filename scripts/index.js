@@ -2302,7 +2302,7 @@ function createViz(error, ...args) {
 
   // Show tooltip (show the first highlight event)
   events_block
-    .html("<div class='events_block'><b>" + "Event Highlight" + "</b><br>" + formatDatetime(initialEvent.datetime) + " EST" + " (<a href='" + initialEvent.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(initialEvent.type, initialEvent.embed, parentDomain) + "<br></div>") 
+    .html("<div class='events_block'>" + "<b>Event Highlight</b>" + "<br><br>" + initialEvent.title + "<br>" + formatDatetime(initialEvent.datetime) + " EST" + " (<a href='" + initialEvent.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(initialEvent.type, initialEvent.embed, parentDomain) + "<br></div>") 
     .style("display", currentMode==="byHighlights" ? null : "none")
 
   // Add nodes (event highlights)
@@ -2408,7 +2408,7 @@ function createViz(error, ...args) {
 
       // update tooltip
       events_block
-        .html("<div class='events_block'><b>" + "Event Highlight" + "</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br></div>") 
+        .html("<div class='events_block'>" + "<b>Event Highlight</b>" + "<br><br>" + d.title + "<br>" +formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br></div>") 
     }
   }
 

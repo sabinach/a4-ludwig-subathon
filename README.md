@@ -61,6 +61,14 @@ node scrapeHighlightsSheet.js
 - ```parentDomain``` in ```scripts/index.js``` MUST match the domain above (ie. ```6859-sp21.github.io``` on deploy, or ```127.0.0.1``` when testing via Brackets)
 - Since the website is hosted on Github Pages, just push to the github repo to deploy updates. 
 
+### To Pull Upstream Fork:
+```
+git remote add upstream https://github.com/6859-sp21/a4-ludwig-subathon.git
+git fetch upstream
+git rebase upstream/main
+git push --force
+```
+
 ### Tools Used:
 - [JSON Formatter](https://jsonformatter.curiousconcept.com/)
 
