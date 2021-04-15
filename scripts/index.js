@@ -96,7 +96,7 @@ var svg_piechart = d3.select("#piechart-viz")
     .attr("height", height_piechart + margin_piechart.top + margin_piechart.bottom)
   .append("g")
     .attr("transform",
-          "translate(" + width_piechart/2 + "," + height_piechart/2 + ")");
+          "translate(" + width_piechart/2 + "," + height_piechart/2 + ")")
 
 /* ---------------------- */
 // utils
@@ -485,6 +485,8 @@ function createViz(error, ...args) {
       .style("font-size", "8px")
       .style("fill", "black")
       .style("display", currentMode==="byActivity" ? null : "none")
+      .on("mouseover", mouseover_treemap_allActivity)
+      .on("mouseleave", mouseleave_allActivity)
 
     /** -------- **/
     // percent
@@ -506,6 +508,8 @@ function createViz(error, ...args) {
       .style("font-size", "8px")
       .style("fill", "black")
       .style("display", currentMode==="byActivity" ? null : "none")
+      .on("mouseover", mouseover_treemap_allActivity)
+      .on("mouseleave", mouseleave_allActivity)
 
     /** -------- **/
     /*
@@ -598,6 +602,8 @@ function createViz(error, ...args) {
       .style("font-size", "8px")
       .style("fill", d => d.data.sleepAwake==="sleep" ? "white" : "black")
       .style("display", currentMode==="byLudwigModcast" ? null : "none")
+      .on("mouseover", mouseover_treemap_allSleepAwake)
+      .on("mouseleave", mouseleave_allSleepAwake)
 
     /** -------- **/
     // percent
@@ -619,6 +625,8 @@ function createViz(error, ...args) {
       .style("font-size", "8px")
       .style("fill", d => d.data.sleepAwake==="sleep" ? "white" : "black")
       .style("display", currentMode==="byLudwigModcast" ? null : "none")
+      .on("mouseover", mouseover_treemap_allSleepAwake)
+      .on("mouseleave", mouseleave_allSleepAwake)
 
     /** -------- **/
     /*
@@ -2323,10 +2331,8 @@ function createViz(error, ...args) {
       svg_piechart.selectAll(".pieSlice").style("opacity", lowOpacity)
       svg_piechart.selectAll(".pieText").style("opacity", lowOpacity)
       // expect the one that is hovered
-      if(d.index){
-        svg_piechart.selectAll(".pieSlice-" + d.index).style("opacity", highOpacity_pichart)
-        svg_piechart.selectAll(".pieText-" + d.index).style("opacity", highOpacity_pichart)
-      }
+      svg_piechart.selectAll(".pieSlice-" + d.index).style("opacity", highOpacity_pichart)
+      svg_piechart.selectAll(".pieText-" + d.index).style("opacity", highOpacity_pichart)
     }
   }
 
@@ -2356,6 +2362,9 @@ function createViz(error, ...args) {
     .innerRadius(0)
     .outerRadius(radius_piechart*1.65)
 
+  // hide/unhide piechart on initialization
+  d3.selectAll("#piechart-viz").style("display", currentMode==="byTime" ? null : "none");
+
   svg_piechart
     .selectAll('pieSlice')
     .data(piechart_data_ready)
@@ -2380,7 +2389,9 @@ function createViz(error, ...args) {
       .attr("transform", d => "translate(" + arcLabel.centroid(d) + ")")
       .style("text-anchor", "middle")
       .style("font-size", 10)
-
+      .style("display", currentMode==="byTime" ? null : "none")
+      .on("mouseover", mouseover_piechart)
+      .on("mouseleave", mouseleave_piechart)
   
 
 
@@ -2465,6 +2476,11 @@ function createViz(error, ...args) {
 
       d3.selectAll(".timeHour_legend_colors").style("display","none");
       d3.selectAll(".timeHour_legend_text").style("display","none");
+
+      // hide piechart
+      d3.selectAll("#piechart-viz").style("display","none");
+      d3.selectAll(".pieSlice").style("display","none");
+      d3.selectAll(".pieText").style("display","none");
     }
 
   }
@@ -2524,6 +2540,14 @@ function createViz(error, ...args) {
 
       d3.selectAll(".timeHour_legend_colors").style("display",null);
       d3.selectAll(".timeHour_legend_text").style("display",null);
+
+      // hide treemap
+      d3.selectAll("#treemap-viz").style("display","none");
+
+      // unhide piechart
+      d3.selectAll("#piechart-viz").style("display",null);
+      d3.selectAll(".pieSlice").style("display",null);
+      d3.selectAll(".pieText").style("display",null);
     }
 
     else if(currentMode === "byNone"){
