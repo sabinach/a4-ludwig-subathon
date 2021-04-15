@@ -1280,7 +1280,7 @@ function createViz(error, ...args) {
       focus_textMode_timeLeft
         .html(d => {
           if(currentMode==="byActivity" && selectedData_viewers) 
-            return "nope" //selectedData_viewers.game
+            return viewers_zip[Math.floor(i_timeLeft/2)].game //selectedData_viewers.game -- hacky hardcoded
           else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
             return sleepAwakeToLudwigModcast[ludwigModcastJson_zip[i_timeLeft].sleepAwake]
           else if (currentMode==="byTime" && selectedData_timeLeft)
@@ -1292,7 +1292,7 @@ function createViz(error, ...args) {
         .attr("y", yTransformed_timeLeft - 10)
         .style("fill", d => {
           if(currentMode==="byActivity" && selectedData_viewers) 
-            return colorDict[cleanString(selectedData_viewers.game)]
+            return viewers_zip[Math.floor(i_timeLeft/2)].game ? colorDict[cleanString(viewers_zip[Math.floor(i_timeLeft/2)].game)] : null
           else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
             return colorSleepAwake[ludwigModcastJson_zip[i_timeLeft].sleepAwake]
           else if (currentMode==="byTime" && selectedData_timeLeft)
@@ -1343,7 +1343,7 @@ function createViz(error, ...args) {
         .attr("y", yTransformed_viewers - 15)
         .style("fill", d => {
           if(currentMode==="byActivity" && selectedData_viewers) 
-            return colorDict[cleanString(selectedData_viewers.game)]
+            return selectedData_viewers.game ? colorDict[cleanString(selectedData_viewers.game)] : null
           else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
             return colorSleepAwake[ludwigModcastJson_zip[i_timeLeft].sleepAwake]
           else if (currentMode==="byTime" && selectedData_timeLeft)
@@ -1391,7 +1391,7 @@ function createViz(error, ...args) {
         .attr("y", yTransformed_subFollows - 10)
         .style("fill", d => {
           if(currentMode==="byActivity" && selectedData_viewers) 
-            return colorDict[cleanString(selectedData_viewers.game)]
+            return selectedData_viewers.game ? colorDict[cleanString(selectedData_viewers.game)] : null
           else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
             return colorSleepAwake[ludwigModcastJson_zip[i_timeLeft].sleepAwake]
           else if (currentMode==="byTime" && selectedData_timeLeft)
