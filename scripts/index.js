@@ -160,6 +160,22 @@ function createViz(error, ...args) {
   /* --------------------------------------------- */
   // LUDWIG/MODCAST
 
+  const ludwigModcastJson_zip = []
+  var currentSleepAwake = ludwigModcastJson.sleepAwake[0]
+  timeLeftJson_zip.forEach((d, i) => {
+    // if index is found
+    const foundIndex = ludwigModcastJson.timeStreamed.indexOf(d.timeStreamed);
+    if(foundIndex>=0){
+      currentSleepAwake = ludwigModcastJson.sleepAwake[foundIndex]
+    }
+    ludwigModcastJson_zip.push({
+      timeStreamed:d.timeStreamed,
+      datetime:hoursToDatetime(d.timeStreamed),
+      sleepAwake:currentSleepAwake
+    })
+  })
+
+  /*
   const ludwigModcastJson_zip = ludwigModcastJson.timeStreamed.map((timeStreamed, i) => {
     return {
       timeStreamed:timeStreamed,
@@ -167,9 +183,10 @@ function createViz(error, ...args) {
       sleepAwake:ludwigModcastJson.sleepAwake[i]
     }
   });
+  */
 
   console.log("ludwigModcastJson: ", ludwigModcastJson)
-  console.log("ludwigModcastJson_zip: ", ludwigModcastJson)
+  console.log("ludwigModcastJson_zip: ", ludwigModcastJson_zip)
 
 
   /* --------------------------------------------- */
@@ -285,10 +302,36 @@ function createViz(error, ...args) {
     // Activity
 
     // filter by date 
-    const viewers_zip_withinBounds = viewers_zip.filter((viewers) => 
+    var viewers_zip_withinBounds = viewers_zip.filter((viewers) => 
       (type==="datetime" && viewers.datetime >= start && viewers.datetime <= end) || 
         (type==="hour" && viewers.timeStreamed >= start && viewers.timeStreamed <= end))
     console.log("viewers_zip_withinBounds: ", viewers_zip_withinBounds)
+
+    // account for when no data is available (get the closest one that happened earlier)
+    if(viewers_zip_withinBounds.length===0){
+      var startHour;
+      if(type==="datetime"){
+        startHour = datetimeToHours(start)
+      }
+      else if (type==="hour"){
+        startHour = start
+      }
+      // no match found, insert the closest occurred value
+      for (var i=0; i<viewers_zip.length; i++){
+        if(viewers_zip[i].timeStreamed>startHour){
+          if(i===0){
+            viewers_zip_withinBounds = [viewers_zip[0]]
+          }else{
+            viewers_zip_withinBounds = [viewers_zip[i-1]]
+          }
+          break;
+        }
+        if(i===viewers_zip.length-1){
+          viewers_zip_withinBounds = [viewers_zip[i]]
+        }
+      }
+      console.log("viewers_zip_withinBounds (bisected): ",viewers_zip_withinBounds)
+    }
 
     // get new gamePlayed count
     const gamePlayed_count = generateGamePlayedCount(viewers_zip_withinBounds)
@@ -301,10 +344,36 @@ function createViz(error, ...args) {
     // SleepAwake
 
     // filter by date
-    const ludwigModcastJson_zip_withinBounds = ludwigModcastJson_zip.filter((item) => 
+    var ludwigModcastJson_zip_withinBounds = ludwigModcastJson_zip.filter((item) => 
       (type==="datetime" && item.datetime >= start && item.datetime <= end) || 
         (type==="hour" && item.timeStreamed >= start && item.timeStreamed <= end))
-    console.log("ludwigModcastJson_zip_withinBounds: ", ludwigModcastJson_zip_withinBounds)
+    console.log("ludwigModcastJson_zip_withinBounds (bisected): ",ludwigModcastJson_zip_withinBounds)
+
+    // account for when no data is available (get the closest one that happened earlier)
+    if(ludwigModcastJson_zip_withinBounds.length===0){
+      var startHour;
+      if(type==="datetime"){
+        startHour = datetimeToHours(start)
+      }
+      else if (type==="hour"){
+        startHour = start
+      }
+      // no match found, insert the closest occurred value
+      for (var i=0; i<ludwigModcastJson_zip.length; i++){
+        if(ludwigModcastJson_zip[i].timeStreamed>startHour){
+          if(i===0){
+            ludwigModcastJson_zip_withinBounds = [ludwigModcastJson_zip[0]]
+          }else{
+            ludwigModcastJson_zip_withinBounds = [ludwigModcastJson_zip[i-1]]
+          }
+          break;
+        }
+        if(i===ludwigModcastJson_zip.length-1){
+          ludwigModcastJson_zip_withinBounds = [ludwigModcastJson_zip[i]]
+        }
+      }
+      console.log("ludwigModcastJson_zip_withinBounds (bisected): ",ludwigModcastJson_zip_withinBounds)
+    }
 
     // get new sleepAwake count
     const sleepAwake_count = generateSleepAwakeCount(ludwigModcastJson_zip_withinBounds, type==="hour" ? end : datetimeToHours(end))
@@ -362,11 +431,8 @@ function createViz(error, ...args) {
     const rects = svg_treemap.selectAll(".rect-activity").data(root.leaves())
 
     //remove rectangle
-    rects.exit().remove();
     rects
-      .attr("transform", d => `translate(${d.x0},${d.y0})`)
-      .attr("width", d => d.x1 - d.x0)
-      .attr("height", d => d.y1 - d.y0)
+      .exit().remove();
 
     // add rectangle
     rects.enter()
@@ -391,11 +457,6 @@ function createViz(error, ...args) {
     title
       .exit().remove()
 
-    // transform title
-    title
-      .html(d => `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
-      .attr("transform", d => `translate(${d.x0},${d.y0})`)
-
     // add title
     title.enter().append("text")
       .attr("class", d => "title-activity" + (d.id ? " treemapTitle-" + cleanString(d.id) : ""))
@@ -417,18 +478,13 @@ function createViz(error, ...args) {
     percent
       .exit().remove()
 
-    // transform percent
-    percent
-      .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
-      .attr("transform", d => `translate(${d.x0},${d.y0})`)
-
     // add percent
     percent.enter().append("text")
       .attr("class", d => "percent-activity" + (d.id ? " treemapPercent-" + cleanString(d.id) : ""))
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 23) // +lower
-      .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
+      .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${(parseFloat(d.data.count)/gamePlayed_count.reduce((accum,item) => accum + parseFloat(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
       .style("display", currentMode==="byActivity" ? null : "none")
@@ -478,17 +534,19 @@ function createViz(error, ...args) {
     svg_treemap.selectAll(".percent-activity").style("display", currentMode==="byActivity" ? null : "none")
 
     /** -------- **/
+    // leaves
+
+    console.log("sleepAwake root.leaves(): ", root.leaves())
+
+    /** -------- **/
     // rect
 
     // create rectangle object
     const rects = svg_treemap.selectAll(".rect-sleepAwake").data(root.leaves())
 
     //remove rectangle
-    rects.exit().remove();
     rects
-      .attr("transform", d => `translate(${d.x0},${d.y0})`)
-      .attr("width", d => d.x1 - d.x0)
-      .attr("height", d => d.y1 - d.y0)
+      .exit().remove();
 
     // add rectangle
     rects.enter().append("rect")
@@ -512,11 +570,6 @@ function createViz(error, ...args) {
     title
       .exit().remove()
 
-    // transform title
-    title
-      .html(d => `<tspan style='font-weight: 500'>${d.data.sleepAwake}</tspan>`)
-      .attr("transform", d => `translate(${d.x0},${d.y0})`)
-
     // add title
     title.enter().append("text")
       .attr("class", d => "title-sleepAwake" + (d.id ? " treemapTitle-" + d.id : ""))
@@ -538,18 +591,13 @@ function createViz(error, ...args) {
     percent
       .exit().remove()
 
-    // transform percent
-    percent
-      .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
-      .attr("transform", d => `translate(${d.x0},${d.y0})`)
-
     // add percent
     percent.enter().append("text")
       .attr("class", d => "percent-sleepAwake" + (d.id ? " treemapPercent-" + cleanString(d.id) : ""))
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 23) // +lower
-      .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${(d.data.count/sleepAwake_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
+      .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${(parseFloat(d.data.count)/sleepAwake_count.reduce((accum,item) => accum + parseFloat(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
       .style("fill", d => d.data.sleepAwake==="sleep" ? "white" : "black")
       .style("display", currentMode==="byLudwigModcast" ? null : "none")
