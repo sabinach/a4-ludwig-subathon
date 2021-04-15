@@ -1286,8 +1286,52 @@ function createViz(error, ...args) {
   var activityList_keys = []
   var activityList_data = []
   var prevActivity = viewers_zip[0].game
+  var prevTimeStreamedStart = 0
   var prevActivityList = []
 
+  // viewers_zip_withinBounds (d.timeStreamed, d.datetime, d.game, d.numViewers)
+              //timeStreamed: 0, timeLeft: 0.5833333333333334, subsGained: 0, subathonTimer
+  timeLeftJson_zip.forEach((d, i) => {
+    const viewers = viewers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
+    const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
+
+    prevActivityList.push({
+      timeStreamed: d.timeStreamed,
+      datetime: hoursToDatetime(d.timeStreamed),
+      game: (viewers && viewers.game) ? viewers.game : null,
+      timeLeft: d.timeLeft,
+      numViewers: (viewers && viewers.numViewers) ? viewers.numViewers : null,
+      numFollowers: (followers && followers.numFollowers) ? followers.numFollowers : null,
+      gainedFollowers: (followers && followers.gainedFollowers) ? followers.gainedFollowers : null
+    })
+
+    if (viewers && viewers.game !== prevActivity){
+      activityList_keys.push(cleanString(prevActivity) + "-" + prevTimeStreamedStart) // ie. SuperMarioOdyssey-1
+      activityList_data.push({
+        data: prevActivityList,
+        game: cleanString(prevActivity),
+        timeStreamed: prevTimeStreamedStart
+      })
+
+      // reset items
+      prevActivity = viewers.game
+      prevTimeStreamedStart = d.timeStreamed
+
+      prevActivityList = [{
+        timeStreamed: d.timeStreamed,
+        datetime: hoursToDatetime(d.timeStreamed),
+        game: (viewers && viewers.game) ? viewers.game : null,
+        timeLeft: d.timeLeft,
+        numViewers: (viewers && viewers.numViewers) ? viewers.numViewers : null,
+        numFollowers: (followers && followers.numFollowers) ? followers.numFollowers : null,
+        gainedFollowers: (followers && followers.gainedFollowers) ? followers.gainedFollowers : null
+      }]
+    }
+  
+  })
+
+
+  /*
   // viewers_zip_withinBounds (d.timeStreamed, d.datetime, d.game, d.numViewers)
   viewers_zip.forEach((d, i) => {
     if(d.game!==null || d.numViewers!==null){
@@ -1333,6 +1377,7 @@ function createViz(error, ...args) {
       }
     }
   })
+  */
 
   console.log("activityList_keys: ", activityList_keys)
   console.log("activityList_data: ", activityList_data)
@@ -1786,7 +1831,7 @@ function createViz(error, ...args) {
   // Add activity area (viewers)
   activityList_data.forEach(activity => {
     svg_line_viewers.append("path")
-      .datum(activity.data)
+      .datum(activity.data.filter(d => d.timeStreamed % 1 == 0))
       .attr("class", d => "area_viewers_activity " + cleanString(activity.game) + " " + cleanString(activity.game) + "-" + activity.numViewers)
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
@@ -1860,7 +1905,7 @@ function createViz(error, ...args) {
   // Add activity area (subFollows)
   activityList_data.forEach(activity => {
     svg_line_subFollows.append("path")
-      .datum(activity.data)
+      .datum(activity.data.filter(d => d.timeStreamed % 1 == 0))
       .attr("class", d => "area_subFollows_activity " + cleanString(activity.game) + " " + cleanString(activity.game) + "-" + activity.timeStreamed)
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
