@@ -1776,12 +1776,16 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", lowOpacity)
       svg.selectAll(".timeHour_legend_colors").style("opacity", lowOpacity)
       svg.selectAll(".timeHour_legend_text").style("opacity", lowOpacity)
+      svg_piechart.selectAll(".pieSlice").style("opacity", lowOpacity)
+      svg_piechart.selectAll(".pieText").style("opacity", lowOpacity)
       // expect the one that is hovered
       svg_line_timeLeft.selectAll(".time" + d).style("opacity", highOpacity)
       svg_line_viewers.selectAll(".time" + d).style("opacity", highOpacity)
       svg_line_subFollows.selectAll(".time" + d).style("opacity", highOpacity)
       svg.selectAll(".legendColor-" + d).style("opacity", highOpacity)
       svg.selectAll(".legendText-" + d).style("opacity", highOpacity)
+      svg_piechart.selectAll(".pieSlice-" + d).style("opacity", highOpacity_piechart)
+      svg_piechart.selectAll(".pieText-" + d).style("opacity", highOpacity_piechart)
     }
   }
 
@@ -1793,21 +1797,10 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", highOpacity)
       svg.selectAll(".timeHour_legend_colors").style("opacity", highOpacity)
       svg.selectAll(".timeHour_legend_text").style("opacity", highOpacity)
+      svg_piechart.selectAll(".pieSlice").style("opacity", highOpacity_piechart)
+      svg_piechart.selectAll(".pieText").style("opacity", highOpacity_piechart)
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   /* --- Brush + Line Clip DEFINITIONS --- */
@@ -2317,29 +2310,42 @@ function createViz(error, ...args) {
     }
   }
 
-
-
   /* --- Pie Chart FUNCTIONS --- */
 
   // Color settings
-  const highOpacity_pichart = 0.7
+  const highOpacity_piechart = 0.7
 
   // What to do when one group is hovered
   const mouseover_piechart = function(d){
     if (currentMode==="byTime"){
-      console.log(d)
+      // reduce opacity of all groups
+      svg_line_timeLeft.selectAll(".area_timeLeft_timeHour").style("opacity", lowOpacity)
+      svg_line_viewers.selectAll(".area_viewers_timeHour").style("opacity", lowOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", lowOpacity)
+      svg.selectAll(".timeHour_legend_colors").style("opacity", lowOpacity)
+      svg.selectAll(".timeHour_legend_text").style("opacity", lowOpacity)
       svg_piechart.selectAll(".pieSlice").style("opacity", lowOpacity)
       svg_piechart.selectAll(".pieText").style("opacity", lowOpacity)
       // expect the one that is hovered
-      svg_piechart.selectAll(".pieSlice-" + d.index).style("opacity", highOpacity_pichart)
-      svg_piechart.selectAll(".pieText-" + d.index).style("opacity", highOpacity_pichart)
+      svg_line_timeLeft.selectAll(".time" + d.index).style("opacity", highOpacity)
+      svg_line_viewers.selectAll(".time" + d.index).style("opacity", highOpacity)
+      svg_line_subFollows.selectAll(".time" + d.index).style("opacity", highOpacity)
+      svg.selectAll(".legendColor-" + d.index).style("opacity", highOpacity)
+      svg.selectAll(".legendText-" + d.index).style("opacity", highOpacity)
+      svg_piechart.selectAll(".pieSlice-" + d.index).style("opacity", highOpacity_piechart)
+      svg_piechart.selectAll(".pieText-" + d.index).style("opacity", highOpacity_piechart)
     }
   }
 
   const mouseleave_piechart = function(d){
     if (currentMode==="byTime"){
-      svg_piechart.selectAll(".pieSlice").style("opacity", highOpacity_pichart)
-      svg_piechart.selectAll(".pieText").style("opacity", highOpacity_pichart)
+      svg_line_timeLeft.selectAll(".area_timeLeft_timeHour").style("opacity", highOpacity)
+      svg_line_viewers.selectAll(".area_viewers_timeHour").style("opacity", highOpacity)
+      svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", highOpacity)
+      svg.selectAll(".timeHour_legend_colors").style("opacity", highOpacity)
+      svg.selectAll(".timeHour_legend_text").style("opacity", highOpacity)
+      svg_piechart.selectAll(".pieSlice").style("opacity", highOpacity_piechart)
+      svg_piechart.selectAll(".pieText").style("opacity", highOpacity_piechart)
     }
   }
 
