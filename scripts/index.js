@@ -1,5 +1,5 @@
 // video embed settings
-var parentDomain = "6859-sp21.github.io" // deploy: 6859-sp21.github.io  OR   sabinach.github.io
+var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io  OR   sabinach.github.io
                                // test: 127.0.0.1
 
 console.log("parentDomain: ", parentDomain);
@@ -2045,7 +2045,7 @@ function createViz(error, ...args) {
       "<b>What are these visualizations?</b>" 
       +
       "<div id='help-tooltip' style='display:inline-block;margin-left:6px;'>\
-          <abbr><i class='fa fa-question-circle'></i>\
+          <abbr>[?] <!--<i class='fa fa-question-circle'></i>-->\
             <span>\
               <b>Subathon Timer</b>\
               <br>\
