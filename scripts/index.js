@@ -1289,8 +1289,6 @@ function createViz(error, ...args) {
   var prevTimeStreamedStart = 0
   var prevActivityList = []
 
-  // viewers_zip_withinBounds (d.timeStreamed, d.datetime, d.game, d.numViewers)
-              //timeStreamed: 0, timeLeft: 0.5833333333333334, subsGained: 0, subathonTimer
   timeLeftJson_zip.forEach((d, i) => {
     const viewers = viewers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
     const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
@@ -1329,55 +1327,6 @@ function createViz(error, ...args) {
     }
   
   })
-
-
-  /*
-  // viewers_zip_withinBounds (d.timeStreamed, d.datetime, d.game, d.numViewers)
-  viewers_zip.forEach((d, i) => {
-    if(d.game!==null || d.numViewers!==null){
-      const timeLeft = timeLeftJson_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
-      const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
-      prevActivityList.push({
-        timeStreamed: d.timeStreamed,
-        datetime: d.datetime,
-        game: d.game,
-        timeLeft: timeLeft ? timeLeft.timeLeft : null,
-        numViewers: d.numViewers,
-        numFollowers: followers.numFollowers,
-        gainedFollowers: followers.gainedFollowers
-      })
-      if (d.game !== prevActivity){
-        activityList_keys.push(cleanString(viewers_zip[i-1].game) + "-" + viewers_zip[i-2].timeStreamed) // ie. SuperMarioOdyssey-1
-        activityList_data.push({
-          data: prevActivityList,
-          game: cleanString(viewers_zip[i-1].game),
-          timeStreamed: viewers_zip[i-2].timeStreamed
-        })
-        // reset items
-        prevActivity = d.game
-        prevActivityList = [{
-          timeStreamed: d.timeStreamed,
-          datetime: d.datetime,
-          game: d.game,
-          timeLeft: timeLeft ? timeLeft.timeLeft : null,
-          numViewers: d.numViewers,
-          numFollowers: followers.numFollowers,
-          gainedFollowers: followers.gainedFollowers
-        }]
-      }
-      if(i===viewers_zip.length-1){
-        const lastItem = activityList_data[activityList_data.length-1]
-        const lastTimeStreamed = lastItem.data[lastItem.data.length-1].timeStreamed
-        activityList_keys.push(cleanString(prevActivity) + "-" + lastTimeStreamed) 
-        activityList_data.push({
-          data: prevActivityList,
-          game: cleanString(prevActivity),
-          timeStreamed: lastTimeStreamed
-        })
-      }
-    }
-  })
-  */
 
   console.log("activityList_keys: ", activityList_keys)
   console.log("activityList_data: ", activityList_data)
@@ -1472,6 +1421,7 @@ function createViz(error, ...args) {
   var prevSleepAwake = ludwigModcastJson.sleepAwake[0]
   var prevSleepAwakeList = []
 
+
   timeLeftJson_zip.forEach((d, i) => {
     const viewers = viewers_zip.filter(obj => obj.timeStreamed === Math.floor(d.timeStreamed))[0] // viewers only has time by the hour
     const followers = followers_zip.filter(obj => obj.timeStreamed === Math.floor(d.timeStreamed))[0] // followers only has time by the hour
@@ -1490,9 +1440,11 @@ function createViz(error, ...args) {
       const j = ludwigModcastJson.timeStreamed.indexOf(d.timeStreamed)
       const currentSleepAwake = ludwigModcastJson.sleepAwake[j]
 
-      if(prevSleepAwake!==currentSleepAwake){
+      if(prevSleepAwake!==currentSleepAwake && d.timeStreamed%1===0){
 
         sleepAwakeList_keys.push(ludwigModcastJson.sleepAwake[j-1] + "-" + ludwigModcastJson.timeStreamed[j-1]) // ie. awake-0
+        //hack modify last element
+        prevSleepAwakeList[prevSleepAwakeList.length-1].sleepAwake = currentSleepAwake
         sleepAwakeList_data.push({
           data: prevSleepAwakeList,
           sleepAwake: ludwigModcastJson.sleepAwake[j-1],
@@ -1843,7 +1795,7 @@ function createViz(error, ...args) {
   // Add sleepAwake area (viewers)
   sleepAwakeList_data.forEach(item => {
     svg_line_viewers.append("path")
-      .datum(item.data)
+      .datum(item.data.filter(d => d.timeStreamed % 1 == 0))
       .attr("class", d => "area_viewers_sleepAwake " + item.sleepAwake + " " + item.sleepAwake + "-" + item.timeStreamed)
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
@@ -1855,7 +1807,7 @@ function createViz(error, ...args) {
   // Add timeHour area (viewers)
   timeHourList_data.forEach(item => {
     svg_line_viewers.append("path")
-      .datum(item.data)
+      .datum(item.data.filter(d => d.timeStreamed % 1 == 0))
       .attr("class", d => "area_viewers_timeHour " + "time" + item.timeHour + " " + "time" + item.timeHour + "-" + item.timeStreamed)
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
@@ -1917,7 +1869,7 @@ function createViz(error, ...args) {
   // Add sleepAwake area (subFollows)
   sleepAwakeList_data.forEach(item => {
     svg_line_subFollows.append("path")
-      .datum(item.data)
+      .datum(item.data.filter(d => d.timeStreamed % 1 == 0))
       .attr("class", d => "area_subFollows_sleepAwake " + item.sleepAwake + " " + item.sleepAwake + "-" + item.timeStreamed)
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
@@ -1929,7 +1881,7 @@ function createViz(error, ...args) {
   // Add timeHour area (subFollows)
   timeHourList_data.forEach(item => {
     svg_line_subFollows.append("path")
-      .datum(item.data)
+      .datum(item.data.filter(d => d.timeStreamed % 1 == 0))
       .attr("class", d => "area_subFollows_timeHour " + "time" + item.timeHour + " " + "time" + item.timeHour + "-" + item.timeStreamed)
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
