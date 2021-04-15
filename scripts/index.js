@@ -598,7 +598,7 @@ function createViz(error, ...args) {
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 13) // +lower
-      .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${d.data.sleepAwake}</tspan>`)
+      .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${sleepAwakeToLudwigModcast[d.data.sleepAwake]}</tspan>`)
       .style("font-size", "8px")
       .style("fill", d => d.data.sleepAwake==="sleep" ? "white" : "black")
       .style("display", currentMode==="byLudwigModcast" ? null : "none")
@@ -783,7 +783,7 @@ function createViz(error, ...args) {
         .attr("x", 640 + legendDotSize*1.2)
         .attr("y", function(d,i){ return -38 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorSleepAwake[d]})
-        .text(function(d){ return d})
+        .text(function(d){ return sleepAwakeToLudwigModcast[d]})
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
         .style("display", currentMode==="byLudwigModcast" ? null : "none")
@@ -1252,7 +1252,7 @@ function createViz(error, ...args) {
       var xTransformed_timeLeft = xScale_timeLeft(selectedData_timeLeft.timeStreamed),
           yTransformed_timeLeft = yScale_timeLeft(selectedData_timeLeft.timeLeft)
       focus_datetime
-        .html(d3.timeFormat("%B %d, %Y @ %I:%M %p")(hoursToDatetime(selectedData_timeLeft.timeStreamed)) + " EST") //" (" + selectedData_timeLeft.timeStreamed + " hrs)"
+        .html(d3.timeFormat("%a, %b %d, %Y @ %I:%M %p")(hoursToDatetime(selectedData_timeLeft.timeStreamed)) + " EST") //" (" + selectedData_timeLeft.timeStreamed + " hrs)"
         .attr("x", xTransformed_timeLeft)
         .attr("y", -30)
         .style("font-weight", "bold")
@@ -1278,7 +1278,7 @@ function createViz(error, ...args) {
           if(currentMode==="byActivity" && selectedData_viewers) 
             return selectedData_viewers.game
           else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
-            return ludwigModcastJson_zip[i_timeLeft].sleepAwake
+            return sleepAwakeToLudwigModcast[ludwigModcastJson_zip[i_timeLeft].sleepAwake]
           else if (currentMode==="byTime" && selectedData_timeLeft)
             return timeHourToText[Math.floor(selectedData_timeLeft.timeStreamed + 17)%24]
           else
@@ -1329,7 +1329,7 @@ function createViz(error, ...args) {
           if(currentMode==="byActivity" && selectedData_viewers) 
             return selectedData_viewers.game
           else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
-            return ludwigModcastJson_zip[i_timeLeft].sleepAwake
+            return sleepAwakeToLudwigModcast[ludwigModcastJson_zip[i_timeLeft].sleepAwake]
           else if (currentMode==="byTime" && selectedData_timeLeft)
             return timeHourToText[Math.floor(selectedData_timeLeft.timeStreamed + 17)%24]
           else
@@ -1378,7 +1378,7 @@ function createViz(error, ...args) {
           if(currentMode==="byActivity" && selectedData_viewers) 
             return selectedData_viewers.game
           else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
-            return ludwigModcastJson_zip[i_timeLeft].sleepAwake
+            return sleepAwakeToLudwigModcast[ludwigModcastJson_zip[i_timeLeft].sleepAwake]
           else if (currentMode==="byTime" && selectedData_timeLeft)
             return timeHourToText[Math.floor(selectedData_timeLeft.timeStreamed + 17)%24]
           else
@@ -1568,6 +1568,11 @@ function createViz(error, ...args) {
   /* ----- */
 
   const sleepAwakeList_unique_original = ["sleep", "awake", "away"] // hardcoded
+  const sleepAwakeToLudwigModcast = {
+    "sleep": "Modcast",
+    "awake": "Ludwig",
+    "away": "Away"
+  }
   console.log("sleepAwakeList_unique_original: ", sleepAwakeList_unique_original)
 
   /* ----- */
@@ -2454,35 +2459,6 @@ function createViz(error, ...args) {
       .style("display", currentMode==="byTime" ? null : "none")
       .on("mouseover", mouseover_piechart)
       .on("mouseleave", mouseleave_piechart)
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   /* --------------------------------------------- */
   // RADIO TOGGLE
