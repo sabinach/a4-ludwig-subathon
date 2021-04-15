@@ -2162,39 +2162,6 @@ function createViz(error, ...args) {
       "<div class='info_block'>"
       +
       "<b>What are these visualizations?</b>" 
-      +
-      "<div id='help-tooltip' style='display:inline-block;margin-left:6px;'>\
-          <abbr>[?] <!--<i class='fa fa-question-circle'></i>-->\
-            <span>\
-              <b>Subathon Timer</b>\
-              <br>\
-              Amount of time left in stream (hours:minutes :seconds). Each new subscriber adds 10 seconds to the subathon timer.\
-              <br><br>\
-              <b>Reset Zoom</b>\
-              <br>\
-              Zooms out the graphs to show all the data. The same command can be applied by double-clicking the graphs when zoomed in.\
-              <br><br>\
-              ---\
-              <br><br>\
-              <b>By Activity</b>\
-              <br>\
-              Game category on Twitch specified during the stream.\
-              <br><br>\
-              <b>By SleepAwake</b>\
-              <br>\
-              Shows when Ludwig is awake, asleep, or away. Modcast occurs when Ludwig is asleep, and Slime takes over when Ludwig is away.\
-              <br><br>\
-              <b>By Time</b>\
-              <br>\
-              Colors the graph according to the time of day. All times are calculated in EST.\
-              <br><br>\
-              <b>By Events</b>\
-              <br>\
-              Interesting mini-clips of events that occurred during the stream. Events can help explain sub spikes or other phenomeons that happened during this time.\
-            </span>\
-          </abbr>\
-        </div>\
-      "
       + 
       "<br><br>"
       +
@@ -2233,7 +2200,7 @@ function createViz(error, ...args) {
 
   // Show tooltip (show the first highlight event)
   events_block
-    .html("<b>" + "Event Highlight" + "</b><br>" + formatDatetime(highlights_zip[2].datetime) + " EST" + " (<a href='" + highlights_zip[2].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[2].type, highlights_zip[2].embed, parentDomain) + "<br>") 
+    .html("<div class='events_block'><b>" + "Event Highlight" + "</b><br>" + formatDatetime(highlights_zip[2].datetime) + " EST" + " (<a href='" + highlights_zip[2].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[2].type, highlights_zip[2].embed, parentDomain) + "<br></div>") 
     .style("display", currentMode==="byHighlights" ? null : "none")
 
   // Add nodes (event highlights)
@@ -2294,7 +2261,7 @@ function createViz(error, ...args) {
 
       // update tooltip
       events_block
-        .html("<b>" + "Event Highlight" + "</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br>") 
+        .html("<div class='events_block'><b>" + "Event Highlight" + "</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br></div>") 
     }
   }
 
