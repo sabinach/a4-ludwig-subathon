@@ -668,7 +668,7 @@ function createViz(error, ...args) {
 
     // legend settings
 
-    const legendDotSize = 10
+    const legendDotSize = 8
     const svg_legend = svg.append("g")
 
     // color 
@@ -684,7 +684,7 @@ function createViz(error, ...args) {
       .append("rect")
         .attr("class", d => "activity_legend_colors legendColor-" + d)
         .attr("x", 640)
-        .attr("y", function(d,i){ return -55 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorDict[d]})
@@ -705,7 +705,7 @@ function createViz(error, ...args) {
       .append("text")
         .attr("class", d => "activity_legend_text legendText-" + d)
         .attr("x", 640 + legendDotSize*1.2)
-        .attr("y", function(d,i){ return -55 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorDict[d]})
         .text(function(d){ return d})
         .attr("text-anchor", "left")
@@ -759,7 +759,7 @@ function createViz(error, ...args) {
       .append("rect")
         .attr("class", d => "sleepAwake_legend_colors legendColor-" + d)
         .attr("x", 640)
-        .attr("y", function(d,i){ return -38 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorSleepAwake[d]})
@@ -780,7 +780,7 @@ function createViz(error, ...args) {
       .append("text")
         .attr("class", d => "sleepAwake_legend_text legendText-" + d)
         .attr("x", 640 + legendDotSize*1.2)
-        .attr("y", function(d,i){ return -38 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("y", function(d,i){ return -30 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorSleepAwake[d]})
         .text(function(d){ return sleepAwakeToLudwigModcast[d]})
         .attr("text-anchor", "left")
@@ -834,7 +834,7 @@ function createViz(error, ...args) {
       .enter()
       .append("rect")
         .attr("class", d => "timeHour_legend_colors legendColor-" + d)
-        .attr("x", 640)
+        .attr("x", 680)
         .attr("y", function(d,i){ return -55 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
@@ -855,7 +855,7 @@ function createViz(error, ...args) {
       .enter()
       .append("text")
         .attr("class", d => "timeHour_legend_text legendText-" + d)
-        .attr("x", 640 + legendDotSize*1.2)
+        .attr("x", 680 + legendDotSize*1.2)
         .attr("y", function(d,i){ return -55 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorTimeHour[d]})
         .text(function(d){ return timeHourToText[d]})
