@@ -46,10 +46,10 @@ var svg_height = 750;
 var margin_timeLeft = { top: 40, right: 160, bottom: 450, left: 60 };
 var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 
-var margin_viewers = { top: 360, right: 160, bottom: 250, left: 60 };
+var margin_viewers = { top: 335, right: 160, bottom: 260, left: 60 };
 var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
 
-var margin_subFollows = { top: 563, right: 160, bottom: 50, left: 60 };
+var margin_subFollows = { top: 545, right: 160, bottom: 50, left: 60 };
 var height_subFollows = svg_height - margin_subFollows.top - margin_subFollows.bottom;
 
 var margin_text = 20; //global
@@ -1207,7 +1207,7 @@ function createViz(error, ...args) {
         .attr("cy", yTransformed_timeLeft)
         .style("opacity", 1)
       focus_text_timeLeft
-        .html(selectedData_timeLeft.subathonTimer + " timer")
+        .html(selectedData_timeLeft.subathonTimer)
         .attr("x", xTransformed_timeLeft + 5)
         .attr("y", yTransformed_timeLeft - 25)
         .style("opacity", 1)
@@ -2165,7 +2165,7 @@ function createViz(error, ...args) {
       + 
       "<br><br>"
       +
-      "On March 14, 2021, Twitch streamer, <a href='https://www.twitch.tv/ludwig' target='_blank'>Ludwig Ahgren</a>, started a subathon for which every new subscriber would add 10 seconds to the length of his stream. Due to overwhelming support from the Twitch community, the stream ended up lasting 31 days, averaging 40k viewers, gaining over 970k new followers and 250k new subscribers, and enabling Ludwig to ultimately surpass <a href='https://twitchtracker.com/subscribers/all-time' target='_blank'>Ninja's record</a> for \"Most Concurrent Twitch Subscribers\" by amassing over 280k active subscribers at peak. I created an interactive visualization for viewers interested in learning more about activity statistics and stream highlights during this record-breaking event." 
+      "On March 14, 2021, Twitch streamer, <a href='https://www.twitch.tv/ludwig' target='_blank'>Ludwig Ahgren</a>, started a subathon for which every new subscriber would add 10 seconds to the length of his stream. Due to overwhelming support from the Twitch community, the stream ended up lasting 31 days. During this time, Ludwig gained over 970k new followers and 250k new subscribers, enabling him to ultimately surpass <a href='https://twitchtracker.com/subscribers/all-time' target='_blank'>Ninja's record</a> for \"Most Concurrent Twitch Subscribers\" by hitting 280k+ subscribers at peak. I created an interactive visualization for viewers interested in learning more about activity statistics and stream highlights during this record-breaking event." 
       + 
       "<br><br>"
       +
