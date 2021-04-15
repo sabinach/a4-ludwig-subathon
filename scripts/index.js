@@ -1255,6 +1255,7 @@ function createViz(error, ...args) {
         .html(d3.timeFormat("%B %d, %Y @ %I:%M %p")(hoursToDatetime(selectedData_timeLeft.timeStreamed)) + " EST") //" (" + selectedData_timeLeft.timeStreamed + " hrs)"
         .attr("x", xTransformed_timeLeft)
         .attr("y", -30)
+        .style("font-weight", "bold")
         .style("text-anchor", "middle")
         .style("opacity", 1)
       focus_dayHour
