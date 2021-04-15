@@ -17,27 +17,29 @@ const scrapeSpreadsheet = () => {
 
             let evaluated = await page.evaluate(() => {
 				
-				const headers = ['datetime', 'type', 'title', 'url', 'embed', 'description'];
-				const types = ['twitch clip', 'youtube', 'twitch'];
+				const headers = ['datetime', 'timeStreamed', 'type', 'title', 'url', 'embed'];
+				const types = ['twitch clip', 'youtube'];
 
+                // hardcoded dom element ids
                 const datetimeDomId = "td.s0";
-				const typeDomId = "td.s0"; 			// hardcoded dom element id
-				const titleDomId = "td.s1"; 		// hardcoded dom element id
-				const descDomId = "td.s4"; 			// hardcoded dom element id
+                const timeStreamedDomId = "td.s0";
+				const typeDomId = "td.s0"; 			
+				const titleDomId = "td.s1"; 		
+			
                 const urlDomId = "a"
                 const embedDomId = "a"
 				
                 const datetimeDom = document.querySelectorAll(datetimeDomId);
+                const timeStreamedDom = document.querySelectorAll(timeStreamedDomId); 
 				const typeDom = document.querySelectorAll(typeDomId);  
                 const titleDom = document.querySelectorAll(titleDomId);      
-				const descDom = document.querySelectorAll(descDomId); 
                 const urlDom = document.querySelectorAll(urlDomId);
                 const embedDom = document.querySelectorAll(embedDomId);
 				
                 const datetimeList = [];
+                const timeStreamedList = []; 
 				const typeList = [];
                 const titleList = []; 
-				const descList = []; 
                 const urlList = []; 
                 const embedList = []; 
 
@@ -45,6 +47,13 @@ const scrapeSpreadsheet = () => {
                     const datetime = domItem.innerText;
                     datetime!=='' && datetime.includes(":")
                         ? datetimeList.push(datetime)
+                        : null;
+                });
+
+                timeStreamedDom.forEach((domItem) => {
+                    const text = domItem.innerText;
+                    text!=='' && !text.includes(":") && !types.includes(text) && !headers.includes(text)
+                        ? timeStreamedList.push(text)
                         : null;
                 });
 				
@@ -59,13 +68,6 @@ const scrapeSpreadsheet = () => {
                     const title = domItem.innerText;
                     title!=='' && !headers.includes(title)
                         ? titleList.push(title)
-                        : null;
-                });
-				
-				descDom.forEach((domItem) => {
-                    const desc = domItem.innerText;
-                    desc!==''
-                        ? descList.push(desc)
                         : null;
                 });
 
@@ -85,9 +87,9 @@ const scrapeSpreadsheet = () => {
 
                 const data = {
                     datetime: datetimeList,
+                    timeStreamed: timeStreamedList,
 					type: typeList,
                     title: titleList,
-					desc: descList,
 					url: urlList,
                     embed: embedList
                 };

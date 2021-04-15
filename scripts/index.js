@@ -43,13 +43,13 @@ var svg_width = 850;
 var svg_height = 750;
 
 // set the dimensions and margins
-var margin_timeLeft = { top: 40, right: 160, bottom: 450, left: 60 };
+var margin_timeLeft = { top: 60, right: 160, bottom: 450, left: 60 };
 var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 
-var margin_viewers = { top: 335, right: 160, bottom: 260, left: 60 };
+var margin_viewers = { top: 320, right: 160, bottom: 275, left: 60 };
 var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
 
-var margin_subFollows = { top: 545, right: 160, bottom: 50, left: 60 };
+var margin_subFollows = { top: 530, right: 160, bottom: 70, left: 60 };
 var height_subFollows = svg_height - margin_subFollows.top - margin_subFollows.bottom;
 
 var margin_text = 20; //global
@@ -684,7 +684,7 @@ function createViz(error, ...args) {
       .append("rect")
         .attr("class", d => "activity_legend_colors legendColor-" + d)
         .attr("x", 640)
-        .attr("y", function(d,i){ return -38 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("y", function(d,i){ return -55 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorDict[d]})
@@ -705,7 +705,7 @@ function createViz(error, ...args) {
       .append("text")
         .attr("class", d => "activity_legend_text legendText-" + d)
         .attr("x", 640 + legendDotSize*1.2)
-        .attr("y", function(d,i){ return -38 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("y", function(d,i){ return -55 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorDict[d]})
         .text(function(d){ return d})
         .attr("text-anchor", "left")
@@ -835,7 +835,7 @@ function createViz(error, ...args) {
       .append("rect")
         .attr("class", d => "timeHour_legend_colors legendColor-" + d)
         .attr("x", 640)
-        .attr("y", function(d,i){ return -35 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("y", function(d,i){ return -55 + i*(legendDotSize+5)}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("width", legendDotSize)
         .attr("height", legendDotSize)
         .style("fill", function(d){ return colorTimeHour[d]})
@@ -856,7 +856,7 @@ function createViz(error, ...args) {
       .append("text")
         .attr("class", d => "timeHour_legend_text legendText-" + d)
         .attr("x", 640 + legendDotSize*1.2)
-        .attr("y", function(d,i){ return -35 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("y", function(d,i){ return -55 + i*(legendDotSize+5) + (legendDotSize/2)}) // 100 is where the first dot appears. 25 is the distance between dots
         .style("fill", function(d){ return colorTimeHour[d]})
         .text(function(d){ return timeHourToText[d]})
         .attr("text-anchor", "left")
@@ -928,23 +928,23 @@ function createViz(error, ...args) {
   // HIGHLIGHTS
 
   const datetime_highlights = highlightsJson.datetime;
+  const timeStreamed_highlights = highlightsJson.timeStreamed;
   const type_highlights = highlightsJson.type; 
   const title_highlights = highlightsJson.title; 
-  const desc_highlights = highlightsJson.desc;
   const url_highlights = highlightsJson.url;
   const embed_highlights = highlightsJson.embed;
 
   //console.log("datetime_highlights: ", datetime_highlights)
+  //console.log("timeStreamed_highlights: ", timeStreamed_highlights)
   //console.log("type_highlights: ", type_highlights)
   //console.log("title_highlights: ", title_highlights)
-  //console.log("desc_highlights: ", desc_highlights)
   //console.log("url_highlights: ", url_highlights)
   //console.log("embed_highlights: ", embed_highlights)
 
   // handle error: mismatch xy length
   if (datetime_highlights.length !== type_highlights.length || 
+        datetime_highlights.length !== timeStreamed_highlights.length || 
         datetime_highlights.length !== title_highlights.length || 
-        datetime_highlights.length !== desc_highlights.length || 
         datetime_highlights.length !== url_highlights.length || 
         datetime_highlights.length !== embed_highlights.length ) 
     throw error;
@@ -957,7 +957,6 @@ function createViz(error, ...args) {
         datetime: parseDatetime(datetime), 
         type: type_highlights[index],
         title: title_highlights[index],
-        desc: desc_highlights[index],
         url: url_highlights[index],
         embed: embed_highlights[index]
       }
@@ -973,7 +972,6 @@ function createViz(error, ...args) {
         datetime: highlight.datetime,
         type: highlight.type,
         title: highlight.title,
-        desc: highlight.desc,
         url: highlight.url,
         embed: highlight.embed
       }
@@ -1062,7 +1060,7 @@ function createViz(error, ...args) {
   // Add x-axis label (timeLeft)
   svg.append("text")             
     .attr("transform",
-          "translate(" + width + " ," + (height_timeLeft + margin_timeLeft.top - 10) + ")")
+          "translate(" + width + " ," + (height_timeLeft + margin_timeLeft.top - 30) + ")")
     .style("text-anchor", "middle")
     .text("# hours streamed");
 
@@ -1258,14 +1256,14 @@ function createViz(error, ...args) {
       focus_datetime
         .html(d3.timeFormat("%a, %b %d, %Y @ %I:%M %p")(hoursToDatetime(selectedData_timeLeft.timeStreamed)) + " EST") //" (" + selectedData_timeLeft.timeStreamed + " hrs)"
         .attr("x", xTransformed_timeLeft)
-        .attr("y", -30)
+        .attr("y", -50)
         .style("font-weight", "bold")
         .style("text-anchor", "middle")
         .style("opacity", 1)
       focus_dayHour
         .html("Day " + (Math.floor(selectedData_timeLeft.timeStreamed/24)+1) + " (" + selectedData_timeLeft.timeStreamed + " hrs)") 
         .attr("x", xTransformed_timeLeft)
-        .attr("y", -15)
+        .attr("y", -35)
         .style("text-anchor", "middle")
         .style("opacity", 1)
       focus_circle_timeLeft
@@ -1289,7 +1287,7 @@ function createViz(error, ...args) {
             return ""
         })
         .attr("x", xTransformed_timeLeft + 15)
-        .attr("y", yTransformed_timeLeft - 10)
+        .attr("y", yTransformed_timeLeft - 12)
         .style("fill", d => {
           if(currentMode==="byActivity" && selectedData_viewers) 
             return viewers_zip[Math.floor(i_timeLeft/2)].game ? colorDict[cleanString(viewers_zip[Math.floor(i_timeLeft/2)].game)] : null
@@ -2279,13 +2277,17 @@ function createViz(error, ...args) {
           </ul> \
         </p> \
         <p> \
-          Want to add an event highlight? Submit the video link <a href='https://forms.gle/w1TgFZHr8MpF9Ti9A' target='_blank'>here</a>! \
+          Want to add an event highlight? Submit a video link <a href='https://forms.gle/w1TgFZHr8MpF9Ti9A' target='_blank'>here</a>! \
         </p>"
       +
       "</div>"
       ) 
 
   /* --- Events Tooltip DEFINITIONS --- */
+
+  // initial event video
+  const initialEventIndex = 5
+  const initialEvent = highlights_zip[initialEventIndex]
 
   // Create tooltip
   var events_block = d3.select("#events-viz")
@@ -2300,7 +2302,7 @@ function createViz(error, ...args) {
 
   // Show tooltip (show the first highlight event)
   events_block
-    .html("<div class='events_block'><b>" + "Event Highlight" + "</b><br>" + formatDatetime(highlights_zip[2].datetime) + " EST" + " (<a href='" + highlights_zip[2].url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(highlights_zip[2].type, highlights_zip[2].embed, parentDomain) + "<br></div>") 
+    .html("<div class='events_block'><b>" + "Event Highlight" + "</b><br>" + formatDatetime(initialEvent.datetime) + " EST" + " (<a href='" + initialEvent.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(initialEvent.type, initialEvent.embed, parentDomain) + "<br></div>") 
     .style("display", currentMode==="byHighlights" ? null : "none")
 
   // Add nodes (event highlights)
@@ -2311,22 +2313,22 @@ function createViz(error, ...args) {
     .attr("id", d => "dot-events-" + d.id)
     .attr("cx", d => xScale_timeLeft(d.timeStreamed))
     .attr("cy", d =>  yScale_timeLeft(d.timeLeft))
-    .attr("r", (d, i) => 6)
+    .attr("r", (d, i) => 4)
     .style("fill", "#fcb0b5")
     .style("display", currentMode==="byHighlights" ? null : "none")
     .on("mouseover", mouseover_events)
 
   // add color to first event example
-  svg_line_timeLeft.selectAll("#dot-events-2") // highlights_zip[2]
+  svg_line_timeLeft.selectAll("#dot-events-" + initialEventIndex)
     .style("fill", "#d30715")
 
   // add text to first event example
   svg_line_timeLeft.selectAll(".tooltip-events")
-    .data([highlights_zip[2]])
+    .data([initialEvent])
     .enter()
       .append("text")
       .attr("class", "tooltip-events")
-      .text(highlights_zip[2].title)
+      .text(initialEvent.title)
       .attr("x", d => xScale_timeLeft(d.timeStreamed))
       .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
       .style("display", currentMode==="byHighlights" ? null : "none")
@@ -2336,7 +2338,7 @@ function createViz(error, ...args) {
   // create embed html
   function getHtmlEmbed(type, embed, parentDomain){
     var htmlEmbed;
-    if (type=="twitch"){
+    if (type=="twitch clip"){
       htmlEmbed = "<iframe src='" + embed + parentDomain + "' frameborder='0' allowfullscreen='true' scrolling='no' height='300' width='400'></iframe>"
     }else if(type=="youtube"){
       htmlEmbed = "<iframe src='" + embed + "' frameborder='0' allowfullscreen='true' scrolling='no' height='300' width='400'></iframe>"
