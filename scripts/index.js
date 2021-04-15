@@ -2333,7 +2333,52 @@ function createViz(error, ...args) {
       .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
       .style("display", currentMode==="byHighlights" ? null : "none")
 
-  /* --- Highlights Tooltip FUNCTIONS --- */
+  /* --- Events Legend --- */
+
+  // legend settings
+
+  const legendDotSize_events = 6
+  const svg_legend_events = svg.append("g")
+  const eventsList_unique = ["Event Highlight"]
+
+  // color 
+
+  const legendColor_events = svg_legend_events.selectAll(".events_legend_colors").data(eventsList_unique)
+
+  legendColor_events
+    .exit()
+    .remove()
+
+  legendColor_events
+    .enter()
+    .append("circle")
+      .attr("class", d => "events_legend_colors")
+      .attr("cx", 640)
+      .attr("cy", 0) 
+      .attr("r", legendDotSize_events)
+      .style("fill", "#fcb0b5")
+      .style("display", currentMode==="byHighlights" ? null : "none")
+  // text
+
+  const legendText_events = svg_legend_events.selectAll(".events_legend_text").data(eventsList_unique)
+
+  legendText_events
+    .exit()
+    .remove()
+
+  legendText_events
+    .enter()
+    .append("text")
+      .attr("class", d => "events_legend_text")
+      .attr("x", 640 + legendDotSize_events*1.5)
+      .attr("y", 0) // 100 is where the first dot appears. 25 is the distance between dots
+      .style("fill", "#fcb0b5")
+      .text(function(d){ return d})
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle")
+      .style("display", currentMode==="byHighlights" ? null : "none")
+
+  /* --- Events Tooltip FUNCTIONS --- */
 
   // create embed html
   function getHtmlEmbed(type, embed, parentDomain){
@@ -2483,6 +2528,9 @@ function createViz(error, ...args) {
       d3.selectAll(".tooltip-events").style("display","none");
       events_block.style("display","none");
 
+      d3.selectAll(".events_legend_colors").style("display","none");
+      d3.selectAll(".events_legend_text").style("display","none");
+
       // unhide treemap
       d3.selectAll("#treemap-viz").style("display",null);
     }
@@ -2546,6 +2594,9 @@ function createViz(error, ...args) {
       d3.selectAll(".dot-events").style("display",null);
       d3.selectAll(".tooltip-events").style("display",null);
       events_block.style("display",null);
+
+      d3.selectAll(".events_legend_colors").style("display",null);
+      d3.selectAll(".events_legend_text").style("display",null);
 
       // hide treemap
       d3.selectAll("#treemap-viz").style("display","none");
