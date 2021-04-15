@@ -134,11 +134,14 @@ function createViz(error, ...args) {
   // TIME LEFT / SUBS GAINED
 
   // reformat xy data (timeLeftJson)
-  const timeStreamed_hours = [...timeLeftJson.timeStreamed, ...timeLeftJson.timeStreamed_2].sort((a,b) => a-b)
-  const timeLeft_hours = timeLeftJson.timeLeft.map(d => parseTimeLeft(d));
+  const timeStreamed_hours = [...[...timeLeftJson.timeStreamed, ...timeLeftJson.timeStreamed_2].sort((a,b) => a-b), ...[ ...Array(17).keys() ].map( i => 719 + i*0.5)] // 719-727 manually added
+  const timeLeft_hours = [...timeLeftJson.timeLeft.map(d => parseTimeLeft(d)), ...[ ...Array(17).keys() ].map( i => i*0.5).sort().reverse()] // 8-0 manually added
+  const subathonTimer_manual = []
 
+  console.log("length: ", timeStreamed_hours.length)
   console.log("timeStreamed_hours: ", timeStreamed_hours)
   console.log("timeLeft_hours: ", timeLeft_hours)
+  console.log("subathonTimer_manual: ", subathonTimer_manual)
 
   // handle error: mismatch xy length
   if (timeStreamed_hours.length !== timeLeft_hours.length) throw error;
@@ -148,7 +151,7 @@ function createViz(error, ...args) {
       timeStreamed: timeStreamed, 
       timeLeft: timeLeft_hours[index],
       subsGained: timeLeftJson.subsGained[index],
-      subathonTimer: timeLeftJson.timeLeft[index]
+      subathonTimer: index<=1411 ? timeLeftJson.timeLeft[index] : Math.floor(timeLeft_hours[index]) + (timeLeft_hours[index] % 1 != 0 ? ":30" : ":00" ) + ":00"
     }
   });
 

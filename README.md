@@ -30,8 +30,8 @@ Current Data Extracted from baddog86's spreadsheet (manually updated):
 - END: 694.5 hr (missing 681-693.5hr due to deleted VOD)
 
 Current Data Extracted from SullyGnome (manually updated):
-- START: March 13, 2021, 19:00 EST
-- END: April 13, 2021, 02:00 EST
+- viewers: 2021-03-11 16:00 EST ... 2021-04-14 00:00 EST
+- followers: 2021-03-09 19:00 EST ... 2021-04-14 18:00 EST
 
 Dataset Credits To:
 - [baddog86, smartax1111, itzdanbarz, and ogsheeper](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#)
@@ -71,6 +71,7 @@ node scrapeHighlightsSheet.js
 - before scraping, make sure BOTH spreadsheets' COLUMN DIVS are still correct bc it's HARDCODED in the script, and constantly changing in real-time since the subathon is ongoing
 	* for baddog's spreadsheet, specifically use the "Hours Streamed" and "Subathon Timer" column from the "Calculations" tab
 - name equivalents for legacy code: highlights = events; ludwigModcast = sleepAwake
+- hours were manually added from hour 719-727 (1-9pm PST inclusive) with subathon timer linearly decreasing in time from 8-0 hours (inclusive) because at that point the subathon timer was just a countdown since all subs went directly to charity, instead of adding to the timer.
 
 -----------------------------
 
