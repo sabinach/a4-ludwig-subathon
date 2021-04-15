@@ -1237,7 +1237,7 @@ function createViz(error, ...args) {
         .style("opacity", 1)
       focus_vertLine_timeLeft
         .attr("x1", xTransformed_timeLeft)
-        .attr("y1", height_timeLeft + 20)
+        .attr("y1", height_timeLeft)
         .attr("x2", xTransformed_timeLeft)
         .attr("y2", 0)
         .style("opacity", 1)
