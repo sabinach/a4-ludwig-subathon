@@ -1,7 +1,7 @@
 // video embed settings
-var parentDomain = "6859-sp21.github.io" // deploy: 6859-sp21.github.io  OR   sabinach.github.io
-                               // test: 127.0.0.1
-
+var parentDomain = "6859-sp21.github.io" // deploy (class): 6859-sp21.github.io
+                                         // deploy (personal): sabinach.github.io
+                                         // test: 127.0.0.1
 console.log("parentDomain: ", parentDomain);
 
 /* ---------------------- */
@@ -79,6 +79,24 @@ var svg_treemap = d3.select("#treemap-viz")
   .append("g")
     .attr("transform",
           "translate(" + margin_treemap.left + "," + margin_treemap.top + ")");
+
+/* ---------------------- */
+
+// set the dimensions and margins of the graph
+var margin_piechart = {top: 0, right: 0, bottom: 0, left: 10},
+  width_piechart = 400 - margin_piechart.left - margin_piechart.right,
+  height_piechart = 400 - margin_piechart.top - margin_piechart.bottom;
+
+var radius_piechart = Math.min(width_piechart, height_piechart) / 2
+
+// append the svg_treemap object to the body of the page
+var svg_piechart = d3.select("#piechart-viz")
+  .append("svg")
+    .attr("width", width_piechart + margin_piechart.left + margin_piechart.right)
+    .attr("height", height_piechart + margin_piechart.top + margin_piechart.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + width_piechart/2 + "," + height_piechart/2 + ")");
 
 /* ---------------------- */
 // utils
@@ -2290,6 +2308,108 @@ function createViz(error, ...args) {
         .html("<div class='events_block'><b>" + "Event Highlight" + "</b><br>" + formatDatetime(d.datetime) + " EST" + " (<a href='" + d.url + "' target='_blank'>video</a>)" + "<br><br>" + getHtmlEmbed(d.type, d.embed, parentDomain) + "<br></div>") 
     }
   }
+
+
+
+  /* --- Pie Chart FUNCTIONS --- */
+
+  // Color settings
+  const highOpacity_pichart = 0.7
+
+  // What to do when one group is hovered
+  const mouseover_piechart = function(d){
+    if (currentMode==="byTime"){
+      console.log(d)
+      svg_piechart.selectAll(".pieSlice").style("opacity", lowOpacity)
+      svg_piechart.selectAll(".pieText").style("opacity", lowOpacity)
+      // expect the one that is hovered
+      if(d.index){
+        svg_piechart.selectAll(".pieSlice-" + d.index).style("opacity", highOpacity_pichart)
+        svg_piechart.selectAll(".pieText-" + d.index).style("opacity", highOpacity_pichart)
+      }
+    }
+  }
+
+  const mouseleave_piechart = function(d){
+    if (currentMode==="byTime"){
+      svg_piechart.selectAll(".pieSlice").style("opacity", highOpacity_pichart)
+      svg_piechart.selectAll(".pieText").style("opacity", highOpacity_pichart)
+    }
+  }
+
+  /* --- Pie Chart DEFINITIONS --- */
+
+  // Create piechart data
+  var piechart_data = {"12 AM":1, "1 AM":1, "2 AM":1, "3 AM":1, "4 AM":1, "5 AM":1, "6 AM":1, "7 AM":1, "8 AM":1, "9 AM":1, "10 AM":1, "11 AM":1, "12 PM":1, "1 PM":1, "2 PM":1, "3 PM":1, "4 PM":1, "5 PM":1, "6 PM":1, "7 PM":1, "8 PM":1, "9 PM":1, "10 PM":1, "11 PM":1}
+
+  // Compute the position of each group on the pie:
+  var piechart = d3.pie().value(d => d.value)
+  var piechart_data_ready = piechart(d3.entries(piechart_data))
+
+  // shape helper to build arcs:
+  var arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(radius_piechart)
+
+  // shape helper to build arcs:
+  var arcLabel = d3.arc()
+    .innerRadius(0)
+    .outerRadius(radius_piechart*1.65)
+
+  svg_piechart
+    .selectAll('pieSlice')
+    .data(piechart_data_ready)
+    .enter()
+    .append('path')
+      .attr("class", d => "pieSlice pieSlice-" + d.index)
+      .attr('d', arcGenerator)
+      .attr('fill', d => colorTimeHour[timeHourToText.indexOf(d.data.key)])
+      .attr("stroke", "black")
+      .style("stroke-width", "2px")
+      .style("opacity", 0.7)
+      .on("mouseover", mouseover_piechart)
+      .on("mouseleave", mouseleave_piechart)
+
+  svg_piechart
+    .selectAll('pieText')
+    .data(piechart_data_ready)
+    .enter()
+    .append('text')
+      .attr("class", d => "pieText pieText-" + d.index)
+      .text(d => d.data.key.replace(/\s/g, ''))
+      .attr("transform", d => "translate(" + arcLabel.centroid(d) + ")")
+      .style("text-anchor", "middle")
+      .style("font-size", 10)
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* --------------------------------------------- */
   // RADIO TOGGLE
