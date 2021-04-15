@@ -104,8 +104,8 @@ var svg_piechart = d3.select("#piechart-viz")
 // string to d3 datetime conversion function
 var parseDatetime = d3.timeParse("%Y-%m-%d %H:%M");
 
-// The data recorded began at 2pm PST on March 15th, the time Ludwig intended to start the subathon.
-var subathonStartDate = parseDatetime("2021-03-15 17:00"); // converted to EST (5pm EST start)
+// The data recorded began at 2pm PST on March 14th, the time Ludwig intended to start the subathon.
+var subathonStartDate = parseDatetime("2021-03-14 17:00"); // converted to EST (5pm EST start)
 var subathonEndDate = parseDatetime("2021-04-14 00:00"); // converted to EST (12am EST end)
 
 // calculate datetime from timeStreamed hours
@@ -156,7 +156,6 @@ function createViz(error, ...args) {
   const timeLeft_hours = [...timeLeftJson.timeLeft.map(d => parseTimeLeft(d)), ...[ ...Array(17).keys() ].map( i => i*0.5).sort().reverse()] // 8-0 manually added
   const subathonTimer_manual = []
 
-  console.log("length: ", timeStreamed_hours.length)
   console.log("timeStreamed_hours: ", timeStreamed_hours)
   console.log("timeLeft_hours: ", timeLeft_hours)
   console.log("subathonTimer_manual: ", subathonTimer_manual)
@@ -889,9 +888,12 @@ function createViz(error, ...args) {
     return delta<=0 ? null : delta
   });
 
+  // set first value to 0
+  delta_followers[0] = null
+
   //console.log("datetime_followers: ", datetime_followers)
   //console.log("num_followers: ", num_followers)
-  //console.log("gained_followers: ", gained_followers)
+  //console.log("delta_followers: ", delta_followers)
 
   // handle error: mismatch xy length
   if (datetime_followers.length !== num_followers.length) throw error;
@@ -914,6 +916,8 @@ function createViz(error, ...args) {
         gainedFollowers: followers.gainedFollowers
       }
     });
+
+  followers_zip[0].gainedFollowers = 0
 
   console.log("followers_zip: ", followers_zip)
 
@@ -1276,7 +1280,7 @@ function createViz(error, ...args) {
       focus_textMode_timeLeft
         .html(d => {
           if(currentMode==="byActivity" && selectedData_viewers) 
-            return selectedData_viewers.game
+            return "nope" //selectedData_viewers.game
           else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
             return sleepAwakeToLudwigModcast[ludwigModcastJson_zip[i_timeLeft].sleepAwake]
           else if (currentMode==="byTime" && selectedData_timeLeft)
@@ -1430,7 +1434,7 @@ function createViz(error, ...args) {
   //var colorSchemes = d3.schemeSet2.concat(d3.schemeTableau10) 
 
   // https://sashamaps.net/docs/resources/20-colors/
-  const colorSchemes = ['#e6194b', '#3cb44b', '#ffc45d', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#800000', '#808000', '#ffd8b1', '#2a9df4', '#808080']
+  const colorSchemes = ['#3cb44b', '#e6194b', '#ffc45d', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#800000', '#808000', '#ffd8b1', '#2a9df4', '#808080']
   const colorDict = {}
   activityList_unique_original.forEach((activity, i) => {
     colorDict[activity] = colorSchemes[i]
