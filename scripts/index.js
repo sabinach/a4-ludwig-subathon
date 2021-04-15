@@ -1,5 +1,5 @@
 // video embed settings
-var parentDomain = "6859-sp21.github.io" // deploy: 6859-sp21.github.io  OR   sabinach.github.io
+var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io  OR   sabinach.github.io
                                // test: 127.0.0.1
 
 console.log("parentDomain: ", parentDomain);
@@ -351,6 +351,11 @@ function createViz(error, ...args) {
     svg_treemap.selectAll(".percent-sleepAwake").style("display", currentMode==="byLudwigModcast" ? null : "none");
 
     /** -------- **/
+    // leaves
+
+    console.log("activity root.leaves(): ", root.leaves())
+
+    /** -------- **/
     // rect
 
     // create rectangle object
@@ -364,16 +369,17 @@ function createViz(error, ...args) {
       .attr("height", d => d.y1 - d.y0)
 
     // add rectangle
-    rects.enter().append("rect")
-      .attr("class", d => "rect-activity" + (d.id ? " treemapRect-" + cleanString(d.id) : ""))
-      .attr("transform", d => `translate(${d.x0},${d.y0})`)
-      .attr("width", d => d.x1 - d.x0)
-      .attr("height", d => d.y1 - d.y0)
-      .style("stroke", "black")
-      .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
-      .style("display", currentMode==="byActivity" ? null : "none")
-      .on("mouseover", mouseover_treemap_allActivity)
-      .on("mouseleave", mouseleave_allActivity)
+    rects.enter()
+      .append("rect")
+        .attr("class", d => "rect-activity" + (d.id ? " treemapRect-" + cleanString(d.id) : ""))
+        .attr("transform", d => `translate(${d.x0},${d.y0})`)
+        .attr("width", d => d.x1 - d.x0)
+        .attr("height", d => d.y1 - d.y0)
+        .style("stroke", "black")
+        .style("fill", d => d.id ? colorDict[cleanString(d.id)] : "#9cbdd9")
+        .style("display", currentMode==="byActivity" ? null : "none")
+        .on("mouseover", mouseover_treemap_allActivity)
+        .on("mouseleave", mouseleave_allActivity)
 
     /** -------- **/
     // title
@@ -396,7 +402,7 @@ function createViz(error, ...args) {
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 13) // +lower
-      .html(d =>`<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
+      .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
       .style("display", currentMode==="byActivity" ? null : "none")
@@ -422,7 +428,7 @@ function createViz(error, ...args) {
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 23) // +lower
-      .html(d => `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
+      .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${(d.data.count/gamePlayed_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
       .style("display", currentMode==="byActivity" ? null : "none")
@@ -517,9 +523,9 @@ function createViz(error, ...args) {
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 13) // +lower
-      .html(d => `<tspan style='font-weight: 500'>${d.data.sleepAwake}</tspan>`)
+      .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${d.data.sleepAwake}</tspan>`)
       .style("font-size", "8px")
-      .style("fill", "black")
+      .style("fill", d => d.data.sleepAwake==="sleep" ? "white" : "black")
       .style("display", currentMode==="byLudwigModcast" ? null : "none")
 
     /** -------- **/
@@ -543,9 +549,9 @@ function createViz(error, ...args) {
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 23) // +lower
-      .html(d => `<tspan style='font-weight: 500'>${(d.data.count/sleepAwake_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
+      .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${(d.data.count/sleepAwake_count.reduce((accum,item) => accum + parseInt(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
-      .style("fill", "black")
+      .style("fill", d => d.data.sleepAwake==="sleep" ? "white" : "black")
       .style("display", currentMode==="byLudwigModcast" ? null : "none")
 
     /** -------- **/
@@ -1237,7 +1243,7 @@ function createViz(error, ...args) {
   //var colorSchemes = d3.schemeSet2.concat(d3.schemeTableau10) 
 
   // https://sashamaps.net/docs/resources/20-colors/
-  const colorSchemes = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#800000', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
+  const colorSchemes = ['#e6194b', '#3cb44b', '#ffc45d', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#800000', '#808000', '#ffd8b1', '#2a9df4', '#808080']
   const colorDict = {}
   activityList_unique_original.forEach((activity, i) => {
     colorDict[activity] = colorSchemes[i]
@@ -1372,9 +1378,9 @@ function createViz(error, ...args) {
 
   // https://fire-miracle.tumblr.com/post/185073640198/day-and-night-submitted-by-smolnlonelybean
   const colorSleepAwake = {
-    "awake": "#aff0ff",
-    "sleep": "#101263",
-    "away": "#ffbaaa"
+    "awake": "#aecfdb", // aff0ff
+    "sleep": "#101263", // 101263
+    "away": "#ffbaaa" // ffbaaa
   }
   console.log("colorSleepAwake: ", colorSleepAwake)
 
