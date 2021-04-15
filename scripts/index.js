@@ -865,6 +865,17 @@ function createViz(error, ...args) {
         .style("display", currentMode==="byTime" ? null : "none")
         .on("mouseover", mouseover_legend_allTimeHour)
         .on("mouseleave", mouseleave_allTimeHour)
+
+    // update piechart (remove hoverability for unavailable times)
+    piechart_keys = [...timeHourList_unique]
+    svg_piechart.selectAll(".pieSlice").style("opacity", lowOpacity)
+    svg_piechart.selectAll(".pieText").style("opacity", lowOpacity)
+    // only show the one that is hovered
+    piechart_keys.forEach(key => {
+      svg_piechart.selectAll(".pieSlice-" + key).style("opacity", highOpacity_piechart)
+      svg_piechart.selectAll(".pieText-" + key).style("opacity", highOpacity_piechart)
+    })
+
   }
 
 
@@ -1770,22 +1781,25 @@ function createViz(error, ...args) {
   // What to do when one group is hovered
   const mouseover_legend_allTimeHour = function(d){
     if (currentMode==="byTime"){
-      // reduce opacity of all groups
-      svg_line_timeLeft.selectAll(".area_timeLeft_timeHour").style("opacity", lowOpacity)
-      svg_line_viewers.selectAll(".area_viewers_timeHour").style("opacity", lowOpacity)
-      svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", lowOpacity)
-      svg.selectAll(".timeHour_legend_colors").style("opacity", lowOpacity)
-      svg.selectAll(".timeHour_legend_text").style("opacity", lowOpacity)
-      svg_piechart.selectAll(".pieSlice").style("opacity", lowOpacity)
-      svg_piechart.selectAll(".pieText").style("opacity", lowOpacity)
-      // expect the one that is hovered
-      svg_line_timeLeft.selectAll(".time" + d).style("opacity", highOpacity)
-      svg_line_viewers.selectAll(".time" + d).style("opacity", highOpacity)
-      svg_line_subFollows.selectAll(".time" + d).style("opacity", highOpacity)
-      svg.selectAll(".legendColor-" + d).style("opacity", highOpacity)
-      svg.selectAll(".legendText-" + d).style("opacity", highOpacity)
-      svg_piechart.selectAll(".pieSlice-" + d).style("opacity", highOpacity_piechart)
-      svg_piechart.selectAll(".pieText-" + d).style("opacity", highOpacity_piechart)
+      // only do stuff if the key is relevant
+      if(piechart_keys.includes(d)){
+        // reduce opacity of all groups
+        svg_line_timeLeft.selectAll(".area_timeLeft_timeHour").style("opacity", lowOpacity)
+        svg_line_viewers.selectAll(".area_viewers_timeHour").style("opacity", lowOpacity)
+        svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", lowOpacity)
+        svg.selectAll(".timeHour_legend_colors").style("opacity", lowOpacity)
+        svg.selectAll(".timeHour_legend_text").style("opacity", lowOpacity)
+        svg_piechart.selectAll(".pieSlice").style("opacity", lowOpacity)
+        svg_piechart.selectAll(".pieText").style("opacity", lowOpacity)
+        // expect the one that is hovered
+        svg_line_timeLeft.selectAll(".time" + d).style("opacity", highOpacity)
+        svg_line_viewers.selectAll(".time" + d).style("opacity", highOpacity)
+        svg_line_subFollows.selectAll(".time" + d).style("opacity", highOpacity)
+        svg.selectAll(".legendColor-" + d).style("opacity", highOpacity)
+        svg.selectAll(".legendText-" + d).style("opacity", highOpacity)
+        svg_piechart.selectAll(".pieSlice-" + d).style("opacity", highOpacity_piechart)
+        svg_piechart.selectAll(".pieText-" + d).style("opacity", highOpacity_piechart)
+      }
     }
   }
 
@@ -1797,8 +1811,13 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", highOpacity)
       svg.selectAll(".timeHour_legend_colors").style("opacity", highOpacity)
       svg.selectAll(".timeHour_legend_text").style("opacity", highOpacity)
-      svg_piechart.selectAll(".pieSlice").style("opacity", highOpacity_piechart)
-      svg_piechart.selectAll(".pieText").style("opacity", highOpacity_piechart)
+      // only show the one that is hovered
+      svg_piechart.selectAll(".pieSlice").style("opacity", lowOpacity)
+      svg_piechart.selectAll(".pieText").style("opacity", lowOpacity)
+      piechart_keys.forEach(key => {
+        svg_piechart.selectAll(".pieSlice-" + key).style("opacity", highOpacity_piechart)
+        svg_piechart.selectAll(".pieText-" + key).style("opacity", highOpacity_piechart)
+      })
     }
   }
 
@@ -2318,22 +2337,25 @@ function createViz(error, ...args) {
   // What to do when one group is hovered
   const mouseover_piechart = function(d){
     if (currentMode==="byTime"){
-      // reduce opacity of all groups
-      svg_line_timeLeft.selectAll(".area_timeLeft_timeHour").style("opacity", lowOpacity)
-      svg_line_viewers.selectAll(".area_viewers_timeHour").style("opacity", lowOpacity)
-      svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", lowOpacity)
-      svg.selectAll(".timeHour_legend_colors").style("opacity", lowOpacity)
-      svg.selectAll(".timeHour_legend_text").style("opacity", lowOpacity)
-      svg_piechart.selectAll(".pieSlice").style("opacity", lowOpacity)
-      svg_piechart.selectAll(".pieText").style("opacity", lowOpacity)
-      // expect the one that is hovered
-      svg_line_timeLeft.selectAll(".time" + d.index).style("opacity", highOpacity)
-      svg_line_viewers.selectAll(".time" + d.index).style("opacity", highOpacity)
-      svg_line_subFollows.selectAll(".time" + d.index).style("opacity", highOpacity)
-      svg.selectAll(".legendColor-" + d.index).style("opacity", highOpacity)
-      svg.selectAll(".legendText-" + d.index).style("opacity", highOpacity)
-      svg_piechart.selectAll(".pieSlice-" + d.index).style("opacity", highOpacity_piechart)
-      svg_piechart.selectAll(".pieText-" + d.index).style("opacity", highOpacity_piechart)
+      // only do stuff if the key is relevvant
+      if(piechart_keys.includes(d.index)){
+        // reduce opacity of all groups
+        svg_line_timeLeft.selectAll(".area_timeLeft_timeHour").style("opacity", lowOpacity)
+        svg_line_viewers.selectAll(".area_viewers_timeHour").style("opacity", lowOpacity)
+        svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", lowOpacity)
+        svg.selectAll(".timeHour_legend_colors").style("opacity", lowOpacity)
+        svg.selectAll(".timeHour_legend_text").style("opacity", lowOpacity)
+        svg_piechart.selectAll(".pieSlice").style("opacity", lowOpacity)
+        svg_piechart.selectAll(".pieText").style("opacity", lowOpacity)
+        // expect the one that is hovered
+        svg_line_timeLeft.selectAll(".time" + d.index).style("opacity", highOpacity)
+        svg_line_viewers.selectAll(".time" + d.index).style("opacity", highOpacity)
+        svg_line_subFollows.selectAll(".time" + d.index).style("opacity", highOpacity)
+        svg.selectAll(".legendColor-" + d.index).style("opacity", highOpacity)
+        svg.selectAll(".legendText-" + d.index).style("opacity", highOpacity)
+        svg_piechart.selectAll(".pieSlice-" + d.index).style("opacity", highOpacity_piechart)
+        svg_piechart.selectAll(".pieText-" + d.index).style("opacity", highOpacity_piechart)
+      }
     }
   }
 
@@ -2344,8 +2366,13 @@ function createViz(error, ...args) {
       svg_line_subFollows.selectAll(".area_subFollows_timeHour").style("opacity", highOpacity)
       svg.selectAll(".timeHour_legend_colors").style("opacity", highOpacity)
       svg.selectAll(".timeHour_legend_text").style("opacity", highOpacity)
-      svg_piechart.selectAll(".pieSlice").style("opacity", highOpacity_piechart)
-      svg_piechart.selectAll(".pieText").style("opacity", highOpacity_piechart)
+      // only show the one that is hovered
+      svg_piechart.selectAll(".pieSlice").style("opacity", lowOpacity)
+      svg_piechart.selectAll(".pieText").style("opacity", lowOpacity)
+      piechart_keys.forEach(key => {
+        svg_piechart.selectAll(".pieSlice-" + key).style("opacity", highOpacity_piechart)
+        svg_piechart.selectAll(".pieText-" + key).style("opacity", highOpacity_piechart)
+      })
     }
   }
 
@@ -2353,6 +2380,8 @@ function createViz(error, ...args) {
 
   // Create piechart data
   var piechart_data = {"12 AM":1, "1 AM":1, "2 AM":1, "3 AM":1, "4 AM":1, "5 AM":1, "6 AM":1, "7 AM":1, "8 AM":1, "9 AM":1, "10 AM":1, "11 AM":1, "12 PM":1, "1 PM":1, "2 PM":1, "3 PM":1, "4 PM":1, "5 PM":1, "6 PM":1, "7 PM":1, "8 PM":1, "9 PM":1, "10 PM":1, "11 PM":1}
+
+  var piechart_keys = [...Array(24).keys()];; // will change depending on what's available
 
   // Compute the position of each group on the pie:
   var piechart = d3.pie().value(d => d.value)
