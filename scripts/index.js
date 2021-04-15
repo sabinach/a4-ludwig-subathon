@@ -2313,7 +2313,7 @@ function createViz(error, ...args) {
     .attr("id", d => "dot-events-" + d.id)
     .attr("cx", d => xScale_timeLeft(d.timeStreamed))
     .attr("cy", d =>  yScale_timeLeft(d.timeLeft))
-    .attr("r", (d, i) => 4)
+    .attr("r", (d, i) => 6)
     .style("fill", "#fcb0b5")
     .style("display", currentMode==="byHighlights" ? null : "none")
     .on("mouseover", mouseover_events)
