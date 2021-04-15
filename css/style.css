@@ -13,7 +13,6 @@ body {
 
 .column {
     flex: 50%;
-    padding: 10px;
 }
 
 /* Vertical Hover Line */
