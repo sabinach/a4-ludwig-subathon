@@ -2317,7 +2317,7 @@ function createViz(error, ...args) {
     .enter()
       .append("text")
       .attr("class", "tooltip-events")
-      .text(highlights_zip[2].timeLeft.toFixed(1) + " hrs")
+      .text(highlights_zip[2].title)
       .attr("x", d => xScale_timeLeft(d.timeStreamed))
       .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
       .style("display", currentMode==="byHighlights" ? null : "none")
@@ -2346,7 +2346,7 @@ function createViz(error, ...args) {
       svg_line_timeLeft.selectAll(".tooltip-events").data([d]).enter()
         .append("text")
         .attr("class", "tooltip-events")
-        .text(d.timeLeft.toFixed(1) + " hrs")
+        .text(d.title)
         .attr("x", d => xScale_timeLeft(d.timeStreamed))
         .attr("y", d => yScale_timeLeft(d.timeLeft)-12)
 
