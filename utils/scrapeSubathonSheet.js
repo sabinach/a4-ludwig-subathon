@@ -18,13 +18,13 @@ const scrapeSpreadsheet = () => {
             let evaluated = await page.evaluate(() => {
 				
                 // hardcoded dom element id 
-				const timeStreamedDomId = "td.s206"; 	
-                const timeStreamedDomId_2 = "td.s231"   // highlighted values on the spreadsheet have different domid
+				const timeStreamedDomId = "td.s207"; 	
+                const timeStreamedDomId_2 = "td.s232"   // highlighted values on the spreadsheet have different domid
 
-				const timeLeftDomId = "td.s207";		// hardcoded dom element id
+				const timeLeftDomId = "td.s208";		// hardcoded dom element id
 
-                const maxSubsTotalDomId = "td.s209";    // hardcoded dom element id
-				const subsGainedDomId = "td.s210";		// hardcoded dom element id
+                const maxSubsTotalDomId = "td.s210";    // hardcoded dom element id
+				const subsGainedDomId = "td.s211";		// hardcoded dom element id
 
                 const timeStreamedDom = document.querySelectorAll(timeStreamedDomId);
                 const timeStreamedDom_2 = document.querySelectorAll(timeStreamedDomId_2);
