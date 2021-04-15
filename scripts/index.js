@@ -1087,13 +1087,6 @@ function createViz(error, ...args) {
 
   /* --- Focus / Hover DEFINITIONS --- */
 
-  // Define focus text (date)
-  var focus_text_date = svg.append("g")
-    .append("text")
-    .attr("transform", "translate(" + (-32) + ", " + (-30) + ")")
-    .style("font-weight", "bold")
-    .style("opacity", 1)
-
   // Define focus circle (timeLeft)
   var focus_circle_timeLeft = svg.append("g")
     .append("circle")
@@ -1173,7 +1166,6 @@ function createViz(error, ...args) {
     focus_circle_subFollows.style("opacity", 0)
     focus_text_subFollows.style("opacity", 0)
     focus_vertLine_subFollows.style("opacity", 0)
-    focus_text_date.style("opacity", 0)
   }
 
   function mousemoveFocus(){
@@ -1259,15 +1251,6 @@ function createViz(error, ...args) {
       focus_circle_subFollows.style("opacity", 0)
       focus_text_subFollows.style("opacity", 0)
       focus_vertLine_subFollows.style("opacity", 0)
-    }
-
-    // date
-    if(selectedData_timeLeft || selectedData_viewers || selectedData_subFollows){
-      focus_text_date
-        .text("") // TODO - Math.round(x0_timeLeft*2)/2
-        .style("opacity", 1)
-    }else{
-      focus_text_date.style("opacity", 0)
     }
 
   }
