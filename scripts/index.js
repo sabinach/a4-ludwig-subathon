@@ -1100,6 +1100,11 @@ function createViz(error, ...args) {
     .append("text")
     .style("opacity", 0)
 
+  // Define focus text mode (timeLeft)
+  var focus_textMode_timeLeft = svg.append("g")
+    .append("text")
+    .style("opacity", 0)
+
   // Define vertical line (timeLeft)
   var focus_vertLine_timeLeft = svg.append("g")
     .append("line")
@@ -1119,6 +1124,12 @@ function createViz(error, ...args) {
 
   // Define focus text (viewers)
   var focus_text_viewers = svg.append("g")
+    .append("text")
+    .style("opacity", 0)
+    .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ")")
+
+  // Define focus text mode (viewers)
+  var focus_textMode_viewers = svg.append("g")
     .append("text")
     .style("opacity", 0)
     .attr("transform", "translate(0," + (margin_viewers.top - margin_text) + ")")
@@ -1147,6 +1158,12 @@ function createViz(error, ...args) {
     .style("opacity", 0)
     .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
 
+  // Define focus text mode (subFollows)
+  var focus_textMode_subFollows = svg.append("g")
+    .append("text")
+    .style("opacity", 0)
+    .attr("transform", "translate(0," + (margin_subFollows.top - margin_text) + ")")
+
   // Define vertical line (subFollows)
   var focus_vertLine_subFollows = svg.append("g")
     .append("line")
@@ -1159,20 +1176,29 @@ function createViz(error, ...args) {
   function mouseoutFocus(){
     focus_circle_timeLeft.style("opacity", 0)
     focus_text_timeLeft.style("opacity", 0)
+    focus_textMode_timeLeft.style("opacity", 0)
     focus_vertLine_timeLeft.style("opacity", 0)
     focus_circle_viewers.style("opacity", 0)
     focus_text_viewers.style("opacity", 0)
+    focus_textMode_viewers.style("opacity", 0)
     focus_vertLine_viewers.style("opacity", 0)
     focus_circle_subFollows.style("opacity", 0)
     focus_text_subFollows.style("opacity", 0)
+    focus_textMode_subFollows.style("opacity", 0)
     focus_vertLine_subFollows.style("opacity", 0)
   }
 
   function mousemoveFocus(){
-    // timeLeft
     var x0_timeLeft = xScale_timeLeft.invert(d3.mouse(this)[0]),
         i_timeLeft = bisectHour(timeLeftJson_zip, x0_timeLeft, 1),
         selectedData_timeLeft = timeLeftJson_zip[i_timeLeft]
+    var x0_viewers= xScale_viewers.invert(d3.mouse(this)[0]),
+        i_viewers = bisectHour(viewers_zip, x0_viewers, 1),
+        selectedData_viewers = viewers_zip[i_viewers]
+    var x0_subFollows = xScale_subFollows.invert(d3.mouse(this)[0]),
+        i_subFollows = bisectHour(followers_zip, x0_subFollows, 1),
+        selectedData_subFollows = followers_zip[i_subFollows]
+
     if(selectedData_timeLeft){
       var xTransformed_timeLeft = xScale_timeLeft(selectedData_timeLeft.timeStreamed),
           yTransformed_timeLeft = yScale_timeLeft(selectedData_timeLeft.timeLeft)
@@ -1181,26 +1207,47 @@ function createViz(error, ...args) {
         .attr("cy", yTransformed_timeLeft)
         .style("opacity", 1)
       focus_text_timeLeft
-        .html(selectedData_timeLeft.subathonTimer)
+        .html(selectedData_timeLeft.subathonTimer + " timer")
         .attr("x", xTransformed_timeLeft + 5)
         .attr("y", yTransformed_timeLeft - 25)
         .style("opacity", 1)
+      focus_textMode_timeLeft
+        .html(d => {
+          if(currentMode==="byActivity" && selectedData_viewers) 
+            return selectedData_viewers.game
+          else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
+            return ludwigModcastJson_zip[i_timeLeft].sleepAwake
+          else if (currentMode==="byTime" && selectedData_timeLeft)
+            return timeHourToText[Math.floor(selectedData_timeLeft.timeStreamed + 17)%24]
+          else
+            return ""
+        })
+        .attr("x", xTransformed_timeLeft + 15)
+        .attr("y", yTransformed_timeLeft - 10)
+        .style("fill", d => {
+          if(currentMode==="byActivity" && selectedData_viewers) 
+            return colorDict[cleanString(selectedData_viewers.game)]
+          else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
+            return colorSleepAwake[ludwigModcastJson_zip[i_timeLeft].sleepAwake]
+          else if (currentMode==="byTime" && selectedData_timeLeft)
+            return colorTimeHour[Math.floor(selectedData_timeLeft.timeStreamed + 17)%24]
+          else
+            return null
+        })
+        .style("opacity", 1)
       focus_vertLine_timeLeft
         .attr("x1", xTransformed_timeLeft)
-        .attr("y1", height_timeLeft)
+        .attr("y1", height_timeLeft + 20)
         .attr("x2", xTransformed_timeLeft)
         .attr("y2", 0)
         .style("opacity", 1)
     }else{
       focus_circle_timeLeft.style("opacity", 0)
       focus_text_timeLeft.style("opacity", 0)
+      focus_textMode_timeLeft.style("opacity", 0)
       focus_vertLine_timeLeft.style("opacity", 0)
     }
 
-    // viewers
-    var x0_viewers= xScale_viewers.invert(d3.mouse(this)[0]),
-        i_viewers = bisectHour(viewers_zip, x0_viewers, 1),
-        selectedData_viewers = viewers_zip[i_viewers]
     if(selectedData_viewers){ 
       var xTransformed_viewers = xScale_viewers(selectedData_viewers.timeStreamed),
           yTransformed_viewers = yScale_viewers(selectedData_viewers.numViewers)
@@ -1211,7 +1258,31 @@ function createViz(error, ...args) {
       focus_text_viewers
         .html(selectedData_viewers.numViewers + " viewers")
         .attr("x", xTransformed_viewers + 5)
-        .attr("y", yTransformed_viewers - 25)
+        .attr("y", yTransformed_viewers - 30)
+        .style("opacity", 1)
+      focus_textMode_viewers
+        .html(d => {
+          if(currentMode==="byActivity" && selectedData_viewers) 
+            return selectedData_viewers.game
+          else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
+            return ludwigModcastJson_zip[i_timeLeft].sleepAwake
+          else if (currentMode==="byTime" && selectedData_timeLeft)
+            return timeHourToText[Math.floor(selectedData_timeLeft.timeStreamed + 17)%24]
+          else
+            return ""
+        })        
+        .attr("x", xTransformed_viewers + 15)
+        .attr("y", yTransformed_viewers - 15)
+        .style("fill", d => {
+          if(currentMode==="byActivity" && selectedData_viewers) 
+            return colorDict[cleanString(selectedData_viewers.game)]
+          else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
+            return colorSleepAwake[ludwigModcastJson_zip[i_timeLeft].sleepAwake]
+          else if (currentMode==="byTime" && selectedData_timeLeft)
+            return colorTimeHour[Math.floor(selectedData_timeLeft.timeStreamed + 17)%24]
+          else
+            return null
+        })
         .style("opacity", 1)
       focus_vertLine_viewers
         .attr("x1", xTransformed_viewers)
@@ -1222,13 +1293,10 @@ function createViz(error, ...args) {
     }else{
       focus_circle_viewers.style("opacity", 0)
       focus_text_viewers.style("opacity", 0)
+      focus_textMode_viewers.style("opacity", 0)
       focus_vertLine_viewers.style("opacity", 0)
     }
 
-    // subFollows
-    var x0_subFollows = xScale_subFollows.invert(d3.mouse(this)[0]),
-        i_subFollows = bisectHour(followers_zip, x0_subFollows, 1),
-        selectedData_subFollows = followers_zip[i_subFollows]
     if(selectedData_subFollows){ 
       var xTransformed_subFollows = xScale_subFollows(selectedData_subFollows.timeStreamed),
           yTransformed_subFollows = yScale_subFollows(selectedData_subFollows.gainedFollowers)
@@ -1241,6 +1309,29 @@ function createViz(error, ...args) {
         .attr("x", xTransformed_subFollows + 5)
         .attr("y", yTransformed_subFollows - 25)
         .style("opacity", 1)
+      focus_textMode_subFollows
+        .html(d => {
+          if(currentMode==="byActivity" && selectedData_viewers) 
+            return selectedData_viewers.game
+          else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
+            return ludwigModcastJson_zip[i_timeLeft].sleepAwake
+          else if (currentMode==="byTime" && selectedData_timeLeft)
+            return timeHourToText[Math.floor(selectedData_timeLeft.timeStreamed + 17)%24]
+          else
+            return ""
+        })        .attr("x", xTransformed_subFollows + 15)
+        .attr("y", yTransformed_subFollows - 10)
+        .style("fill", d => {
+          if(currentMode==="byActivity" && selectedData_viewers) 
+            return colorDict[cleanString(selectedData_viewers.game)]
+          else if (currentMode==="byLudwigModcast" && i_timeLeft>=0)
+            return colorSleepAwake[ludwigModcastJson_zip[i_timeLeft].sleepAwake]
+          else if (currentMode==="byTime" && selectedData_timeLeft)
+            return colorTimeHour[Math.floor(selectedData_timeLeft.timeStreamed + 17)%24]
+          else
+            return null
+        })
+        .style("opacity", 1)
       focus_vertLine_subFollows
         .attr("x1", xTransformed_subFollows)
         .attr("y1", height_subFollows)
@@ -1250,6 +1341,7 @@ function createViz(error, ...args) {
     }else{
       focus_circle_subFollows.style("opacity", 0)
       focus_text_subFollows.style("opacity", 0)
+      focus_textMode_subFollows.style("opacity", 0)
       focus_vertLine_subFollows.style("opacity", 0)
     }
 
