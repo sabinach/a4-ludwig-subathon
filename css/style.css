@@ -1,26 +1,30 @@
 /* General Layout */
 
 body {
-    font: 12px sans-serif;
-    position: relative;
+  font: 12px sans-serif;
+  position: relative;
 }
 
 .row {
-    display: flex;
-    width:1300px;
-    margin:auto;
+  display: flex;
+  width:1300px;
+  margin:auto;
 }
 
 .column {
-    flex: 50%;
+  flex: 50%;
+}
+
+.info_block{
+  font-size: 14px;
 }
 
 /* Vertical Hover Line */
 
 .hover-line {
-    stroke: #6F257F;
-    stroke-width: 2px;
-    stroke-dasharray: 2,4;
+  stroke: #6F257F;
+  stroke-width: 2px;
+  stroke-dasharray: 2,4;
 }
 
 /* Radio Button */

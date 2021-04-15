@@ -1,5 +1,5 @@
 // video embed settings
-var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io  OR   sabinach.github.io
+var parentDomain = "6859-sp21.github.io" // deploy: 6859-sp21.github.io  OR   sabinach.github.io
                                // test: 127.0.0.1
 
 console.log("parentDomain: ", parentDomain);
@@ -2154,11 +2154,13 @@ function createViz(error, ...args) {
     //.style("border-width", "1px")
     //.style("border-radius", "5px")
     .style("padding", "10px")
-    .style("margin-bottom", "10px")
+    //.style("margin-bottom", "10px")
     .style("width", "400px")
 
   info_block
     .html(
+      "<div class='info_block'>"
+      +
       "<b>What are these visualizations?</b>" 
       +
       "<div id='help-tooltip' style='display:inline-block;margin-left:6px;'>\
@@ -2212,6 +2214,8 @@ function createViz(error, ...args) {
         <p> \
           Want to add an event highlight? Submit the video link <a href='XXX' target='_blank'>here</a>! \
         </p>"
+      +
+      "</div>"
       ) 
 
   /* --- Events Tooltip DEFINITIONS --- */
