@@ -2234,7 +2234,7 @@ function createViz(error, ...args) {
       + 
       "<br><br>"
       +
-      "To learn more about the subathon, check out this <a href='https://www.theverge.com/2021/4/14/22362532/ludwig-twitch-subathon-ends-stream-ninja-subs-record' target='_blank'>article</a>." 
+      "To learn more about the subathon, check out this <a href='https://www.businessinsider.com/ludwig-streaming-smash-stop-how-much-money-subathon-ended-twitch-2021-4' target='_blank'>article</a>." 
       + 
       "<p>Data Credits To: \
           <ul> \
@@ -2244,7 +2244,7 @@ function createViz(error, ...args) {
           </ul> \
         </p> \
         <p> \
-          Want to add an event highlight? Submit the video link <a href='XXX' target='_blank'>here</a>! \
+          Want to add an event highlight? Submit the video link <a href='https://forms.gle/w1TgFZHr8MpF9Ti9A' target='_blank'>here</a>! \
         </p>"
       +
       "</div>"
