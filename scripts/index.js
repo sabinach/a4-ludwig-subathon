@@ -1,5 +1,5 @@
 // video embed settings
-var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io.  OR   sabinach.github.io
+var parentDomain = "127.0.0.1" // deploy: 6859-sp21.github.io  OR   sabinach.github.io
                                // test: 127.0.0.1
 
 console.log("parentDomain: ", parentDomain);
@@ -396,7 +396,7 @@ function createViz(error, ...args) {
       .attr("transform", d => `translate(${d.x0}, ${d.y0})`)
       .attr("dx", 5)  // +right
       .attr("dy", 13) // +lower
-      .html(d => (d.dx < 10 || d.dy < 10) ? null : `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
+      .html(d =>`<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
       .style("font-size", "8px")
       .style("fill", "black")
       .style("display", currentMode==="byActivity" ? null : "none")
