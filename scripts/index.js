@@ -1579,10 +1579,27 @@ function createViz(error, ...args) {
   var prevSleepAwake = ludwigModcastJson_zip[0].sleepAwake
   var prevSleepAwakeList = []
 
+  var newSection = false
+
   timeLeftJson_zip.forEach((d, i) => {
     const viewers = viewers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
     const followers = followers_zip.filter(obj => obj.timeStreamed === d.timeStreamed)[0]
     const ludwigModcast = ludwigModcastJson_zip[i]
+
+    if(newSection && d.timeStreamed%1===0){
+      // update previous if it ended on a non-whole integer
+      sleepAwakeList_data[sleepAwakeList_data.length-1].data.push({
+        timeStreamed: d.timeStreamed,
+        datetime: hoursToDatetime(d.timeStreamed),
+        sleepAwake: ludwigModcast.sleepAwake,
+        timeLeft: d.timeLeft,
+        numViewers: (viewers && viewers.numViewers) ? viewers.numViewers : null,
+        numFollowers: (followers && followers.numFollowers) ? followers.numFollowers : null,
+        gainedFollowers: (followers && followers.gainedFollowers) ? followers.gainedFollowers : null
+      })
+
+      newSection = false
+    }
 
     prevSleepAwakeList.push({
       timeStreamed: d.timeStreamed,
@@ -1595,6 +1612,10 @@ function createViz(error, ...args) {
     })
 
     if (ludwigModcast.sleepAwake !== prevSleepAwake){
+
+      // if ending on a non-integer value, need to go back and add the final value in the next iteration
+      newSection = d.timeStreamed%1!==0
+
       sleepAwakeList_keys.push(prevSleepAwake + "-" + prevSleepAwakeStart) // ie. awake-0
       sleepAwakeList_data.push({
         data: prevSleepAwakeList,
@@ -1606,15 +1627,20 @@ function createViz(error, ...args) {
       prevSleepAwake = ludwigModcast.sleepAwake
       prevSleepAwakeStart = d.timeStreamed
 
-      prevSleepAwakeList = [{
-        timeStreamed: d.timeStreamed,
-        datetime: hoursToDatetime(d.timeStreamed),
-        sleepAwake: ludwigModcast.sleepAwake,
-        timeLeft: d.timeLeft,
-        numViewers: (viewers && viewers.numViewers) ? viewers.numViewers : null,
-        numFollowers: (followers && followers.numFollowers) ? followers.numFollowers : null,
-        gainedFollowers: (followers && followers.gainedFollowers) ? followers.gainedFollowers : null
-      }]
+      // only start add data to new section if it starts on a whole number
+      if(d.timeStreamed%1===0){
+        prevSleepAwakeList = [{
+          timeStreamed: d.timeStreamed,
+          datetime: hoursToDatetime(d.timeStreamed),
+          sleepAwake: ludwigModcast.sleepAwake,
+          timeLeft: d.timeLeft,
+          numViewers: (viewers && viewers.numViewers) ? viewers.numViewers : null,
+          numFollowers: (followers && followers.numFollowers) ? followers.numFollowers : null,
+          gainedFollowers: (followers && followers.gainedFollowers) ? followers.gainedFollowers : null
+        }]
+      }else{
+        prevSleepAwakeList = []
+      }
     }
 
     if(i===timeLeftJson_zip.length-1){
