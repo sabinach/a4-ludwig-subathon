@@ -74,14 +74,14 @@ git push --force
 - [JSON Formatter](https://jsonformatter.curiousconcept.com/)
 
 #### Notes to Self:
-- all dates are converted to EST
-- name equivalents due to hacky legacy code: highlights = events; ludwigModcast = sleepAwake
-- before scraping, make sure BOTH spreadsheets' COLUMN DIVS are still correct bc it's HARDCODED in the script, and constantly changing in real-time since the subathon is ongoing
-	* for baddog's spreadsheet, specifically use the "Hours Streamed" and "Subathon Timer" column from the "Calculations" tab
-- for baddog's spreadsheet:
+- All dates are converted to EST
+- Name equivalents due to hacky legacy code (sigh): highlights = events; ludwigModcast = sleepAwake
+- Before scraping, make sure BOTH spreadsheets' COLUMN DIVS are still correct bc it's HARDCODED in the script, and constantly changing in real-time since the subathon is ongoing
+- For baddog86's spreadsheet:
+	* specifically scrape the "Hours Streamed" and "Subathon Timer" column from the "Calculations" tab
 	* to calculate datetime, add # hr of time streamed to 5pm EST start
 	* hours were manually inserted (via code) from hour 719-727 (1-9pm PST inclusive) with subathon timer linearly decreasing in time from 8-0 hours (inclusive) because at that point the subathon timer was just a countdown since all subs went directly to charity, instead of adding to the timer.
-- for sullygnome
+- For sullygnome:
 	* make sure to convert to EST on the bottom left dropdown of the website before downloading .json
 
 -----------------------------
@@ -89,12 +89,12 @@ git push --force
 ## Writeup
 
 #### Motivation
-I was inspired to make this visualization from  [u/baddog86’s “lud subathon” spreadsheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#), which was posted on Reddit near the beginning of Ludwig’s Subathon. When initially brainstorming ideas, what peaked my curiosity the most was the seemingly random subscription spikes scattered throughout the subathon. As a casual viewer, I am not watching Ludwig’s subathon 24/7, and although I might catch the reasons for some of the sub spikes live, it would be great if there was a consolidated place to view this information without scouring the web or watching hours of past videos. 
+I was inspired to make this visualization from [u/baddog86’s “lud subathon” spreadsheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#), which was posted on Reddit near the beginning of Ludwig’s Subathon. When initially brainstorming ideas, what peaked my curiosity the most was the seemingly random subscription spikes scattered throughout the subathon. As a casual viewer, I am not watching Ludwig’s subathon 24/7, and although I might catch the reasons for some of the sub spikes live, it would be great if there was a consolidated place to view this information without scouring the web or watching hours of past videos. 
 
-Since the subathon timer corresponds directly with the number of new subscribers to the channel (1 new subscriber = +10 seconds to the subathon timer), I was really curious to understand the reasons behind the sub spikes. Were the sub spikes really because the viewers all just simultaneously decided to start donating at the same time? Was it because Ludwig said something to convince viewers to start subscribing? Was it due to another content creator’s influence? Did viewers just feel more generous during specific times of the day? Maybe this publicity stunt lead to more exposure, thereby increasing viewership, which in turn convinced more viewers to subscribe? ...Or could there something greater going on influencing the trends? My primary motivation in building this visualization was to create a medium for both me and other interested viewers to explore these questions. 
+Since the subathon timer corresponds directly with the number of new subscribers to the channel (1 new subscriber = +10 seconds to the subathon timer), I was really curious to understand the reasons behind the sub spikes. Were the sub spikes really because the viewers all just simultaneously decided to start donating at the same time? Was it because Ludwig said something to convince viewers to start subscribing? Was it due to another content creator’s influence? Did viewers just feel more generous during specific times of the day? Maybe this publicity stunt lead to more exposure, thereby increasing viewership, which in turn convinced more viewers to subscribe? ...or could there something greater going on influencing the trends? My primary motivation in building this visualization was to create a medium for both me and other interested viewers to explore these questions. 
 
 #### Dataset
-I used a mixture of available and hand-aggregated datasets. I used u/baddog86’s “lud subathon” spreadsheet to track the subathon timer and overall stream time. To track viewership and follower counts, I used data from [SullyGnome](https://sullygnome.com/channel/ludwig/30). For event highlights, I manually selected interesting clips that I felt would help explain some of the sub spikes. 
+I used a mixture of available and hand-aggregated datasets. I used [u/baddog86’s “lud subathon” spreadsheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#) to track the subathon timer and overall stream time. To track viewership and follower counts, I used data from [SullyGnome](https://sullygnome.com/channel/ludwig/30). For event highlights, I manually selected interesting clips that I felt would help explain some of the sub spikes. 
 
 One difficulty in aggregating the necessary datasets was that the Twitch API only allows users to retrieve real-time data (it does not allow users to retrieve past data). Therefore, since I only realized I wanted to do this project 12-days into the subathon, I had to rely on other websites to get past datasets for me. However, most websites only saved or displayed data at daily, weekly, or monthly time intervals. Because I wanted to visualize the data at 30-minute increments, since the subathon was only 1-month long, I was limited by the amount of data I had available. Ultimately I was able to retrieve viewership and follower data (from SullyGnome), but was unable to find subscriber data for the time intervals I needed. 
 
