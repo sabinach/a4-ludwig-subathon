@@ -11,7 +11,7 @@ On March 14, 2021, Twitch streamer, [Ludwig Ahgren](https://www.twitch.tv/ludwig
 During the stream, users on Reddit/Twitch tracked the subathon in a public spreadsheet, which produced some preliminary static graphs. My goal was to take this dataset, and turn it into a more interactive and exploratory visualization. The intended audience for this visualization is for Ludwig fans and for general viewers interested in learning more about Ludwig’s subathon. I created an interactive visualization for users interested in learning more about activity statistics and stream highlights during this record-breaking event. 
 
 #### Deploy URL
-https://6859-sp21.github.io/a4-ludwig-subathon/
+https://sabinach.github.io/a4-ludwig-subathon/
 
 -----------------------------
 
