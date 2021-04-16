@@ -39,11 +39,11 @@ Dataset Credits To:
 	* timeLeft.json (scraped from spreadsheet)
 	* ludwigModcast.json (hardcoded based on spreadsheet)
 - [SullyGnome](https://sullygnome.com/channel/ludwig)
-	* [viewers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelViewers/30/0/12171601/ludwig/%20/%20/0/0/%20/) (directly download)
-	* [followers.json](https://sullygnome.com/api/charts/linecharts/getconfig/ChannelFollowers/7/0/12171601/ludwig/%20/%20/0/0/%20/) (directly downloaded)
+	* viewers.json (directly download)
+	* followers.json (directly downloaded)
 	* gameImages.json (manually checked loaded image urls)
 - Random Twitch/YouTube Clips
-	* highlights.json (manually collected the video urls)
+	* [highlights.json](https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#) (manually collected the video urls)
 
 #### To Preprocess Data:
 ```
