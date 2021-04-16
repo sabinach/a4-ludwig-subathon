@@ -2273,7 +2273,6 @@ function createViz(error, ...args) {
           <ul> \
             <li><a href='https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#' target='_blank'>baddog86, smartax1111, itzdanbarz, and ogsheeper</a></li> \
             <li><a href='https://sullygnome.com/channel/ludwig' target='_blank'>SullyGnome</a></li> \
-            <li><a href='https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#' target='_blank'>Twitch Highlight Clips</a></li> \
           </ul> \
         </p> \
         <p> \
