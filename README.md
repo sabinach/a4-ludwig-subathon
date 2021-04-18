@@ -25,22 +25,11 @@ https://sabinach.github.io/a4-ludwig-subathon/
 
 ## Dev Notes [For Sabina's Reference Only]
 
+#### THE SUBATHON HAS OFFICIALLY ENDED. CONGRATS LUDWIG!!!!!! 
+
+It's been a wild ride! To fellow Ludwig fans out there, I hope you find this visualization interesting. I had a blast making it :) 
+
 #### Overview
-
-THE SUBATHON HAS OFFICIALLY ENDED. CONGRATS LUDWIG!!!!!! 
-- It's been a wild ride! To fellow Ludwig fans out there, I hope you find this visualization interesting. I had a blast making it :) 
-
-Subathon Dates:
-- START: March 14, 2021 @ 2:00pm PST (5:00pm EST)
-- END: April 13, 2021 @ 8:59pm PST (11:59pm EST)
-
-Current Data Extracted from baddog86's spreadsheet (manually updated):
-- START: 0 hr
-- END: 694.5 hr (missing 681-693.5 hr due to deleted VOD)
-
-Current Data Extracted from SullyGnome (manually updated):
-- viewers: 2021-03-11 16:00 EST ... 2021-04-14 00:00 EST
-- followers: 2021-03-09 19:00 EST ... 2021-04-14 18:00 EST
 
 Dataset Credits To:
 - [baddog86, smartax1111, itzdanbarz, and ogsheeper](https://docs.google.com/spreadsheets/d/e/2PACX-1vThvKnVHDeF0iGgL7Bkx6wz_SE2hh2RvxzqEHyqtZvR3H0DXuOwwh5MdwnbzMYvluul97ld364VANqm/pubhtml#)
@@ -52,6 +41,18 @@ Dataset Credits To:
 	* gameImages.json (manually checked loaded image urls)
 - Random Twitch/YouTube Clips
 	* [highlights.json](https://docs.google.com/spreadsheets/d/e/2PACX-1vQLW71Ytd45ilfzRnforyZJthghXUickXMZdhY_phG8rAEO7eYqOCTj2u5DlxN0x5s1xP-ondSwf3RD/pubhtml#) (manually collected the video urls)
+
+Subathon Dates:
+- START: March 14, 2021 @ 2:00pm PST (5:00pm EST)
+- END: April 13, 2021 @ 8:59pm PST (11:59pm EST)
+
+Current Data Extracted from baddog86's spreadsheet (manually updated):
+- START: 0 hr
+- END: 718.5 hr (manually added hours 719-727, see "Notes to Self" below)
+
+Current Data Extracted from SullyGnome (manually updated):
+- viewers: 2021-03-11 16:00 EST ... 2021-04-14 00:00 EST
+- followers: 2021-03-09 19:00 EST ... 2021-04-14 18:00 EST
 
 #### To Preprocess Data:
 ```
@@ -89,7 +90,7 @@ git push --force
 	* specifically scrape the "Hours Streamed" and "Subathon Timer" column from the "Calculations" tab
 	* to calculate datetime, add # hr of time streamed to 5pm EST start
 	* hours were manually inserted (via code) from hour 719-727 (1-9pm PST inclusive) with subathon timer linearly decreasing in time from 8-0 hours (inclusive) because at that point the subathon timer was just a countdown since all subs went directly to charity, instead of adding to the timer.
-- For sullygnome:
+- For SullyGnome:
 	* make sure to convert to EST on the bottom left dropdown of the website before downloading .json
 
 -----------------------------
