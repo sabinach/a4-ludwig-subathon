@@ -6,7 +6,7 @@
 Sabina Chen
 
 #### Project Description
-On March 14, 2021, Twitch streamer, [Ludwig Ahgren](https://www.twitch.tv/ludwig), started a subathon for which every new subscriber would add 10 seconds to the length of his stream. Due to overwhelming support from the Twitch community, the stream ended up lasting 31 days. During this time, Ludwig gained over 970k new followers and 250k new subscribers, enabling him to ultimately surpass [Ninja's record](https://twitchtracker.com/subscribers/all-time) for "Most Concurrent Twitch Subscribers" by hitting 280k+ subscribers at peak. 
+On March 14, 2021, Twitch streamer, [Ludwig Ahgren](https://www.twitch.tv/ludwig), started a subathon for which every new subscriber would add 10 seconds to the length of his stream. Due to overwhelming support from the Twitch community, the stream ended up lasting 31 days. During this time, Ludwig gained over 960k new followers and 250k new subscribers, enabling him to ultimately surpass [Ninja's record](https://twitchtracker.com/subscribers/all-time) for "Most Concurrent Twitch Subscribers" by hitting 280k+ subscribers at peak. 
 
 During the stream, users on Reddit/Twitch tracked the subathon in a public spreadsheet, which produced some preliminary static graphs. My goal was to take this dataset, and turn it into a more interactive and exploratory visualization. The intended audience for this visualization is for Ludwig fans and for general viewers interested in learning more about Ludwig’s subathon. I created an interactive visualization for users interested in learning more about activity statistics and stream highlights during this record-breaking event. 
 

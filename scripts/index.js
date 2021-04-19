@@ -1,6 +1,6 @@
 // video embed settings
-var parentDomain = "sabinach.github.io" // deploy: 6859-sp21.github.io    OR   sabinach.github.io
-                               // test: 127.0.0.1
+var parentDomain = "sabinach.github.io" // deploy: sabinach.github.io
+                                        // test: 127.0.0.1
 
 console.log("parentDomain: ", parentDomain);
 
@@ -12,6 +12,9 @@ var currentMode = "byActivity"
 // hover opacity (for area graphs)
 const lowOpacity = 0.1
 const highOpacity = 1
+
+// debug (hide/unhide prints)
+const DEBUG = false
 
 /* ---------------------- */
 // helper utils (todo - currently not used)
@@ -46,7 +49,7 @@ var svg_height = 750;
 var margin_timeLeft = { top: 60, right: 160, bottom: 450, left: 60 };
 var height_timeLeft = svg_height - margin_timeLeft.top - margin_timeLeft.bottom;
 
-var margin_viewers = { top: 320, right: 160, bottom: 275, left: 60 };
+var margin_viewers = { top: 330, right: 160, bottom: 275, left: 60 };
 var height_viewers = svg_height - margin_viewers.top - margin_viewers.bottom;
 
 var margin_subFollows = { top: 530, right: 160, bottom: 70, left: 60 };
@@ -122,8 +125,8 @@ var formatDatetime = d3.timeFormat("%B %d, %Y %H:%M %p")
 
 var formatTime = d3.timeFormat("%B %d, %Y");
 
-console.log("subathonStartDate: ", subathonStartDate) 
-console.log("subathonEndDate: ", subathonEndDate) 
+if (DEBUG) console.log("subathonStartDate: ", subathonStartDate) 
+if (DEBUG) console.log("subathonEndDate: ", subathonEndDate)
 
 var bisectHour = d3.bisector(function(d) { return d.timeStreamed; }).left;
 
@@ -146,7 +149,7 @@ function createViz(error, ...args) {
   const gameImagesJson = args[4];
   const ludwigModcastJson = args[5];
 
-  console.log("gameImagesJson: ", gameImagesJson)
+  if (DEBUG) console.log("gameImagesJson: ", gameImagesJson)
 
   /* --------------------------------------------- */
   // TIME LEFT / SUBS GAINED
@@ -156,9 +159,9 @@ function createViz(error, ...args) {
   const timeLeft_hours = [...timeLeftJson.timeLeft.map(d => parseTimeLeft(d)), ...[ ...Array(17).keys() ].map( i => i*0.5).sort().reverse()] // 8-0 manually added
   const subathonTimer_manual = []
 
-  console.log("timeStreamed_hours: ", timeStreamed_hours)
-  console.log("timeLeft_hours: ", timeLeft_hours)
-  console.log("subathonTimer_manual: ", subathonTimer_manual)
+  if (DEBUG) console.log("timeStreamed_hours: ", timeStreamed_hours)
+  if (DEBUG) console.log("timeLeft_hours: ", timeLeft_hours)
+  if (DEBUG) console.log("subathonTimer_manual: ", subathonTimer_manual)
 
   // handle error: mismatch xy length
   if (timeStreamed_hours.length !== timeLeft_hours.length) throw error;
@@ -172,7 +175,7 @@ function createViz(error, ...args) {
     }
   });
 
-  console.log("timeLeftJson_zip: ", timeLeftJson_zip)
+  if (DEBUG) console.log("timeLeftJson_zip: ", timeLeftJson_zip)
 
   /* --------------------------------------------- */
   // LUDWIG/MODCAST
@@ -202,8 +205,8 @@ function createViz(error, ...args) {
   });
   */
 
-  console.log("ludwigModcastJson: ", ludwigModcastJson)
-  console.log("ludwigModcastJson_zip: ", ludwigModcastJson_zip)
+  if (DEBUG) console.log("ludwigModcastJson: ", ludwigModcastJson)
+  if (DEBUG) console.log("ludwigModcastJson_zip: ", ludwigModcastJson_zip)
 
 
   /* --------------------------------------------- */
@@ -212,8 +215,8 @@ function createViz(error, ...args) {
   const datetime_viewers = viewersJson.data.labels;
   const gamePlayed_viewers = viewersJson.data.datasets;
 
-  console.log("datetime_viewers: ", datetime_viewers)
-  console.log("gamePlayed_viewers: ", gamePlayed_viewers)
+  if (DEBUG) console.log("datetime_viewers: ", datetime_viewers)
+  if (DEBUG) console.log("gamePlayed_viewers: ", gamePlayed_viewers)
 
   // handle error: mismatch xy length
   gamePlayed_viewers.forEach(gamePlayed => {
@@ -242,9 +245,9 @@ function createViz(error, ...args) {
   }) 
 
   const numViewers = viewers_zip.map(d => {return d.numViewers})
-  console.log("numViewers: ", numViewers)
 
-  console.log("viewers_zip: ", viewers_zip)
+  if (DEBUG) console.log("numViewers: ", numViewers)
+  if (DEBUG) console.log("viewers_zip: ", viewers_zip)
 
   /* --------------------------------------------- */
   // TREEMAP
@@ -266,7 +269,7 @@ function createViz(error, ...args) {
     })
 
     gamePlayed_count = gamePlayed_count.filter(d => d.game!==null)
-    console.log("gamePlayed_count (before): ", gamePlayed_count)
+    if (DEBUG) console.log("gamePlayed_count (before): ", gamePlayed_count)
 
     /*
     // make sure no elements is less than 1% of total
@@ -322,7 +325,7 @@ function createViz(error, ...args) {
     var viewers_zip_withinBounds = viewers_zip.filter((viewers) => 
       (type==="datetime" && viewers.datetime >= start && viewers.datetime <= end) || 
         (type==="hour" && viewers.timeStreamed >= start && viewers.timeStreamed <= end))
-    console.log("viewers_zip_withinBounds: ", viewers_zip_withinBounds)
+    if (DEBUG) console.log("viewers_zip_withinBounds: ", viewers_zip_withinBounds)
 
     // account for when no data is available (get the closest one that happened earlier)
     if(viewers_zip_withinBounds.length===0){
@@ -347,12 +350,12 @@ function createViz(error, ...args) {
           viewers_zip_withinBounds = [viewers_zip[i]]
         }
       }
-      console.log("viewers_zip_withinBounds (bisected): ",viewers_zip_withinBounds)
+      if (DEBUG) console.log("viewers_zip_withinBounds (bisected): ",viewers_zip_withinBounds)
     }
 
     // get new gamePlayed count
     const gamePlayed_count = generateGamePlayedCount(viewers_zip_withinBounds)
-    console.log("gamePlayed_count: ", gamePlayed_count)
+    if (DEBUG) console.log("gamePlayed_count: ", gamePlayed_count)
 
     redrawTreemapActivity(gamePlayed_count)
     redrawLegendActivity(viewers_zip_withinBounds, gamePlayed_count)
@@ -364,7 +367,7 @@ function createViz(error, ...args) {
     var ludwigModcastJson_zip_withinBounds = ludwigModcastJson_zip.filter((item) => 
       (type==="datetime" && item.datetime >= start && item.datetime <= end) || 
         (type==="hour" && item.timeStreamed >= start && item.timeStreamed <= end))
-    console.log("ludwigModcastJson_zip_withinBounds (bisected): ",ludwigModcastJson_zip_withinBounds)
+    if (DEBUG) console.log("ludwigModcastJson_zip_withinBounds (bisected): ",ludwigModcastJson_zip_withinBounds)
 
     // account for when no data is available (get the closest one that happened earlier)
     if(ludwigModcastJson_zip_withinBounds.length===0){
@@ -389,12 +392,12 @@ function createViz(error, ...args) {
           ludwigModcastJson_zip_withinBounds = [ludwigModcastJson_zip[i]]
         }
       }
-      console.log("ludwigModcastJson_zip_withinBounds (bisected): ",ludwigModcastJson_zip_withinBounds)
+      if (DEBUG) console.log("ludwigModcastJson_zip_withinBounds (bisected): ",ludwigModcastJson_zip_withinBounds)
     }
 
     // get new sleepAwake count
     const sleepAwake_count = generateSleepAwakeCount(ludwigModcastJson_zip_withinBounds, type==="hour" ? end : datetimeToHours(end))
-    console.log("sleepAwake_count: ", sleepAwake_count)
+    if (DEBUG) console.log("sleepAwake_count: ", sleepAwake_count)
 
     // redraw treemap here
     redrawTreemapSleepAwake(sleepAwake_count)
@@ -439,7 +442,7 @@ function createViz(error, ...args) {
     /** -------- **/
     // leaves
 
-    console.log("activity root.leaves(): ", root.leaves())
+    if (DEBUG) console.log("activity root.leaves(): ", root.leaves())
 
     /** -------- **/
     // rect
@@ -557,7 +560,7 @@ function createViz(error, ...args) {
     /** -------- **/
     // leaves
 
-    console.log("sleepAwake root.leaves(): ", root.leaves())
+    if (DEBUG) console.log("sleepAwake root.leaves(): ", root.leaves())
 
     /** -------- **/
     // rect
@@ -654,7 +657,7 @@ function createViz(error, ...args) {
           activityList_unique.push(cleanString(viewer.game))
         }
       })
-    console.log("activityList_unique: ", activityList_unique)
+    if (DEBUG) console.log("activityList_unique: ", activityList_unique)
 
     // clear previous legend
     svg.selectAll(".activity_legend_colors").remove();
@@ -729,7 +732,7 @@ function createViz(error, ...args) {
           sleepAwakeList_unique.push(item.sleepAwake)
         }
       })
-    console.log("sleepAwakeList_unique: ", sleepAwakeList_unique)
+    if (DEBUG) console.log("sleepAwakeList_unique: ", sleepAwakeList_unique)
 
     // clear previous legend
     svg.selectAll(".sleepAwake_legend_colors").remove();
@@ -805,7 +808,7 @@ function createViz(error, ...args) {
         }
       })
     timeHourList_unique.sort(function(a, b){return a - b});
-    console.log("timeHourList_unique: ", timeHourList_unique)
+    if (DEBUG) console.log("timeHourList_unique: ", timeHourList_unique)
 
     // clear previous legend
     svg.selectAll(".timeHour_legend_colors").remove();
@@ -918,11 +921,10 @@ function createViz(error, ...args) {
     });
 
   followers_zip[0].gainedFollowers = 0
-
-  console.log("followers_zip: ", followers_zip)
+  if (DEBUG) console.log("followers_zip: ", followers_zip)
 
   const gainedFollowers = followers_zip.map(d => d.gainedFollowers)
-  console.log("gainedFollowers: ", gainedFollowers)
+  if (DEBUG) console.log("gainedFollowers: ", gainedFollowers)
 
   /* --------------------------------------------- */
   // HIGHLIGHTS
@@ -977,7 +979,7 @@ function createViz(error, ...args) {
       }
     });
 
-  console.log("highlights_zip: ", highlights_zip)
+  if (DEBUG) console.log("highlights_zip: ", highlights_zip)
 
   /* --------------------------------------------- */
   // GRAPH
@@ -1424,7 +1426,7 @@ function createViz(error, ...args) {
       }
     })
 
-  console.log("activityList_unique_original: ", activityList_unique_original)
+  if (DEBUG) console.log("activityList_unique_original: ", activityList_unique_original)
 
   /* ----- */
 
@@ -1437,7 +1439,7 @@ function createViz(error, ...args) {
   activityList_unique_original.forEach((activity, i) => {
     colorDict[activity] = colorSchemes[i]
   })
-  console.log("colorDict: ", colorDict)
+  if (DEBUG) console.log("colorDict: ", colorDict)
 
   /* ----- */
 
@@ -1476,18 +1478,29 @@ function createViz(error, ...args) {
       prevActivityList = [{
         timeStreamed: d.timeStreamed,
         datetime: hoursToDatetime(d.timeStreamed),
-        game: (viewers && viewers.game) ? viewers.game : null,
+        game: (viewers && viewers.game) ? viewers.game : viewers_zip.filter(obj => obj.timeStreamed === d.timeStreamed-0.5)[0],
         timeLeft: d.timeLeft,
         numViewers: (viewers && viewers.numViewers) ? viewers.numViewers : null,
         numFollowers: (followers && followers.numFollowers) ? followers.numFollowers : null,
         gainedFollowers: (followers && followers.gainedFollowers) ? followers.gainedFollowers : null
       }]
     }
+
+    if(i===timeLeftJson_zip.length-1){
+      const lastItem = activityList_data[activityList_data.length-1]
+      const prevSleepAwakeStart = lastItem.data[lastItem.data.length-1].timeStreamed
+      activityList_keys.push(cleanString(prevActivity) + "-" + prevTimeStreamedStart) // ie. SuperMarioOdyssey-1
+      activityList_data.push({
+        data: prevActivityList,
+        game: cleanString(prevActivity),
+        timeStreamed: prevTimeStreamedStart
+      })
+    }
   
   })
 
-  console.log("activityList_keys: ", activityList_keys)
-  console.log("activityList_data: ", activityList_data)
+  if (DEBUG) console.log("activityList_keys: ", activityList_keys)
+  if (DEBUG) console.log("activityList_data: ", activityList_data)
 
   /* ----- */
 
@@ -1565,7 +1578,7 @@ function createViz(error, ...args) {
     "sleep": "#101263", // 101263
     "away": "#ffbaaa" // ffbaaa
   }
-  console.log("colorSleepAwake: ", colorSleepAwake)
+  if (DEBUG) console.log("colorSleepAwake: ", colorSleepAwake)
 
   /* ----- */
 
@@ -1575,7 +1588,7 @@ function createViz(error, ...args) {
     "awake": "Ludwig",
     "away": "Away"
   }
-  console.log("sleepAwakeList_unique_original: ", sleepAwakeList_unique_original)
+  if (DEBUG) console.log("sleepAwakeList_unique_original: ", sleepAwakeList_unique_original)
 
   /* ----- */
 
@@ -1663,9 +1676,8 @@ function createViz(error, ...args) {
   
   })
 
-
-  console.log("sleepAwakeList_keys: ", sleepAwakeList_keys)
-  console.log("sleepAwakeList_data: ", sleepAwakeList_data)
+  if (DEBUG) console.log("sleepAwakeList_keys: ", sleepAwakeList_keys)
+  if (DEBUG) console.log("sleepAwakeList_data: ", sleepAwakeList_data)
 
   /* ----- */
 
@@ -1739,14 +1751,14 @@ function createViz(error, ...args) {
 
   // https://line.17qq.com/articles/scesqrhqx.html
   const colorTimeHour = ["#793ba9", "#571189", "#4a2bae", "#105ca3", "#0594cc", "#17c3ea", "#00d3ec", "#71eead", "#eeeebe", "#fdea8a", "#e6ffa9", "#f9ef93", "#ffe677", "#ffda35", "#ffcf79", "#e3ab44", "#e09a19", "#ffb8a5", "#f15293", "#872ba3", "#7821a0", "#6a27a2", "#4d157b", "#43106f"] 
-  console.log("colorTimeHour: ", colorTimeHour) // colorTimeHour[0] = 12am, colorTimeHour[1] = 1am, etc
+  if (DEBUG) console.log("colorTimeHour: ", colorTimeHour) // colorTimeHour[0] = 12am, colorTimeHour[1] = 1am, etc
 
   const timeHourToText = ["12 AM","1 AM","2 AM","3 AM","4 AM","5 AM","6 AM","7 AM","8 AM","9 AM","10 AM","11 AM","12 PM","1 PM","2 PM","3 PM","4 PM","5 PM","6 PM","7 PM","8 PM","9 PM","10 PM","11 PM"]
 
   /* ----- */
 
   const timeHourList_unique_original = [...Array(24).keys()] // 24 hours in a day
-  console.log("timeHourList_unique_original: ", timeHourList_unique_original)
+  if (DEBUG) console.log("timeHourList_unique_original: ", timeHourList_unique_original)
 
   /* ----- */
 
@@ -1806,8 +1818,8 @@ function createViz(error, ...args) {
 
   })
 
-  console.log("timeHourList_keys: ", timeHourList_keys)
-  console.log("timeHourList_data: ", timeHourList_data)
+  if (DEBUG) console.log("timeHourList_keys: ", timeHourList_keys)
+  if (DEBUG) console.log("timeHourList_data: ", timeHourList_data)
 
 
   /* ----- */
@@ -2263,7 +2275,7 @@ function createViz(error, ...args) {
       + 
       "<br><br>"
       +
-      "On March 14, 2021, Twitch streamer, <a href='https://www.twitch.tv/ludwig' target='_blank'>Ludwig Ahgren</a>, started a subathon for which every new subscriber would add 10 seconds to the length of his stream. Due to overwhelming support from the Twitch community, the stream ended up lasting 31 days. During this time, Ludwig gained over 970k new followers and 250k new subscribers, enabling him to ultimately surpass <a href='https://twitchtracker.com/subscribers/all-time' target='_blank'>Ninja's record</a> for \"Most Concurrent Twitch Subscribers\" by hitting 280k+ subscribers at peak. I created an interactive visualization for viewers interested in learning more about activity statistics and stream highlights during this record-breaking event." 
+      "On March 14, 2021, Twitch streamer, <a href='https://www.twitch.tv/ludwig' target='_blank'>Ludwig Ahgren</a>, started a subathon for which every new subscriber would add 10 seconds to the length of his stream. Due to overwhelming support from the Twitch community, the stream ended up lasting 31 days. During this time, Ludwig gained over 960k new followers and 250k new subscribers, enabling him to ultimately surpass <a href='https://twitchtracker.com/subscribers/all-time' target='_blank'>Ninja's record</a> for \"Most Concurrent Twitch Subscribers\" by hitting 280k+ subscribers at peak. I created an interactive visualization for viewers interested in learning more about activity statistics and stream highlights during this record-breaking event." 
       + 
       "<br><br>"
       +
