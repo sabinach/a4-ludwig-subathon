@@ -485,7 +485,7 @@ function createViz(error, ...args) {
       .attr("dy", 13) // +lower
       .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${d.data.game}</tspan>`)
       .style("font-size", "8px")
-      .style("fill", "black")
+      .style("fill", d => d.data.game==="Jump King" ? "white" : "black")
       .style("display", currentMode==="byActivity" ? null : "none")
       .on("mouseover", mouseover_treemap_allActivity)
       .on("mouseleave", mouseleave_allActivity)
@@ -508,7 +508,7 @@ function createViz(error, ...args) {
       .attr("dy", 23) // +lower
       .html(d => d.x1-d.x0<50 || d.y1-d.y0<50 ? null : `<tspan style='font-weight: 500'>${(parseFloat(d.data.count)/gamePlayed_count.reduce((accum,item) => accum + parseFloat(item.count), 0)*100).toFixed(1) + "%"}</tspan>`)
       .style("font-size", "8px")
-      .style("fill", "black")
+      .style("fill", d => d.data.game==="Jump King" ? "white" : "black")
       .style("display", currentMode==="byActivity" ? null : "none")
       .on("mouseover", mouseover_treemap_allActivity)
       .on("mouseleave", mouseleave_allActivity)
