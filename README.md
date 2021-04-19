@@ -13,7 +13,7 @@ During the stream, users on Reddit/Twitch tracked the subathon in a public sprea
 #### Deploy URL
 https://sabinach.github.io/a4-ludwig-subathon/
 
-#### Example Screenshots
+#### Screenshots
 
 ![byActivity.png](https://github.com/sabinach/a4-ludwig-subathon/blob/main/docs/byActivity.png)
 
