@@ -157,7 +157,9 @@ Average viewership increased the most when the subathon timer was at less than 1
 
 The number of new followers increases and peaks on Day 7. This is interesting because this corresponds to a day AFTER the subathon timer hits its peak at 72 hours in. Meaning that news about the subathon most likely started getting popularized during this time since the subathon timer hitting 72 hours was such a surprising event. The new publicity encouraged more people to become interested in the event and begin following Ludwig’s channel. (This was exactly what happened to me actually; I only started following the subathon around Day 7 after learning about the 72 hour peak as well). 
 
+Here is a bonus screenshot of one of my sketches while I was initially brainstorming designs for this visualization:
 
+![sketch.png](https://github.com/sabinach/a4-ludwig-subathon/blob/main/docs/sketch.png)
 
 
 
